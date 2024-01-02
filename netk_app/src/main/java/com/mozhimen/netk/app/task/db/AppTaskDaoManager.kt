@@ -39,14 +39,25 @@ object AppTaskDaoManager : IUtilK {
 //        }
 //    }
 
+//    @JvmStatic
+//    fun getByTaskId_PackageName(taskId: String, packageName: String): AppTask? {
+//        val appTask: AppTask = _tasks[taskId] ?: kotlin.run {
+//            return null
+//        }
+//        if (appTask.apkPackageName == packageName)
+//            return appTask
+//        return null
+//    }
+
     @JvmStatic
-    fun getByTaskId_PackageName(taskId: String, packageName: String): AppTask? {
-        val appTask: AppTask = _tasks[taskId] ?: kotlin.run {
-            return null
-        }
-        if (appTask.apkPackageName == packageName)
-            return appTask
-        return null
+    fun getByTaskId_PackageName_VersionCode(taskId: String, packageName: String, versionCode: Int): AppTask? {
+//        val appTask: AppTask = _tasks[taskId] ?: kotlin.run {
+//            return null
+//        }
+//        if (appTask.apkPackageName == packageName)
+//            return appTask
+//        return null
+        return _tasks.filter { it.value.taskId == taskId && it.value.apkPackageName == packageName && it.value.apkVersionCode == versionCode }.map { it.value }.getOrNull(0)
     }
 
     /**
@@ -69,14 +80,24 @@ object AppTaskDaoManager : IUtilK {
         return _tasks.filter { it.value.downloadUrlCurrent == downloadUrlCurrent }.map { it.value }.getOrNull(0)
     }
 
-    /**
-     * 根据应用包名查询下载对象
-     * @param packageName 应用Id
-     * @return null 表示没有查询到
-     */
+//    /**
+//     * 根据应用包名查询下载对象
+//     * @param packageName 应用Id
+//     * @return null 表示没有查询到
+//     */
+
     @JvmStatic
-    fun getByApkPackageName(packageName: String): AppTask? {
-        return _tasks.filter { it.value.apkPackageName == packageName }.map { it.value }.getOrNull(0)
+    fun getByApkPackageName_VersionCode(packageName: String, versionCode: Int): AppTask? {
+        return _tasks.filter { it.value.apkPackageName == packageName && it.value.apkVersionCode == versionCode }.map { it.value }.getOrNull(0)
+    }
+
+    /**
+     * 通过保存名称获取下载信息
+     * @param apkName 保存名称
+     * @return 下载信息
+     */
+    fun getByApkName(apkName: String): AppTask? {
+        return _tasks.filter { it.value.apkName == apkName }.map { it.value }.getOrNull(0)
     }
 
 //    @JvmStatic
@@ -84,6 +105,11 @@ object AppTaskDaoManager : IUtilK {
 //        return _tasks.filter { it.value.isTaskDownload() /*|| it.value.taskState == CNetKAppTaskState.STATE_TASK_WAIT*/ || it.value.taskState == CNetKAppTaskState.STATE_TASK_PAUSE }
 //            .map { it.value }
 //    }
+
+    @JvmStatic
+    fun getAppTasksByApkPackageName(packageName: String): List<AppTask> {
+        return _tasks.filter { it.value.apkPackageName == packageName }.map { it.value }
+    }
 
     @JvmStatic
     fun getAppTasksIsDownloading(): List<AppTask> {
@@ -98,16 +124,6 @@ object AppTaskDaoManager : IUtilK {
     @JvmStatic
     fun getAppTasksIsInstalled(): List<AppTask> {
         return _tasks.filter { it.value.isInstalled() }.map { it.value }
-    }
-
-
-    /**
-     * 通过保存名称获取下载信息
-     * @param apkName 保存名称
-     * @return 下载信息
-     */
-    fun getByApkName(apkName: String): AppTask? {
-        return _tasks.filter { it.value.apkName == apkName }.map { it.value }.getOrNull(0)
     }
 
     //////////////////////////////////////////////////////////
@@ -127,7 +143,6 @@ object AppTaskDaoManager : IUtilK {
     fun hasInstalling(): Boolean {
         return _tasks.filter { it.value.isTaskInstall() }.isNotEmpty()
     }
-
 
     //////////////////////////////////////////////////////////
 

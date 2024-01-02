@@ -6,6 +6,7 @@ import com.mozhimen.basick.lintk.optin.OptInApiInit_ByLazy
 import com.mozhimen.basick.lintk.optin.OptInApiInit_InApplication
 import com.mozhimen.basick.utilk.android.content.UtilKAppInstall
 import com.mozhimen.basick.utilk.bases.IUtilK
+import com.mozhimen.basick.utilk.kotlin.collections.ifNotEmptyOr
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.netk.app.NetKApp
 import com.mozhimen.netk.app.cons.CNetKAppErrorCode
@@ -51,17 +52,22 @@ internal object NetKAppInstallManager : IUtilK {
     }
 
     @JvmStatic
-    fun onInstallSuccess(apkPackageName: String) {
-        AppTaskDaoManager.getByApkPackageName(apkPackageName)?.let {
-            onInstallSuccess(it)
-        } ?: run {
-            InstallKManager.onPackageAdded(apkPackageName)
-        }
+    fun onInstallSuccess(apkPackageName: String, versionCode: Int) {
+        val list = AppTaskDaoManager.getAppTasksByApkPackageName(apkPackageName)
+        list.ifNotEmptyOr({
+            it.forEach { appTask ->
+                if (appTask.apkVersionCode <= versionCode) {
+                    onInstallSuccess(appTask)
+                }
+            }
+        }, {
+            InstallKManager.addPackage(apkPackageName)
+        })
     }
 
     @JvmStatic
     fun onInstallSuccess(appTask: AppTask) {
-        InstallKManager.onPackageAdded(appTask.apkPackageName)
+        InstallKManager.addPackage(appTask.apkPackageName)
 
         if (NetKAppTaskManager.isDeleteApkFile) {
             NetKAppUnInstallManager.deleteFileApk(appTask)
@@ -93,7 +99,7 @@ internal object NetKAppInstallManager : IUtilK {
         NetKAppUnInstallManager.deleteFileApk(appTask)
 
         /**
-         * [CNetKAppState.STATE_INzzzzzzSTALL_CANCEL]
+         * [CNetKAppState.STATE_INSTALL_CANCEL]
          */
         NetKApp.onInstallCancel(appTask)
     }

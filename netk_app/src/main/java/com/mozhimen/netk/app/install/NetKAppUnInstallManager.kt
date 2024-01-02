@@ -4,6 +4,8 @@ import com.mozhimen.basick.lintk.optin.OptInApiInit_InApplication
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.java.io.deleteFile
 import com.mozhimen.basick.utilk.java.io.deleteFolder
+import com.mozhimen.basick.utilk.kotlin.collections.ifNotEmpty
+import com.mozhimen.basick.utilk.kotlin.collections.ifNotEmptyOr
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.netk.app.NetKApp
 import com.mozhimen.netk.app.cons.CNetKAppState
@@ -22,17 +24,20 @@ internal object NetKAppUnInstallManager {
     @OptIn(OptInApiInit_InApplication::class)
     @JvmStatic
     fun onUninstallSuccess(apkPackageName: String) {
-        AppTaskDaoManager.getByApkPackageName(apkPackageName)?.let {
-            onUninstallSuccess(it)
-        } ?: run {
-            InstallKManager.onPackageRemoved(apkPackageName)
-        }
+        val list = AppTaskDaoManager.getAppTasksByApkPackageName(apkPackageName)
+        list.ifNotEmptyOr({
+            it.forEach { appTask ->
+                onUninstallSuccess(appTask)
+            }
+        }, {
+            InstallKManager.removePackage(apkPackageName)
+        })
     }
 
     @OptIn(OptInApiInit_InApplication::class)
     @JvmStatic
     fun onUninstallSuccess(appTask: AppTask) {
-        InstallKManager.onPackageRemoved(appTask.apkPackageName)
+        InstallKManager.removePackage(appTask.apkPackageName)
 
         /**
          * [CNetKAppState.STATE_UNINSTALL_SUCCESS]

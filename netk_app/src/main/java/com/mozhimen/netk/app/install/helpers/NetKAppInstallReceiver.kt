@@ -6,6 +6,8 @@ import android.util.Log
 import com.mozhimen.basick.elemk.android.content.bases.BaseBroadcastReceiver
 import com.mozhimen.basick.elemk.android.content.cons.CIntent
 import com.mozhimen.basick.lintk.optin.OptInApiInit_InApplication
+import com.mozhimen.basick.utilk.android.content.UtilKPackageManager
+import com.mozhimen.basick.utilk.android.content.getVersionCode
 import com.mozhimen.netk.app.install.NetKAppInstallManager
 import com.mozhimen.netk.app.install.NetKAppUnInstallManager
 
@@ -21,8 +23,9 @@ class NetKAppInstallReceiver : BaseBroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         context?.let {
             intent?.let { intent ->
-                intent.dataString?.let { packName ->
-                    val apkPackName = packName.split(":")[1]
+                intent.dataString?.let { dataString ->
+                    Log.d(TAG, "onReceive: dataString $dataString")
+                    val apkPackName = dataString.split(":")[1]
                     if (apkPackName.isEmpty()) return
                     Log.i(TAG, "onReceive: action ${intent.action} apkPackName $apkPackName")
                     when (intent.action) {
@@ -31,8 +34,15 @@ class NetKAppInstallReceiver : BaseBroadcastReceiver() {
                         }
 
                         CIntent.ACTION_PACKAGE_ADDED, CIntent.ACTION_PACKAGE_REPLACED -> {//有应用发生变化，强制刷新应用
-                            NetKAppInstallManager.onInstallSuccess(apkPackName)
+                            val packageInfo = UtilKPackageManager.getInstalledPackages(context, false).find { it.packageName == apkPackName }
+                            if (packageInfo != null) {
+                                NetKAppInstallManager.onInstallSuccess(apkPackName, packageInfo.getVersionCode())
+                            } else {
+                                Log.e(TAG, "onReceive: cant find packageInfo just now")
+                            }
                         }
+
+                        else -> {}
                     }
                 }
             }

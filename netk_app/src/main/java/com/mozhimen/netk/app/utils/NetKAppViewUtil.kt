@@ -26,10 +26,11 @@ object NetKAppViewUtil {
         view.setOnLongClickListener {
             val appTask = onGetAppTask.invoke()
             when (appTask.taskState) {
-                /*CNetKAppTaskState.STATE_TASK_WAIT,*/ CNetKAppState.STATE_DOWNLOADING, CNetKAppTaskState.STATE_TASK_PAUSE -> {
+                /*CNetKAppTaskState.STATE_TASK_WAIT,*/
+                CNetKAppState.STATE_DOWNLOADING, CNetKAppTaskState.STATE_TASK_PAUSE, CNetKAppState.STATE_DOWNLOAD_PAUSE -> {
 //                    cancelTask(it.context, appTask)
-                onCancel.invoke(it.context, appTask)
-            }
+                    onCancel.invoke(it.context, appTask)
+                }
 
                 CNetKAppState.STATE_UNZIP_SUCCESS, CNetKAppState.STATE_INSTALLING -> {
                     onCancel.invoke(it.context, appTask)
@@ -66,7 +67,7 @@ object NetKAppViewUtil {
 //                    }
                 }
                 //如果是未下载，则下载app
-                CNetKAppTaskState.STATE_TASK_CREATE/*, CNetKAppTaskState.STATE_TASK_WAIT*/ -> {
+                CNetKAppTaskState.STATE_TASK_CREATE, CNetKAppTaskState.STATE_TASK_UPDATE/*, CNetKAppTaskState.STATE_TASK_WAIT*/ -> {
                     //startTask(it.context, appTask)
                     onStart.invoke(it.context, appTask)
                 }
@@ -116,6 +117,7 @@ object NetKAppViewUtil {
                 }
 
                 else -> {
+                    //不可达
                     //解压中 AppState.APP_STATE_UNPACKING
                     //未安装 AppState.APP_STATE_NOT_INSTALLED
                     //安装中
