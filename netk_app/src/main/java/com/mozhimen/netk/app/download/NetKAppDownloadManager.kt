@@ -431,7 +431,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
             Log.d(TAG, "progress: $progress currentOffset $currentOffset  totalLength $totalLength")
             if (progress !in 0..100) return
             if (appTask.appTask.isTaskPause()) return
-            if (progress < appTask.appTask.downloadProgress) return
+//            if (progress < appTask.appTask.downloadProgress) return
 
             /**
              * [CNetKAppState.STATE_DOWNLOADING]

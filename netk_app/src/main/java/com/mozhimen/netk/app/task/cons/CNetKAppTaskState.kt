@@ -24,7 +24,7 @@ object CNetKAppTaskState {
 
     @JvmStatic
     fun isTaskProcess(taskState: Int): Boolean {
-        return taskState != STATE_TASK_CREATE && taskState != STATE_TASK_CANCEL && taskState != STATE_TASK_SUCCESS && taskState != STATE_TASK_FAIL && taskState != STATE_TASK_UPDATE
+        return taskState != STATE_TASK_CREATE && taskState != STATE_TASK_CANCEL && taskState != STATE_TASK_SUCCESS && taskState != STATE_TASK_FAIL && taskState != STATE_TASK_UPDATE && taskState != STATE_TASK_UNAVAILABLE
     }
 
 //    @JvmStatic

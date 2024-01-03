@@ -2,14 +2,19 @@ package com.mozhimen.netk.app.utils
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.annotation.IntRange
 import androidx.core.app.NotificationCompat
 import com.mozhimen.basick.elemk.android.app.cons.CNotificationManager
 import com.mozhimen.basick.utilk.android.app.UtilKNotificationManager
+import com.mozhimen.basick.utilk.android.app.UtilKPendingIntent
 import com.mozhimen.basick.utilk.android.content.UtilKApplicationInfo
+import com.mozhimen.basick.utilk.android.content.UtilKIntentWrapper
 import com.mozhimen.basick.utilk.android.os.UtilKBuildVersion
+import com.mozhimen.basick.utilk.android.widget.showToast
 import com.mozhimen.netk.app.R
 import com.mozhimen.netk.app.annors.ANetKAppTaskState
 import com.mozhimen.netk.app.cons.CNetKAppState
@@ -21,7 +26,8 @@ import com.mozhimen.netk.app.task.db.AppTask
  * @author by chiclaim@google.com
  */
 object NetKAppNotificationUtil {
-    private const val NETK_APP_NOTIFICATION_CHANNEL_ID = "netk_app_notification_channel_id"
+    const val NETK_APP_NOTIFICATION_CHANNEL_ID = "NETK_APP_NOTIFICATION_CHANNEL_ID"
+    const val NETK_APP_NOTIFICATION_GROUP_ID = "NETK_APP_NOTIFICATION_GROUP_ID"
 
     @JvmStatic
     @SuppressLint("SwitchIntDef")
@@ -31,9 +37,8 @@ object NetKAppNotificationUtil {
         channelName: CharSequence,
         title: CharSequence,
         appTask: AppTask,
-        @DrawableRes notifierSmallIcon: Int = UtilKApplicationInfo.getIcon(context),
-//        file: File? = null,
-//        url: String? = null
+        intent: Intent? = null,
+        @DrawableRes notifierSmallIcon: Int = UtilKApplicationInfo.getIcon(context)
     ) {
         val notificationManager = UtilKNotificationManager.get(context)
         // 在 Android 8.0 及更高版本上，需要在系统中注册应用的通知渠道
@@ -46,7 +51,7 @@ object NetKAppNotificationUtil {
             .setSmallIcon(notifierSmallIcon)
             .setContentTitle(title)
             .setAutoCancel(
-                !appTask.isTaskProcess()
+                !appTask.isTaskProcess() || appTask.taskState == CNetKAppState.STATE_UNZIP_SUCCESS
             ) // canceled when it is clicked by the user.
             .setOngoing(appTask.isTaskProcess())
 
@@ -67,9 +72,24 @@ object NetKAppNotificationUtil {
 //                        builder.setContentIntent(pendingIntent)
 //                }
 //            }
+            appTask.taskState == CNetKAppTaskState.STATE_TASK_SUCCESS -> {
+                intent?.let {
+                    builder.setContentIntent(UtilKPendingIntent.getActivity(context, it))
+                }
+            }
+
+            appTask.isUnzipSuccess() -> {
+                intent?.let {
+                    builder.setContentIntent(UtilKPendingIntent.getActivity(context, it))
+                }
+            }
 
             appTask.isTasking() -> {
-                builder.setProgress(100, appTask.downloadProgress, appTask.downloadProgress<=0||appTask.taskState==CNetKAppState.STATE_INSTALLING||appTask.taskState==CNetKAppState.STATE_VERIFYING/*percent <= 0*/)
+                builder.setProgress(
+                    100,
+                    appTask.downloadProgress,
+                    appTask.downloadProgress <= 0 || appTask.taskState == CNetKAppState.STATE_INSTALLING || appTask.taskState == CNetKAppState.STATE_VERIFYING/*percent <= 0*/
+                )
             }
 
 //            CDownloadManager.STATUS_FAILED -> {

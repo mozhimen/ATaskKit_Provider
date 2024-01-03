@@ -44,6 +44,7 @@ object NetKAppViewUtil {
     fun generateViewClickOfAppTask(
         view: View,
         onGetAppTask: I_AListener<AppTask>,
+        onOpen: IAB_Listener<Context, AppTask>,
         onStart: IAB_Listener<Context, AppTask>,
         onPause: IAB_Listener<Context, AppTask>,
         onResume: IAB_Listener<Context, AppTask>,
@@ -63,8 +64,9 @@ object NetKAppViewUtil {
 //                    if (appBriefRes.haveUpdate == 1) {
 //                        download(it.context, button, fileParams)
 //                    } else {
-                    UtilKContextStart.startContextByPackageName(it.context, appTask.apkPackageName)
+//                    UtilKContextStart.startContextByPackageName(it.context, appTask.apkPackageName)
 //                    }
+                    onOpen.invoke(it.context, appTask)
                 }
                 //如果是未下载，则下载app
                 CNetKAppTaskState.STATE_TASK_CREATE, CNetKAppTaskState.STATE_TASK_UPDATE/*, CNetKAppTaskState.STATE_TASK_WAIT*/ -> {
