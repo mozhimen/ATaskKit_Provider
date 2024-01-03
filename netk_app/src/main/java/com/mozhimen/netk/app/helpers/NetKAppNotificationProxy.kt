@@ -48,38 +48,45 @@ class NetKAppNotificationProxy(private val _activity: AppCompatActivity) : BaseW
         intent: Intent? = null,
         @DrawableRes notifierSmallIcon: Int = UtilKApplicationInfo.getIcon(_activity)
     ) {
-
         val builder: NotificationCompat.Builder = _builders[id] ?: run {
             NotificationCompat.Builder(_activity, NetKAppNotificationUtil.NETK_APP_NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(notifierSmallIcon)
-                .setContentTitle(title)
-                .setAutoCancel(
-                    !appTask.isTaskProcess() || appTask.taskState == CNetKAppState.STATE_UNZIP_SUCCESS
-                ) // canceled when it is clicked by the user.
-                .setOngoing(appTask.isTaskProcess()).also { _builders[id] = it }
+                .also { _builders[id] = it }
         }
-
-        if (appTask.downloadProgress >= 0) {// don't use setContentInfo(deprecated in API level 24)
+        //标题
+        builder.apply {
+            setContentTitle(title)
+            setAutoCancel(
+                !appTask.isTaskProcess() || appTask.taskState == CNetKAppState.STATE_UNZIP_SUCCESS
+            ) // canceled when it is clicked by the user.
+            setOngoing(appTask.isTaskProcess())
+        }
+        //子标题
+        if (appTask.downloadProgress in 1..99) {// don't use setContentInfo(deprecated in API level 24)
             builder.setSubText(_activity.getString(R.string.netk_app_notifier_subtext_placeholder, appTask.downloadProgress))
+        } else {
+            builder.setSubText("")
         }
         when {
             appTask.taskState == CNetKAppTaskState.STATE_TASK_SUCCESS -> {
                 intent?.let {
                     builder.setContentIntent(UtilKPendingIntent.getActivity(_activity, it))
                 }
+                builder.setProgress(0, 0, false)
             }
 
-            appTask.isUnzipSuccess() -> {
+            appTask.taskState == CNetKAppState.STATE_UNZIP_SUCCESS -> {
                 intent?.let {
                     builder.setContentIntent(UtilKPendingIntent.getActivity(_activity, it))
                 }
+                builder.setProgress(0, 0, false)
             }
 
             appTask.isTasking() -> {
                 builder.setProgress(
                     100,
                     appTask.downloadProgress,
-                    appTask.downloadProgress <= 0 || appTask.taskState == CNetKAppState.STATE_INSTALLING || appTask.taskState == CNetKAppState.STATE_VERIFYING/*percent <= 0*/
+                    appTask.downloadProgress <= 0 || appTask.downloadProgress >= 100 || appTask.taskState == CNetKAppState.STATE_INSTALLING || appTask.taskState == CNetKAppState.STATE_VERIFYING/*percent <= 0*/
                 )
             }
         }
