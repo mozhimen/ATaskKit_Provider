@@ -76,15 +76,9 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
 //                    NetKApp.onDownloadCancel(it)
 //                }
 //            }
-            AppTaskDaoManager.getAppTasksIsDownloading().forEach {
-                getDownloadTask(it)?.let { downloadTask ->
-                    _downloadingTasks.put(downloadTask.id, MAppDownloadProgress(it))
-                }
-                if (it.isDownloading())
-                    downloadPause(it)
-            }
+
             Log.d(TAG, "init: resume task num ${_downloadingTasks.size()}")
-            BreakpointStoreOnSQLite(context, _breakpointCompare)::class.java.name.et(TAG)
+//            BreakpointStoreOnSQLite(context, _breakpointCompare)::class.java.name.et(TAG)
 
             val builder = OkDownload.Builder(context)
                 .processFileStrategy(ExtProcessFileStrategy())
@@ -98,6 +92,14 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
                 )
             OkDownload.setSingletonInstance(builder.build())
             DownloadDispatcher.setMaxParallelRunningCount(PARALLEL_RUNNING_COUNT)
+
+            AppTaskDaoManager.getAppTasksIsDownloading().forEach {
+                getDownloadTask(it)?.let { downloadTask ->
+                    _downloadingTasks.put(downloadTask.id, MAppDownloadProgress(it))
+                }
+                if (it.isDownloading())
+                    downloadPause(it)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -209,8 +211,9 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
             }
 
             StatusUtil.Status.COMPLETED -> {
-                onDownloadSuccess(appTask)
-                return
+                Log.d(TAG, "download: StatusUtil.Status.COMPLETED")
+//                onDownloadSuccess(appTask)
+//                return
             }
 
             StatusUtil.Status.IDLE -> {

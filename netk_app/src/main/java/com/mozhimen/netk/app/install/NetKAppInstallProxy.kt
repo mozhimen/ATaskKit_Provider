@@ -3,6 +3,7 @@ package com.mozhimen.netk.app.install
 import android.app.Activity
 import android.content.Context
 import android.content.IntentFilter
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.elemk.android.content.bases.BaseBroadcastReceiver
 import com.mozhimen.basick.elemk.android.content.bases.BaseBroadcastReceiverProxy2
@@ -67,6 +68,7 @@ class NetKAppInstallProxy(
         if (UtilKRom.isFlyme()) {
             StackKCb.instance.removeFrontBackListener(this)
         }
+        Log.d(TAG, "onDestroy: ")
         super.onDestroy(owner)
     }
 

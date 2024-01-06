@@ -162,7 +162,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
             /**
              * [CNetKAppTaskState.STATE_TASK_CREATE]
              */
-            onTaskCreate(appTask)
+            onTaskCreate(appTask, appTask.taskState == CNetKAppTaskState.STATE_TASK_UPDATE)
 
             NetKAppDownloadManager.download(appTask/*, listener*/)
         } catch (exception: AppDownloadException) {
@@ -274,7 +274,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
                      */
                     onTaskCreate(appTask.apply {
                         apkIsInstalled = false
-                    })
+                    }, false)
                 }
 
                 CNetKAppTaskState.STATE_TASK_UNAVAILABLE -> {
@@ -290,9 +290,9 @@ object NetKApp : INetKAppState, BaseUtilK() {
                     /**
                      * [CNetKAppTaskState.STATE_TASK_UPDATE]
                      */
-                    onTaskUpdate(appTask.apply {
+                    onTaskCreate(appTask.apply {
                         apkIsInstalled = false
-                    })
+                    }, true)
                 }
             }
         } else if (getAppTaskByTaskId_PackageName_VersionCode(appTask.taskId, appTask.apkPackageName, appTask.apkVersionCode) == null) {
@@ -303,7 +303,16 @@ object NetKApp : INetKAppState, BaseUtilK() {
                      */
                     onTaskCreate(appTask.apply {
                         apkIsInstalled = false
-                    })
+                    }, false)
+                }
+
+                CNetKAppTaskState.STATE_TASK_UPDATE -> {
+                    /**
+                     * [CNetKAppTaskState.STATE_TASK_UPDATE]
+                     */
+                    onTaskCreate(appTask.apply {
+                        apkIsInstalled = false
+                    }, true)
                 }
 
                 CNetKAppTaskState.STATE_TASK_UNAVAILABLE -> {
@@ -311,15 +320,6 @@ object NetKApp : INetKAppState, BaseUtilK() {
                      * [CNetKAppTaskState.STATE_TASK_UNAVAILABLE]
                      */
                     onTaskUnavailable(appTask.apply {
-                        apkIsInstalled = false
-                    })
-                }
-
-                CNetKAppTaskState.STATE_TASK_UPDATE -> {
-                    /**
-                     * [CNetKAppTaskState.STATE_TASK_UPDATE]
-                     */
-                    onTaskUpdate(appTask.apply {
                         apkIsInstalled = false
                     })
                 }
@@ -420,7 +420,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
     /////////////////////////////////////////////////////////////////
 
 
-    override fun onTaskCreate(appTask: AppTask) {
+    override fun onTaskCreate(appTask: AppTask, isUpdate: Boolean) {
         /*        //将结果传递给服务端
         GlobalScope.launch(Dispatchers.IO) {
             if (appTask.appId == "2") {
@@ -429,7 +429,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
                 ApplicationService.updateAppDownload(appTask.appId)
             }
         }*/
-        applyAppTaskState(appTask, CNetKAppTaskState.STATE_TASK_CREATE)
+        applyAppTaskState(appTask, if (isUpdate) CNetKAppTaskState.STATE_TASK_UPDATE else CNetKAppTaskState.STATE_TASK_CREATE)
     }
 
 //    override fun onTaskWait(appTask: AppTask) {
@@ -448,9 +448,9 @@ object NetKApp : INetKAppState, BaseUtilK() {
         applyAppTaskState(appTask, CNetKAppTaskState.STATE_TASK_UNAVAILABLE)
     }
 
-    fun onTaskUpdate(appTask: AppTask) {
-        applyAppTaskState(appTask, CNetKAppTaskState.STATE_TASK_UPDATE)
-    }
+//    fun onTaskUpdate(appTask: AppTask) {
+//        applyAppTaskState(appTask, CNetKAppTaskState.STATE_TASK_UPDATE)
+//    }
 
     override fun onTaskFinish(appTask: AppTask, finishType: ENetKAppFinishType) {
         when (finishType) {
@@ -469,7 +469,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
                     /**
                      * [CNetKAppTaskState.STATE_TASK_CREATE]
                      */
-                    onTaskCreate(appTask)
+                    onTaskCreate(appTask, appTask.taskStateInit == CNetKAppTaskState.STATE_TASK_UPDATE)
                 })
             }
 
@@ -752,7 +752,8 @@ object NetKApp : INetKAppState, BaseUtilK() {
     private fun postAppTaskState(appTask: AppTask, state: Int, progress: Int, finishType: ENetKAppFinishType, nextMethod: I_Listener?) {
         for (listener in _appDownloadStateListeners) {
             when (state) {
-                CNetKAppTaskState.STATE_TASK_CREATE -> listener.onTaskCreate(appTask)
+                CNetKAppTaskState.STATE_TASK_CREATE -> listener.onTaskCreate(appTask, false)
+                CNetKAppTaskState.STATE_TASK_UPDATE -> listener.onTaskCreate(appTask, true)
 //                CNetKAppTaskState.STATE_TASK_WAIT -> listener.onTaskWait(appTask)
                 CNetKAppTaskState.STATE_TASKING -> listener.onTasking(appTask, state)
                 CNetKAppTaskState.STATE_TASK_PAUSE -> listener.onTaskPause(appTask)

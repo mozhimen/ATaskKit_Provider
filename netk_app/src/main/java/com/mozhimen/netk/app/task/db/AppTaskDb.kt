@@ -12,7 +12,7 @@ import com.mozhimen.netk.app.task.db.AppTaskDao
  * @Date 2023/11/7 16:01
  * @Version 1.0
  */
-@Database(entities = [AppTask::class], version = 1, exportSchema = false)
+@Database(entities = [AppTask::class], version = 2, exportSchema = false)
 abstract class AppTaskDb : RoomDatabase() {
     abstract fun appTaskDao(): AppTaskDao
 }

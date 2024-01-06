@@ -56,6 +56,8 @@ data class AppTask(
     var apkVerifyNeed: Boolean,//是否需要检测0,不需要,1需要
     @ColumnInfo(name = "apk_unzip_need")
     var apkUnzipNeed: Boolean,
+    @ColumnInfo(name = "task_state_init")
+    var taskStateInit: Int = taskState,//下载初始状态(便于出现异常时回落)
     @ColumnInfo(name = "task_update_time")
     var taskUpdateTime: Long = System.currentTimeMillis(),//更新时间
     @ColumnInfo(name = "downloadId")

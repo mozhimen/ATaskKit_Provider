@@ -13,8 +13,9 @@ import com.mozhimen.netk.app.task.db.AppTask
  * @Version 1.0
  */
 interface INetKAppStateView<V : View> {
-    fun onTaskCreate(view: V?, appTask: AppTask)
-//    fun onTaskWait(view: V?, appTask: AppTask) //任务等待的回调
+    fun onTaskCreate(view: V?, appTask: AppTask, isUpdate: Boolean)
+
+    //    fun onTaskWait(view: V?, appTask: AppTask) //任务等待的回调
     fun onTasking(view: V?, appTask: AppTask, state: Int)//任务进行中
     fun onTaskPause(view: V?, appTask: AppTask)
     fun onTaskFinish(view: V?, appTask: AppTask, finishType: ENetKAppFinishType)
