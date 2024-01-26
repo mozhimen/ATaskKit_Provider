@@ -1,6 +1,7 @@
 package com.mozhimen.netk.app
 
 import android.content.Context
+import android.content.pm.PackageInfo
 import android.util.Log
 import androidx.annotation.AnyThread
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -12,10 +13,12 @@ import com.mozhimen.basick.lintk.optin.OptInApiInit_ByLazy
 import com.mozhimen.basick.lintk.optin.OptInApiInit_InApplication
 import com.mozhimen.basick.postk.event.PostKEventLiveData
 import com.mozhimen.basick.utilk.android.app.UtilKPermission
+import com.mozhimen.basick.utilk.android.content.UtilKPackageInfo
 import com.mozhimen.basick.utilk.bases.BaseUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.kotlin.strFilePath2file
 import com.mozhimen.installk.manager.InstallKManager
+import com.mozhimen.installk.manager.commons.IPackagesChangeListener
 import com.mozhimen.netk.app.commons.INetKAppState
 import com.mozhimen.netk.app.cons.CNetKAppErrorCode
 import com.mozhimen.netk.app.cons.CNetKAppEvent
@@ -63,7 +66,18 @@ object NetKApp : INetKAppState, BaseUtilK() {
         _netKAppInstallProxy.bindLifecycle(ProcessLifecycleOwner.get())// 注册应用安装的监听 InstalledApkReceiver.registerReceiver(this)
 //        NetKOkDownloadExt.init(context)
         AppTaskDbManager.init(context)
-        InstallKManager.init(context)
+        InstallKManager.apply {
+            init(context)
+            registerPackagesChangeListener(object : IPackagesChangeListener {
+                override fun onPackageAdd(packageInfo: PackageInfo) {
+                    NetKAppInstallManager.onInstallSuccess(packageInfo.packageName, UtilKPackageInfo.getVersionCode(packageInfo))
+                }
+
+                override fun onPackageRemove(packageInfo: PackageInfo) {
+                    NetKAppUnInstallManager.onUninstallSuccess(packageInfo.packageName)
+                }
+            })
+        }
         NetKAppDownloadManager.init(context, compare)
     }
 

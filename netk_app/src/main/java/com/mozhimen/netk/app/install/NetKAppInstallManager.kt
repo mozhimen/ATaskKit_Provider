@@ -57,10 +57,26 @@ internal object NetKAppInstallManager : IUtilK {
         list.ifNotEmptyOr({
             it.forEach { appTask ->
                 if (appTask.apkVersionCode <= versionCode) {
+                    Log.d(TAG, "onInstallSuccess: apkPackageName $apkPackageName")
                     onInstallSuccess(appTask)
                 }
             }
         }, {
+            Log.d(TAG, "onInstallSuccess: addPackage $apkPackageName")
+            InstallKManager.addPackage(apkPackageName)
+        })
+    }
+
+    @JvmStatic
+    fun onInstallSuccess(apkPackageName: String) {
+        val list = AppTaskDaoManager.getAppTasksByApkPackageName(apkPackageName)
+        list.ifNotEmptyOr({
+            it.forEach { appTask ->
+                Log.d(TAG, "onInstallSuccess: apkPackageName $apkPackageName")
+                onInstallSuccess(appTask)
+            }
+        }, {
+            Log.d(TAG, "onInstallSuccess: addPackage $apkPackageName")
             InstallKManager.addPackage(apkPackageName)
         })
     }
