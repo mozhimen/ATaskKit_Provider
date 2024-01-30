@@ -13,6 +13,7 @@ import com.mozhimen.basick.lintk.optin.OptInApiInit_ByLazy
 import com.mozhimen.basick.lintk.optin.OptInApiInit_InApplication
 import com.mozhimen.basick.stackk.cb.StackKCb
 import com.mozhimen.basick.stackk.commons.IStackKListener
+import com.mozhimen.basick.utilk.android.content.UtilKPackage
 import com.mozhimen.basick.utilk.android.content.UtilKPackageManager
 import com.mozhimen.basick.utilk.android.os.UtilKRom
 import com.mozhimen.netk.app.install.helpers.NetKAppInstallReceiver
@@ -74,7 +75,7 @@ class NetKAppInstallProxy(
 
     override fun onChanged(isFront: Boolean, activityRef: WeakReference<Activity>?) {
         if (isFront) {
-            if (_appTask != null && UtilKPackageManager.hasPackage(_context, _appTask!!.apkPackageName)) {
+            if (_appTask != null && UtilKPackage.hasPackage(_context, _appTask!!.apkPackageName)) {
                 NetKAppInstallManager.onInstallSuccess(_appTask!!)
             }
             _appTask = null

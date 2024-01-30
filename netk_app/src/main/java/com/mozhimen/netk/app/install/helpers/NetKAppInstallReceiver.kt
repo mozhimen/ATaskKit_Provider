@@ -6,6 +6,7 @@ import android.util.Log
 import com.mozhimen.basick.elemk.android.content.bases.BaseBroadcastReceiver
 import com.mozhimen.basick.elemk.android.content.cons.CIntent
 import com.mozhimen.basick.lintk.optin.OptInApiInit_InApplication
+import com.mozhimen.basick.utilk.android.content.UtilKPackage
 import com.mozhimen.basick.utilk.android.content.UtilKPackageManager
 import com.mozhimen.basick.utilk.android.content.getVersionCode
 import com.mozhimen.netk.app.install.NetKAppInstallManager
@@ -34,7 +35,7 @@ class NetKAppInstallReceiver : BaseBroadcastReceiver() {
                         }
 
                         CIntent.ACTION_PACKAGE_ADDED, CIntent.ACTION_PACKAGE_REPLACED -> {//有应用发生变化，强制刷新应用
-                            val packageInfo = UtilKPackageManager.getInstalledPackages(context, false).find { it.packageName == apkPackName }
+                            val packageInfo = UtilKPackage.getInstalledPackages(context, false).find { it.packageName == apkPackName }
                             if (packageInfo != null) {
                                 NetKAppInstallManager.onInstallSuccess(apkPackName, packageInfo.getVersionCode())
                             } else {
