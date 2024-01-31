@@ -101,10 +101,14 @@ class NetKAppNotificationProxy(private val _activity: AppCompatActivity) : BaseW
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
-        _builders.forEach { (t, _) ->
-            cancelNotification(t)
+        try {
+            _builders.forEach { (t, _) ->
+                UtilKNotificationManager.get(_activity).cancel(t)
+            }
+            _builders.clear()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        _builders.clear()
         super.onDestroy(owner)
     }
 }
