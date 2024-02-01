@@ -7,7 +7,6 @@ import androidx.core.util.forEach
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.OkDownload
 import com.liulishuo.okdownload.StatusUtil
-import com.liulishuo.okdownload.core.breakpoint.BreakpointStoreOnSQLite
 import com.liulishuo.okdownload.core.breakpoint.IBreakpointCompare
 import com.liulishuo.okdownload.core.cause.EndCause
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause
@@ -19,7 +18,6 @@ import com.liulishuo.okdownload.core.listener.assist.Listener1Assist
 import com.mozhimen.basick.elemk.javax.net.bases.BaseX509TrustManager
 import com.mozhimen.basick.lintk.optin.OptInApiInit_InApplication
 import com.mozhimen.basick.taskk.handler.TaskKHandler
-import com.mozhimen.basick.utilk.android.util.et
 import com.mozhimen.basick.utilk.bases.IUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.javax.net.UtilKSSLSocketFactory
@@ -33,6 +31,7 @@ import com.mozhimen.netk.app.task.db.AppTask
 import com.mozhimen.netk.app.task.db.AppTaskDaoManager
 import com.mozhimen.netk.app.verify.NetKAppVerifyManager
 import okhttp3.OkHttpClient
+import okhttp3.internal.http2.StreamResetException
 import java.lang.Exception
 import kotlin.math.abs
 
@@ -434,7 +433,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
             Log.d(TAG, "progress: $progress currentOffset $currentOffset  totalLength $totalLength")
             if (progress !in 0..100) return
             if (appTask.appTask.isTaskPause()) return
-//            if (progress < appTask.appTask.downloadProgress) return
+            if (progress < appTask.appTask.downloadProgress) return
 
             /**
              * [CNetKAppState.STATE_DOWNLOADING]
@@ -496,7 +495,22 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
                             _downloadingTasks.delete(downloadTask.id)//从队列里移除掉
                         }
                         return
-                    } /*else if (appTask.retryCount < RETRY_COUNT_MAX) {
+                    } else if (realCause is StreamResetException) {
+                        try {
+                            appTask.retryCount++
+                            appTask.isRetry = true
+                            downloadRetryWithClear(appTask.appTask)
+                            download(appTask.appTask)
+                            Log.d(TAG, "taskEnd: StreamResetException 重新开始下载")
+                        } catch (e: AppDownloadException) {
+                            /**
+                             * [CNetKAppState.STATE_DOWNLOAD_FAIL]
+                             */
+                            NetKApp.onDownloadFail(appTask.appTask, e)
+                            _downloadingTasks.delete(downloadTask.id)//从队列里移除掉
+                        }
+                        return
+                    }/*else if (appTask.retryCount < RETRY_COUNT_MAX) {
                         try {
                             appTask.retryCount++
                             appTask.isRetry = true
