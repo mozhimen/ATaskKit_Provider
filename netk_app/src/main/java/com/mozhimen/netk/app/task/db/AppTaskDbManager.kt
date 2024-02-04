@@ -5,7 +5,7 @@ import androidx.annotation.UiThread
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.mozhimen.basick.lintk.optin.OptInApiInit_InApplication
+import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.netk.app.task.cons.CNetKAppTaskState
 
 /**
@@ -15,7 +15,7 @@ import com.mozhimen.netk.app.task.cons.CNetKAppTaskState
  * @Date 2023/11/7 16:01
  * @Version 1.0
  */
-@OptInApiInit_InApplication
+@OApiInit_InApplication
 object AppTaskDbManager {
     private lateinit var _appTaskDb: AppTaskDb
 

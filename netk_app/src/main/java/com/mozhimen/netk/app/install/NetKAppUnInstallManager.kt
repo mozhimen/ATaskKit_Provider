@@ -1,12 +1,11 @@
 package com.mozhimen.netk.app.install
 
 import android.util.Log
-import com.mozhimen.basick.lintk.optin.OptInApiInit_InApplication
+import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.utilk.bases.IUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.java.io.deleteFile
 import com.mozhimen.basick.utilk.java.io.deleteFolder
-import com.mozhimen.basick.utilk.kotlin.collections.ifNotEmpty
 import com.mozhimen.basick.utilk.kotlin.collections.ifNotEmptyOr
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.netk.app.NetKApp
@@ -23,7 +22,7 @@ import java.io.File
  * @Version 1.0
  */
 internal object NetKAppUnInstallManager : IUtilK {
-    @OptIn(OptInApiInit_InApplication::class)
+    @OptIn(OApiInit_InApplication::class)
     @JvmStatic
     fun onUninstallSuccess(apkPackageName: String) {
         val list = AppTaskDaoManager.getAppTasksByApkPackageName(apkPackageName)
@@ -38,7 +37,7 @@ internal object NetKAppUnInstallManager : IUtilK {
         })
     }
 
-    @OptIn(OptInApiInit_InApplication::class)
+    @OptIn(OApiInit_InApplication::class)
     @JvmStatic
     fun onUninstallSuccess(appTask: AppTask) {
         InstallKManager.removePackage(appTask.apkPackageName)

@@ -8,9 +8,9 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import com.liulishuo.okdownload.core.breakpoint.IBreakpointCompare
 import com.liulishuo.okdownload.core.exception.ServerCanceledException
 import com.mozhimen.basick.elemk.commons.I_Listener
-import com.mozhimen.basick.lintk.optin.OptInApiCall_BindLifecycle
-import com.mozhimen.basick.lintk.optin.OptInApiInit_ByLazy
-import com.mozhimen.basick.lintk.optin.OptInApiInit_InApplication
+import com.mozhimen.basick.lintk.optins.OApiCall_BindLifecycle
+import com.mozhimen.basick.lintk.optins.OApiInit_ByLazy
+import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.postk.event.PostKEventLiveData
 import com.mozhimen.basick.utilk.android.app.UtilKPermission
 import com.mozhimen.basick.utilk.android.content.UtilKPackageInfo
@@ -37,7 +37,6 @@ import com.mozhimen.netk.app.task.NetKAppTaskManager
 import com.mozhimen.netk.app.task.db.AppTask
 import com.mozhimen.netk.app.task.cons.CNetKAppTaskState
 import com.mozhimen.netk.app.utils.intAppState2strAppState
-import com.mozhimen.netk.okdownload.ext.NetKOkDownloadExt
 
 /**
  * @ClassName NetKAppDownload
@@ -46,21 +45,21 @@ import com.mozhimen.netk.okdownload.ext.NetKOkDownloadExt
  * @Date 2023/10/12 9:38
  * @Version 1.0
  */
-@OptInApiInit_InApplication
+@OApiInit_InApplication
 object NetKApp : INetKAppState, BaseUtilK() {
     private val _appDownloadStateListeners = mutableListOf<INetKAppState>()
 
-    @OptIn(OptInApiCall_BindLifecycle::class, OptInApiInit_ByLazy::class)
+    @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class)
     private val _netKAppInstallProxy by lazy { NetKAppInstallProxy(_context, ProcessLifecycleOwner.get()) }
 
-    @OptIn(OptInApiCall_BindLifecycle::class, OptInApiInit_ByLazy::class)
+    @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class)
     val netKAppInstallProxy get() = _netKAppInstallProxy
 
     /////////////////////////////////////////////////////////////////
     // init
     /////////////////////////////////////////////////////////////////
     //region # init
-    @OptIn(OptInApiCall_BindLifecycle::class, OptInApiInit_ByLazy::class)
+    @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class)
     @JvmStatic
     fun init(context: Context, compare: IBreakpointCompare) {
         _netKAppInstallProxy.bindLifecycle(ProcessLifecycleOwner.get())// 注册应用安装的监听 InstalledApkReceiver.registerReceiver(this)

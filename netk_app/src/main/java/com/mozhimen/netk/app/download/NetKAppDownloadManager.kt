@@ -16,7 +16,7 @@ import com.liulishuo.okdownload.core.file.ExtProcessFileStrategy
 import com.liulishuo.okdownload.core.listener.DownloadListener1
 import com.liulishuo.okdownload.core.listener.assist.Listener1Assist
 import com.mozhimen.basick.elemk.javax.net.bases.BaseX509TrustManager
-import com.mozhimen.basick.lintk.optin.OptInApiInit_InApplication
+import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.taskk.handler.TaskKHandler
 import com.mozhimen.basick.utilk.bases.IUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
@@ -42,7 +42,7 @@ import kotlin.math.abs
  * @Date 2023/11/7 14:19
  * @Version 1.0
  */
-@OptInApiInit_InApplication
+@OApiInit_InApplication
 internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     private const val PARALLEL_RUNNING_COUNT = 3
     private const val RETRY_COUNT_MIN = 10

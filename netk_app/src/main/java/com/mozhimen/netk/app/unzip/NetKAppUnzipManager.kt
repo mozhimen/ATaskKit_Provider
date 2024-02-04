@@ -3,7 +3,7 @@ package com.mozhimen.netk.app.unzip
 import android.os.Environment
 import android.util.Log
 import androidx.annotation.WorkerThread
-import com.mozhimen.basick.lintk.optin.OptInApiInit_InApplication
+import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.taskk.executor.TaskKExecutor
 import com.mozhimen.basick.taskk.handler.TaskKHandler
 import com.mozhimen.basick.utilk.bases.IUtilK
@@ -38,7 +38,7 @@ import java.util.zip.ZipFile
  * @Date 2023/11/7 15:09
  * @Version 1.0
  */
-@OptInApiInit_InApplication
+@OApiInit_InApplication
 internal object NetKAppUnzipManager : IUtilK {
     /**
      *  过滤在mac上压缩时自动生成的__MACOSX文件夹

@@ -1,9 +1,9 @@
 package com.mozhimen.netk.app.install
 
 import android.util.Log
-import com.mozhimen.basick.lintk.optin.OptInApiCall_BindLifecycle
-import com.mozhimen.basick.lintk.optin.OptInApiInit_ByLazy
-import com.mozhimen.basick.lintk.optin.OptInApiInit_InApplication
+import com.mozhimen.basick.lintk.optins.OApiCall_BindLifecycle
+import com.mozhimen.basick.lintk.optins.OApiInit_ByLazy
+import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.utilk.android.content.UtilKAppInstall
 import com.mozhimen.basick.utilk.bases.IUtilK
 import com.mozhimen.basick.utilk.kotlin.collections.ifNotEmptyOr
@@ -24,9 +24,9 @@ import java.io.File
  * @Date 2023/11/8 17:21
  * @Version 1.0
  */
-@OptInApiInit_InApplication
+@OApiInit_InApplication
 internal object NetKAppInstallManager : IUtilK {
-    @OptIn(OptInApiCall_BindLifecycle::class, OptInApiInit_ByLazy::class)
+    @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class)
     @JvmStatic
     fun install(appTask: AppTask, fileApk: File) {
         if (!appTask.canInstall()) {

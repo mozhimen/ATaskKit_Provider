@@ -2,7 +2,7 @@ package com.mozhimen.netk.app.verify
 
 import android.text.TextUtils
 import android.util.Log
-import com.mozhimen.basick.lintk.optin.OptInApiInit_InApplication
+import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.utilk.bases.IUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.java.io.file2strFilePath
@@ -22,7 +22,7 @@ import java.io.File
  * @Date 2023/11/8 17:01
  * @Version 1.0
  */
-@OptInApiInit_InApplication
+@OApiInit_InApplication
 internal object NetKAppVerifyManager : IUtilK {
 
     @JvmStatic

@@ -1,7 +1,5 @@
 package com.mozhimen.netk.app.helpers
 
-import android.app.NotificationChannel
-import android.content.Context
 import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
@@ -9,13 +7,11 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.elemk.android.app.cons.CNotificationManager
 import com.mozhimen.basick.elemk.androidx.lifecycle.bases.BaseWakeBefDestroyLifecycleObserver
-import com.mozhimen.basick.lintk.optin.OptInApiCall_BindLifecycle
-import com.mozhimen.basick.lintk.optin.OptInApiInit_ByLazy
-import com.mozhimen.basick.utilk.android.app.UtilKNotificationChannel
+import com.mozhimen.basick.lintk.optins.OApiCall_BindLifecycle
+import com.mozhimen.basick.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.basick.utilk.android.app.UtilKNotificationManager
 import com.mozhimen.basick.utilk.android.app.UtilKPendingIntent
 import com.mozhimen.basick.utilk.android.content.UtilKApplicationInfo
-import com.mozhimen.basick.utilk.android.os.UtilKBuildVersion
 import com.mozhimen.netk.app.R
 import com.mozhimen.netk.app.cons.CNetKAppState
 import com.mozhimen.netk.app.task.cons.CNetKAppTaskState
@@ -29,8 +25,8 @@ import com.mozhimen.netk.app.utils.NetKAppNotificationUtil
  * @Date 2024/1/3
  * @Version 1.0
  */
-@OptInApiInit_ByLazy
-@OptInApiCall_BindLifecycle
+@OApiInit_ByLazy
+@OApiCall_BindLifecycle
 class NetKAppNotificationProxy(private val _activity: AppCompatActivity) : BaseWakeBefDestroyLifecycleObserver() {
     private val _builders = mutableMapOf<Int, NotificationCompat.Builder>()
     private val _notificationManager by lazy {

@@ -2,7 +2,7 @@ package com.mozhimen.netk.app.task.db
 
 import android.util.Log
 import androidx.annotation.WorkerThread
-import com.mozhimen.basick.lintk.optin.OptInApiInit_InApplication
+import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.taskk.executor.TaskKExecutor
 import com.mozhimen.basick.utilk.bases.IUtilK
 import com.mozhimen.netk.app.task.cons.CNetKAppTaskState
@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @Date 2023/11/7 16:08
  * @Version 1.0
  */
-@OptInApiInit_InApplication
+@OApiInit_InApplication
 object AppTaskDaoManager : IUtilK {
     private val _tasks = ConcurrentHashMap<String, AppTask>()
 
