@@ -11,6 +11,7 @@ import com.mozhimen.basick.elemk.commons.I_Listener
 import com.mozhimen.basick.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.basick.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
+import com.mozhimen.basick.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
 import com.mozhimen.basick.postk.event.PostKEventLiveData
 import com.mozhimen.basick.utilk.android.app.UtilKPermission
 import com.mozhimen.basick.utilk.android.content.UtilKPackageInfo
@@ -622,6 +623,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
         })
     }
 
+    @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class)
     override fun onUnzipSuccess(appTask: AppTask) {
         applyAppTaskState(appTask, CNetKAppState.STATE_UNZIP_SUCCESS, onNext = {
             /**

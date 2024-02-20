@@ -4,6 +4,7 @@ import android.util.Log
 import com.mozhimen.basick.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.basick.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
+import com.mozhimen.basick.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
 import com.mozhimen.basick.utilk.android.content.UtilKAppInstall
 import com.mozhimen.basick.utilk.bases.IUtilK
 import com.mozhimen.basick.utilk.kotlin.collections.ifNotEmptyOr
@@ -26,7 +27,7 @@ import java.io.File
  */
 @OApiInit_InApplication
 internal object NetKAppInstallManager : IUtilK {
-    @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class)
+    @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class, OPermission_REQUEST_INSTALL_PACKAGES::class)
     @JvmStatic
     fun install(appTask: AppTask, fileApk: File) {
         if (!appTask.canInstall()) {
