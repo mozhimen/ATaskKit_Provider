@@ -44,6 +44,8 @@ dependencies {
     implementation project(':ANetKit_okdownload:okdownload-connection-okhttp')
     implementation project(':SwiftKit:basick')
 
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.2'
+
     //kapt
     kapt 'androidx.room:room-compiler:2.5.2'
 
