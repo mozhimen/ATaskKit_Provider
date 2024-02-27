@@ -19,6 +19,9 @@ data class AppTask(
     @ColumnInfo(name = "task_id")
     val taskId: String,//主键
     @ColumnInfo(name = "task_state")
+    /**
+     * @see CNetKAppTaskState
+     */
     var taskState: Int,//下载状态
     @ColumnInfo(name = "download_url")
     var downloadUrl: String,//内部下载地址
