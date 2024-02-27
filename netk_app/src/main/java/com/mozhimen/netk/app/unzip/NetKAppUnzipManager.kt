@@ -231,6 +231,8 @@ internal object NetKAppUnzipManager : IUtilK {
             var totalSize = 0L
             var lastOffset = 0L
             var lastTime = System.currentTimeMillis()
+            val copyList = mutableListOf<String>()
+            copyList.clear()
             while (entries.hasMoreElements()) {
                 zipEntry = entries.nextElement() ?: continue
                 if (zipEntry.name.contains(MAC__IGNORE)) continue
@@ -280,10 +282,11 @@ internal object NetKAppUnzipManager : IUtilK {
 //                }
 //                bufferedOutputStream.flushClose()
 //                inputStream.close()
-
+                copyList.add(tempFile.absolutePath)
             }
             zipFile.close()
-            if (apkFileName.isEmpty()) {
+            Log.d(TAG, "unzipApkOnBack: copyList $copyList")
+            if (apkFileName.isEmpty() || !copyList.containsBy { it.endsWith("obb") || it.endsWith("data") }) {
                 strApkFilePathDestReal.deleteFolder()
                 return apkFileSource.absolutePath
             }
