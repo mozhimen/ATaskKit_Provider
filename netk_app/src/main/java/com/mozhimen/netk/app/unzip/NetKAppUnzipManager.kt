@@ -49,8 +49,14 @@ internal object NetKAppUnzipManager : IUtilK {
 
     private val _unzippingTasks = CopyOnWriteArrayList<AppTask>()
     private val _unzippingProgressTasks = CopyOnWriteArrayList<AppTask>()
+    private var _strSourceApkNameUnzip = ""
 
     //////////////////////////////////////////////////////////////////
+
+    @JvmStatic
+    fun init(strSourceApkNameUnzip: String) {
+        _strSourceApkNameUnzip = strSourceApkNameUnzip
+    }
 
     /**
      * 判断当前应用是否在解压过程中
@@ -231,8 +237,6 @@ internal object NetKAppUnzipManager : IUtilK {
             var totalSize = 0L
             var lastOffset = 0L
             var lastTime = System.currentTimeMillis()
-            val copyList = mutableListOf<String>()
-            copyList.clear()
             while (entries.hasMoreElements()) {
                 zipEntry = entries.nextElement() ?: continue
                 if (zipEntry.name.contains(MAC__IGNORE)) continue
@@ -275,22 +279,15 @@ internal object NetKAppUnzipManager : IUtilK {
                         }
                     }
                 })
-//                val bufferedOutputStream = BufferedOutputStream(FileOutputStream(tempFile))
-//                var len: Int
-//                while ((inputStream.read(bytes).also { len = it }) != -1) {
-//                    bufferedOutputStream.write(bytes, 0, len)
-//                }
-//                bufferedOutputStream.flushClose()
-//                inputStream.close()
-                copyList.add(tempFile.absolutePath)
             }
             zipFile.close()
-            Log.d(TAG, "unzipApkOnBack: copyList $copyList")
-            if (apkFileName.isEmpty() || !copyList.containsBy { it.endsWith("obb") || it.endsWith("data") }) {
+            if (apkFileName.isEmpty() || (_strSourceApkNameUnzip.isNotEmpty() && apkFileName != _strSourceApkNameUnzip)) {
                 strApkFilePathDestReal.deleteFolder()
+                Log.d(TAG, "unzipApkOnBack: 删除解压文件夹")
                 return apkFileSource.absolutePath
             }
-            return strApkFilePathDestReal + File.separator + apkFileName
+
+            return (strApkFilePathDestReal + File.separator + apkFileName).also { Log.d(TAG, "unzipApkOnBack: 保留解压文件夹 $it") }
         } catch (e: Exception) {
             e.printStackTrace()
             Log.e(TAG, "unzipOnBack: error ${e.message}")

@@ -62,7 +62,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
     //region # init
     @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class)
     @JvmStatic
-    fun init(context: Context, compare: IBreakpointCompare) {
+    fun init(context: Context, compare: IBreakpointCompare, strSourceApkNameUnzip: String = "") {
         _netKAppInstallProxy.bindLifecycle(ProcessLifecycleOwner.get())// 注册应用安装的监听 InstalledApkReceiver.registerReceiver(this)
 //        NetKOkDownloadExt.init(context)
         AppTaskDbManager.init(context)
@@ -78,6 +78,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
                 }
             })
         }
+        NetKAppUnzipManager.init(strSourceApkNameUnzip)
         NetKAppDownloadManager.init(context, compare)
     }
 
