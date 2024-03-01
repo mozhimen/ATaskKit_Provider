@@ -227,6 +227,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
 
     @JvmStatic
     fun taskResume(appTask: AppTask) {
+        Log.d(TAG, "taskResume: ")
         if (!appTask.isTaskProcess()) {
             Log.d(TAG, "downloadResume: task is not process")
             return
