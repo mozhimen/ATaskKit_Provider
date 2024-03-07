@@ -6,7 +6,7 @@ import com.mozhimen.basick.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
 import com.mozhimen.basick.utilk.android.content.UtilKAppInstall
-import com.mozhimen.basick.utilk.bases.IUtilK
+import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.kotlin.collections.ifNotEmptyOr
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.netk.app.NetKApp

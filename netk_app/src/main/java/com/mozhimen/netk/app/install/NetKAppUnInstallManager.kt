@@ -2,7 +2,7 @@ package com.mozhimen.netk.app.install
 
 import android.util.Log
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
-import com.mozhimen.basick.utilk.bases.IUtilK
+import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.java.io.deleteFile
 import com.mozhimen.basick.utilk.java.io.deleteFolder

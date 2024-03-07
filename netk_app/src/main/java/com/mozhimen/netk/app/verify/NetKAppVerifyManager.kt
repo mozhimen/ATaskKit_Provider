@@ -3,7 +3,7 @@ package com.mozhimen.netk.app.verify
 import android.text.TextUtils
 import android.util.Log
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
-import com.mozhimen.basick.utilk.bases.IUtilK
+import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.java.io.file2strFilePath
 import com.mozhimen.basick.utilk.java.io.file2strMd5

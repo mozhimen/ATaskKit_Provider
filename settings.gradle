@@ -23,7 +23,7 @@ include ':app'
 include ':netk_app'
 //SwiftKit
 include ':SwiftKit'
-project(':SwiftKit').projectDir = new File("C:\\Users\\${System.getenv().get("USERNAME")}\\Documents\\GitHub\\SwiftKit")
+project(':SwiftKit').projectDir = new File("D:\\WorkSpace\\GitHub\\SwiftKit")
 include ':SwiftKit:basick'
 //ANetKit_okdownload
 include(':ANetKit_okdownload')

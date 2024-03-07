@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.annotation.WorkerThread
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.taskk.executor.TaskKExecutor
-import com.mozhimen.basick.utilk.bases.IUtilK
+import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.netk.app.task.cons.CNetKAppTaskState
 import com.mozhimen.netk.app.utils.intAppState2strAppState
 import java.lang.Exception

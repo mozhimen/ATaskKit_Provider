@@ -18,7 +18,7 @@ import com.liulishuo.okdownload.core.listener.assist.Listener1Assist
 import com.mozhimen.basick.elemk.javax.net.bases.BaseX509TrustManager
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.taskk.handler.TaskKHandler
-import com.mozhimen.basick.utilk.bases.IUtilK
+import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.javax.net.UtilKSSLSocketFactory
 import com.mozhimen.netk.app.NetKApp

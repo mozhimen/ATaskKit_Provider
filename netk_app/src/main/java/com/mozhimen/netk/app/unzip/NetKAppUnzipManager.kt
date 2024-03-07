@@ -6,7 +6,7 @@ import androidx.annotation.WorkerThread
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.taskk.executor.TaskKExecutor
 import com.mozhimen.basick.taskk.handler.TaskKHandler
-import com.mozhimen.basick.utilk.bases.IUtilK
+import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.java.io.createFolder
 import com.mozhimen.basick.utilk.java.io.deleteFile
