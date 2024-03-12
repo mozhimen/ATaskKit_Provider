@@ -21,6 +21,7 @@ import com.mozhimen.basick.taskk.handler.TaskKHandler
 import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.javax.net.UtilKSSLSocketFactory
+import com.mozhimen.basick.utilk.kotlin.normalize
 import com.mozhimen.netk.app.NetKApp
 import com.mozhimen.netk.app.cons.CNetKAppErrorCode
 import com.mozhimen.netk.app.cons.CNetKAppState
@@ -34,6 +35,8 @@ import okhttp3.OkHttpClient
 import okhttp3.internal.http2.StreamResetException
 import java.lang.Exception
 import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.roundToInt
 
 /**
  * @ClassName AppDownloadManager
@@ -427,11 +430,10 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
             mAppDownloadProgress = _downloadingTasks[downloadTask.id]
         }
         mAppDownloadProgress?.let { appTask ->
-            val progress = ((currentOffset.toFloat() / totalLength.toFloat()) * 100f).toInt()
+            val progress = ((currentOffset.toFloat() / totalLength.toFloat()) * 100f).toInt().plus(1).normalize(0, 100)
             val offsetFileSizePerSeconds = abs(currentOffset - appTask.appTask.downloadFileSize)
 
             Log.d(TAG, "progress: $progress currentOffset $currentOffset  totalLength $totalLength")
-            if (progress !in 0..100) return
             if (appTask.appTask.isTaskPause()) return
             if (progress < appTask.appTask.downloadProgress) return
 
