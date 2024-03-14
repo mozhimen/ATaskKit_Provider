@@ -13,7 +13,7 @@ import com.mozhimen.basick.utilk.commons.IUtilK
  */
 internal object NetKAppTaskManager : IUtilK {
     private val _cacheKDSProvider by lazy { CacheKDS.instance.with(NAME) }
-    var isDeleteApkFile by CacheKDSVarPropertyBoolean(_cacheKDSProvider, "is_delete_apk_file", false)
+    var isDeleteApkFile by CacheKDSVarPropertyBoolean(_cacheKDSProvider, "is_delete_apk_file", true)
     var isAutoInstall by CacheKDSVarPropertyBoolean(_cacheKDSProvider, "is_auto_install", true)
 
 //    /**

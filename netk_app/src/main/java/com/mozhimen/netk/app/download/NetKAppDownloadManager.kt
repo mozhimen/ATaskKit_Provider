@@ -248,7 +248,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
         /**
          * [CNetKAppState.STATE_DOWNLOADING]
          */
-        NetKApp.onDownloading(appTask, appTask.downloadProgress, currentIndex.toLong(), appTask.apkFileSize, 0)
+        NetKApp.onDownloading(appTask, appTask.downloadProgress.normalize(1, 100), currentIndex.toLong(), appTask.apkFileSize, 0)
 //        }
 //        listener?.onSuccess()
     }
@@ -310,7 +310,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
         /**
          * [CNetKAppState.STATE_DOWNLOADING]
          */
-        NetKApp.onDownloading(appTask, appTask.downloadProgress, appTask.downloadFileSize, appTask.apkFileSize, BLOCK_SIZE_MIN)
+        NetKApp.onDownloading(appTask, appTask.downloadProgress.normalize(1, 100), appTask.downloadFileSize, appTask.apkFileSize, BLOCK_SIZE_MIN)
     }
 
     /**
@@ -409,7 +409,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
             /**
              * [CNetKAppState.STATE_DOWNLOADING]
              */
-            NetKApp.onDownloading(appTask.appTask, appTask.appTask.downloadProgress, currentIndex.toLong(), appTask.appTask.apkFileSize, 0)
+            NetKApp.onDownloading(appTask.appTask, appTask.appTask.downloadProgress.normalize(1, 100), currentIndex.toLong(), appTask.appTask.apkFileSize, 0)
 //            }
         }
     }
@@ -430,7 +430,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
             mAppDownloadProgress = _downloadingTasks[downloadTask.id]
         }
         mAppDownloadProgress?.let { appTask ->
-            val progress = ((currentOffset.toFloat() / totalLength.toFloat()) * 100f).toInt().plus(1).normalize(0, 100)
+            val progress = ((currentOffset.toFloat() / totalLength.toFloat()) * 100f).toInt().normalize(1, 100)
             val offsetFileSizePerSeconds = abs(currentOffset - appTask.appTask.downloadFileSize)
 
             Log.d(TAG, "progress: $progress currentOffset $currentOffset  totalLength $totalLength")
