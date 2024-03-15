@@ -1,6 +1,6 @@
 package com.mozhimen.netk.app.commons
 
-import com.mozhimen.netk.app.cons.ENetKAppFinishType
+import com.mozhimen.netk.app.cons.SNetKAppFinishType
 import com.mozhimen.netk.app.download.mos.AppDownloadException
 import com.mozhimen.netk.app.task.db.AppTask
 
@@ -60,7 +60,7 @@ interface INetKAppStateTask {
     //    fun onTaskWait(appTask: AppTask) //任务等待的回调
     fun onTasking(appTask: AppTask, state: Int)//任务进行中
     fun onTaskPause(appTask: AppTask)
-    fun onTaskFinish(appTask: AppTask, finishType: ENetKAppFinishType)
+    fun onTaskFinish(appTask: AppTask, finishType: SNetKAppFinishType)
 //    /**
 //     * 任务等待取消的回调
 //     */

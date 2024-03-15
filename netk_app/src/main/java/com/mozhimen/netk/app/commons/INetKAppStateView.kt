@@ -1,7 +1,7 @@
 package com.mozhimen.netk.app.commons
 
 import android.view.View
-import com.mozhimen.netk.app.cons.ENetKAppFinishType
+import com.mozhimen.netk.app.cons.SNetKAppFinishType
 import com.mozhimen.netk.app.download.mos.AppDownloadException
 import com.mozhimen.netk.app.task.db.AppTask
 
@@ -18,7 +18,7 @@ interface INetKAppStateView<V : View> {
     //    fun onTaskWait(view: V?, appTask: AppTask) //任务等待的回调
     fun onTasking(view: V?, appTask: AppTask, state: Int)//任务进行中
     fun onTaskPause(view: V?, appTask: AppTask)
-    fun onTaskFinish(view: V?, appTask: AppTask, finishType: ENetKAppFinishType)
+    fun onTaskFinish(view: V?, appTask: AppTask, finishType: SNetKAppFinishType)
 
     fun onDownloadWait(view: V?, appTask: AppTask) {}
     fun onDownloading(view: V?, appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {}//下载进度回调方法

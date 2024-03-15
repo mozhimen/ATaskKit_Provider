@@ -24,7 +24,7 @@ import com.mozhimen.netk.app.commons.INetKAppState
 import com.mozhimen.netk.app.cons.CNetKAppErrorCode
 import com.mozhimen.netk.app.cons.CNetKAppEvent
 import com.mozhimen.netk.app.cons.CNetKAppState
-import com.mozhimen.netk.app.cons.ENetKAppFinishType
+import com.mozhimen.netk.app.cons.SNetKAppFinishType
 import com.mozhimen.netk.app.task.db.AppTaskDaoManager
 import com.mozhimen.netk.app.unzip.NetKAppUnzipManager
 import com.mozhimen.netk.app.task.db.AppTaskDbManager
@@ -468,12 +468,12 @@ object NetKApp : INetKAppState, BaseUtilK() {
 //        applyAppTaskState(appTask, CNetKAppTaskState.STATE_TASK_UPDATE)
 //    }
 
-    override fun onTaskFinish(appTask: AppTask, finishType: ENetKAppFinishType) {
+    override fun onTaskFinish(appTask: AppTask, finishType: SNetKAppFinishType) {
         when (finishType) {
-            ENetKAppFinishType.SUCCESS ->
+            SNetKAppFinishType.SUCCESS ->
                 applyAppTaskState(appTask, CNetKAppTaskState.STATE_TASK_SUCCESS, finishType = finishType)
 
-            ENetKAppFinishType.CANCEL -> {
+            SNetKAppFinishType.CANCEL -> {
                 appTask.apply {
                     downloadProgress = 0
                     downloadFileSize = 0
@@ -489,7 +489,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
                 })
             }
 
-            is ENetKAppFinishType.FAIL -> {
+            is SNetKAppFinishType.FAIL -> {
 //                appTask.apply {
 //                    downloadProgress = 0
 //                    downloadFileSize = 0
@@ -541,7 +541,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
             /**
              * [CNetKAppTaskState.STATE_TASK_CANCEL]
              */
-            onTaskFinish(appTask, ENetKAppFinishType.CANCEL)
+            onTaskFinish(appTask, SNetKAppFinishType.CANCEL)
         })
     }
 
@@ -581,7 +581,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
             /**
              * [CNetKAppTaskState.STATE_TASK_FAIL]
              */
-            onTaskFinish(appTask, ENetKAppFinishType.FAIL(exception))
+            onTaskFinish(appTask, SNetKAppFinishType.FAIL(exception))
         })
     }
 
@@ -610,7 +610,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
             /**
              * [CNetKAppTaskState.STATE_TASK_FAIL]
              */
-            onTaskFinish(appTask, ENetKAppFinishType.FAIL(exception))
+            onTaskFinish(appTask, SNetKAppFinishType.FAIL(exception))
         })
     }
 
@@ -645,7 +645,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
             /**
              * [CNetKAppTaskState.STATE_TASK_FAIL]
              */
-            onTaskFinish(appTask, ENetKAppFinishType.FAIL(exception))
+            onTaskFinish(appTask, SNetKAppFinishType.FAIL(exception))
         })
     }
 
@@ -667,7 +667,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
             /**
              * [CNetKAppTaskState.STATE_TASK_SUCCESS]
              */
-            onTaskFinish(appTask, ENetKAppFinishType.SUCCESS)
+            onTaskFinish(appTask, SNetKAppFinishType.SUCCESS)
         })
     }
 
@@ -676,7 +676,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
             /**
              * [CNetKAppTaskState.STATE_TASK_FAIL]
              */
-            onTaskFinish(appTask, ENetKAppFinishType.FAIL(exception))
+            onTaskFinish(appTask, SNetKAppFinishType.FAIL(exception))
         })
     }
 
@@ -689,7 +689,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
             /**
              * [CNetKAppTaskState.STATE_TASK_FAIL]
              */
-            onTaskFinish(appTask, ENetKAppFinishType.CANCEL)
+            onTaskFinish(appTask, SNetKAppFinishType.CANCEL)
         })
     }
 
@@ -705,14 +705,14 @@ object NetKApp : INetKAppState, BaseUtilK() {
             /**
              * [CNetKAppTaskState.STATE_TASK_CANCEL]
              */
-            onTaskFinish(appTask, ENetKAppFinishType.CANCEL)
+            onTaskFinish(appTask, SNetKAppFinishType.CANCEL)
         })//设置为未安装
     }
 
     /////////////////////////////////////////////////////////////////
 
     private fun applyAppTaskState(
-        appTask: AppTask, state: Int, progress: Int = 0, finishType: ENetKAppFinishType = ENetKAppFinishType.SUCCESS, onNext: I_Listener? = null
+        appTask: AppTask, state: Int, progress: Int = 0, finishType: SNetKAppFinishType = SNetKAppFinishType.SUCCESS, onNext: I_Listener? = null
     ) {
         appTask.apply {
             this.taskState = state
@@ -766,7 +766,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
         nextMethod?.invoke()
     }
 
-    private fun postAppTaskState(appTask: AppTask, state: Int, progress: Int, finishType: ENetKAppFinishType, nextMethod: I_Listener?) {
+    private fun postAppTaskState(appTask: AppTask, state: Int, progress: Int, finishType: SNetKAppFinishType, nextMethod: I_Listener?) {
         for (listener in _appDownloadStateListeners) {
             when (state) {
                 CNetKAppTaskState.STATE_TASK_CREATE -> listener.onTaskCreate(appTask, false)

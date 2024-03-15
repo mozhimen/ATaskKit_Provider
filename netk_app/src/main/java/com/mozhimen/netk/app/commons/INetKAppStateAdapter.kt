@@ -1,9 +1,8 @@
 package com.mozhimen.netk.app.commons
 
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.mozhimen.netk.app.cons.ENetKAppFinishType
+import com.mozhimen.netk.app.cons.SNetKAppFinishType
 import com.mozhimen.netk.app.download.mos.AppDownloadException
 import com.mozhimen.netk.app.task.db.AppTask
 
@@ -20,7 +19,7 @@ interface INetKAppStateAdapter<A : Adapter<ViewHolder>> {
     //    fun onTaskWait(adapter: V?, appTask: AppTask) //任务等待的回调
     fun onTasking(adapter: A?, position: Int, appTask: AppTask, state: Int)//任务进行中
     fun onTaskPause(adapter: A?, position: Int, appTask: AppTask)
-    fun onTaskFinish(adapter: A?, position: Int, appTask: AppTask, finishType: ENetKAppFinishType)
+    fun onTaskFinish(adapter: A?, position: Int, appTask: AppTask, finishType: SNetKAppFinishType)
 
     fun onDownloadWait(adapter: A?, position: Int, appTask: AppTask) {}
     fun onDownloading(adapter: A?, position: Int, appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {}//下载进度回调方法
