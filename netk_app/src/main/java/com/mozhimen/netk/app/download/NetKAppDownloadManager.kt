@@ -80,7 +80,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
 //            }
 
             Log.d(TAG, "init: resume task num ${_downloadingTasks.size()}")
-//            BreakpointStoreOnSQLite(context, _breakpointCompare)::class.java.name.et(TAG)
+//            BreakpointStoreOnSQLite(context, _breakpointCompare)::class.java.name.e(TAG)
 
             val builder = OkDownload.Builder(context)
                 .processFileStrategy(ExtProcessFileStrategy())
