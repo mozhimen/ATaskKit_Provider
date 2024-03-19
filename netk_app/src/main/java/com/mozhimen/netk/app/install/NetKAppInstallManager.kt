@@ -49,7 +49,7 @@ internal object NetKAppInstallManager : IUtilK {
 
         NetKApp.netKAppInstallProxy.setAppTask(appTask)
 
-        UtilKAppInstall.installHand(fileApk)
+        UtilKAppInstall.install_ofView(fileApk)
     }
 
     @JvmStatic

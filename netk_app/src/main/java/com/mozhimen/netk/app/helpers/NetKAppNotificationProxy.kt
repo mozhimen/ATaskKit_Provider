@@ -42,7 +42,7 @@ class NetKAppNotificationProxy(private val _activity: AppCompatActivity) : BaseW
         title: String,
         appTask: AppTask,
         intent: Intent? = null,
-        @DrawableRes notifierSmallIcon: Int = UtilKApplicationInfo.getIcon(_activity)
+        @DrawableRes notifierSmallIcon: Int = UtilKApplicationInfo.getIcon_ofCxt(_activity)
     ) {
         val builder: NotificationCompat.Builder = _builders[id] ?: run {
             NotificationCompat.Builder(_activity, NetKAppNotificationUtil.NETK_APP_NOTIFICATION_CHANNEL_ID)
@@ -66,14 +66,14 @@ class NetKAppNotificationProxy(private val _activity: AppCompatActivity) : BaseW
         when {
             appTask.taskState == CNetKAppTaskState.STATE_TASK_SUCCESS -> {
                 intent?.let {
-                    builder.setContentIntent(UtilKPendingIntent.getActivity(_activity, it))
+                    builder.setContentIntent(UtilKPendingIntent.get_ofActivity(_activity, it))
                 }
                 builder.setProgress(0, 0, false)
             }
 
             appTask.taskState == CNetKAppState.STATE_UNZIP_SUCCESS -> {
                 intent?.let {
-                    builder.setContentIntent(UtilKPendingIntent.getActivity(_activity, it))
+                    builder.setContentIntent(UtilKPendingIntent.get_ofActivity(_activity, it))
                 }
                 builder.setProgress(0, 0, false)
             }

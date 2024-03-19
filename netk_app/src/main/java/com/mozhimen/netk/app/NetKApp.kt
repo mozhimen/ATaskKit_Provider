@@ -13,7 +13,7 @@ import com.mozhimen.basick.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
 import com.mozhimen.basick.postk.event.PostKEventLiveData
-import com.mozhimen.basick.utilk.android.app.UtilKPermission
+import com.mozhimen.basick.utilk.android.UtilKPermission
 import com.mozhimen.basick.utilk.android.content.UtilKPackageInfo
 import com.mozhimen.basick.utilk.bases.BaseUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
@@ -633,7 +633,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
              */
             onTasking(appTask, CNetKAppState.STATE_UNZIP_SUCCESS)
 
-            if (NetKAppTaskManager.isAutoInstall && UtilKPermission.hasPackageInstalls()) {
+            if (NetKAppTaskManager.isAutoInstall && UtilKPermission.hasRequestInstallPackages()) {
                 taskInstall(appTask)
             }
         })
