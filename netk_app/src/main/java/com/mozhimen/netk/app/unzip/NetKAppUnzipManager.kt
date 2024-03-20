@@ -16,7 +16,7 @@ import com.mozhimen.basick.utilk.kotlin.collections.containsBy
 import com.mozhimen.basick.utilk.kotlin.createFolder
 import com.mozhimen.basick.utilk.kotlin.deleteFolder
 import com.mozhimen.basick.utilk.kotlin.getSplitLastIndexToStart
-import com.mozhimen.basick.utilk.kotlin.normalize
+import com.mozhimen.basick.utilk.kotlin.constraint
 import com.mozhimen.basick.utilk.kotlin.strFilePath2file
 import com.mozhimen.netk.app.NetKApp
 import com.mozhimen.netk.app.cons.CNetKAppErrorCode
@@ -273,7 +273,7 @@ internal object NetKAppUnzipManager : IUtilK {
                         totalSize = if (totalOffset > appTask.apkFileSize) totalOffset else appTask.apkFileSize
                         val offsetIndexPerSeconds = totalOffset - lastOffset
                         lastOffset = totalOffset
-                        val progress = (totalOffset.toFloat() / totalSize.toFloat()).normalize(0f, 1f) * 100f
+                        val progress = (totalOffset.toFloat() / totalSize.toFloat()).constraint(0f, 1f) * 100f
                         TaskKHandler.post {
                             onUnziping(appTask, progress.toInt(), totalOffset, totalSize, offsetIndexPerSeconds)
                         }

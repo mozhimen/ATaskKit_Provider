@@ -21,7 +21,7 @@ import com.mozhimen.basick.taskk.handler.TaskKHandler
 import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.javax.net.UtilKSSLSocketFactory
-import com.mozhimen.basick.utilk.kotlin.normalize
+import com.mozhimen.basick.utilk.kotlin.constraint
 import com.mozhimen.netk.app.NetKApp
 import com.mozhimen.netk.app.cons.CNetKAppErrorCode
 import com.mozhimen.netk.app.cons.CNetKAppState
@@ -35,8 +35,6 @@ import okhttp3.OkHttpClient
 import okhttp3.internal.http2.StreamResetException
 import java.lang.Exception
 import kotlin.math.abs
-import kotlin.math.ceil
-import kotlin.math.roundToInt
 
 /**
  * @ClassName AppDownloadManager
@@ -248,7 +246,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
         /**
          * [CNetKAppState.STATE_DOWNLOADING]
          */
-        NetKApp.onDownloading(appTask, appTask.downloadProgress.normalize(1, 100), currentIndex.toLong(), appTask.apkFileSize, 0)
+        NetKApp.onDownloading(appTask, appTask.downloadProgress.constraint(1, 100), currentIndex.toLong(), appTask.apkFileSize, 0)
 //        }
 //        listener?.onSuccess()
     }
@@ -310,7 +308,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
         /**
          * [CNetKAppState.STATE_DOWNLOADING]
          */
-        NetKApp.onDownloading(appTask, appTask.downloadProgress.normalize(1, 100), appTask.downloadFileSize, appTask.apkFileSize, BLOCK_SIZE_MIN)
+        NetKApp.onDownloading(appTask, appTask.downloadProgress.constraint(1, 100), appTask.downloadFileSize, appTask.apkFileSize, BLOCK_SIZE_MIN)
     }
 
     /**
@@ -409,7 +407,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
             /**
              * [CNetKAppState.STATE_DOWNLOADING]
              */
-            NetKApp.onDownloading(appTask.appTask, appTask.appTask.downloadProgress.normalize(1, 100), currentIndex.toLong(), appTask.appTask.apkFileSize, 0)
+            NetKApp.onDownloading(appTask.appTask, appTask.appTask.downloadProgress.constraint(1, 100), currentIndex.toLong(), appTask.appTask.apkFileSize, 0)
 //            }
         }
     }
@@ -430,7 +428,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
             mAppDownloadProgress = _downloadingTasks[downloadTask.id]
         }
         mAppDownloadProgress?.let { appTask ->
-            val progress = ((currentOffset.toFloat() / totalLength.toFloat()) * 100f).toInt().normalize(1, 100)
+            val progress = ((currentOffset.toFloat() / totalLength.toFloat()) * 100f).toInt().constraint(1, 100)
             val offsetFileSizePerSeconds = abs(currentOffset - appTask.appTask.downloadFileSize)
 
             Log.d(TAG, "progress: $progress currentOffset $currentOffset  totalLength $totalLength")
