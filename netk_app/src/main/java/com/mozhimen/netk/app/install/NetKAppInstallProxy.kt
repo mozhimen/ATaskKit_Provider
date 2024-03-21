@@ -14,7 +14,7 @@ import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.stackk.cb.StackKCb
 import com.mozhimen.basick.stackk.commons.IStackKListener
 import com.mozhimen.basick.utilk.android.content.UtilKPackage
-import com.mozhimen.basick.utilk.android.os.UtilKRom
+import com.mozhimen.basick.utilk.wrapper.UtilKSysRom
 import com.mozhimen.netk.app.install.helpers.NetKAppInstallReceiver
 import com.mozhimen.netk.app.task.db.AppTask
 import java.lang.ref.WeakReference
@@ -35,7 +35,7 @@ class NetKAppInstallProxy(
     receiver: BaseBroadcastReceiver = NetKAppInstallReceiver(),
 ) : BaseBroadcastReceiverProxy2(
     context, owner, receiver,
-    if (UtilKRom.isFlyme())
+    if (UtilKSysRom.isFlyme())
         arrayOf(CIntent.ACTION_PACKAGE_REMOVED)
     else
         arrayOf(CIntent.ACTION_PACKAGE_ADDED, CIntent.ACTION_PACKAGE_REPLACED, CIntent.ACTION_PACKAGE_REMOVED)
@@ -52,7 +52,7 @@ class NetKAppInstallProxy(
     /////////////////////////////////////////////////////////////////////////////
 
     override fun registerReceiver() {
-        if (UtilKRom.isFlyme()) {
+        if (UtilKSysRom.isFlyme()) {
             StackKCb.instance.addFrontBackListener(this)
         }
         val intentFilter = IntentFilter()
@@ -65,7 +65,7 @@ class NetKAppInstallProxy(
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
-        if (UtilKRom.isFlyme()) {
+        if (UtilKSysRom.isFlyme()) {
             StackKCb.instance.removeFrontBackListener(this)
         }
         Log.d(TAG, "onDestroy: ")
