@@ -11,7 +11,7 @@ import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.java.io.createFolder
 import com.mozhimen.basick.utilk.java.io.deleteFile
 import com.mozhimen.basick.utilk.java.io.flushClose
-import com.mozhimen.basick.utilk.java.io.inputStream2fileOfBufferedOps
+import com.mozhimen.basick.utilk.java.io.inputStream2file_use_ofBufferedOutStream
 import com.mozhimen.basick.utilk.kotlin.collections.containsBy
 import com.mozhimen.basick.utilk.kotlin.createFolder
 import com.mozhimen.basick.utilk.kotlin.deleteFolder
@@ -266,7 +266,7 @@ internal object NetKAppUnzipManager : IUtilK {
                 }
 
                 //移动文件
-                zipFile.getInputStream(zipEntry).inputStream2fileOfBufferedOps(tempFile, bufferSize = 1024 * 1024, block = { offset: Int, _: Float ->
+                zipFile.getInputStream(zipEntry).inputStream2file_use_ofBufferedOutStream(tempFile, bufferSize = 1024 * 1024, block = { offset: Int, _: Float ->
                     totalOffset += offset
                     if (System.currentTimeMillis() - lastTime > 1000L) {
                         lastTime = System.currentTimeMillis()
