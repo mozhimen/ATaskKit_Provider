@@ -54,7 +54,7 @@ internal object NetKAppVerifyManager : IUtilK {
      */
     private fun verifyApp(appTask: AppTask) {
         if (!isNeedVerify(appTask)) {//如果文件没有MD5值或者为空，则不校验 直接去安装
-            onVerifySuccess(appTask, File(UtilKFileDir.External.getFilesDownloadsDir() ?: return, appTask.apkFileName))
+            onVerifySuccess(appTask, File(UtilKFileDir.External.getFilesDownloads() ?: return, appTask.apkFileName))
             return
         }
 
@@ -63,7 +63,7 @@ internal object NetKAppVerifyManager : IUtilK {
             return//正在解压中，不进行操作
         }
 
-        val externalFilesDir = UtilKFileDir.External.getFilesDownloadsDir() ?: run {
+        val externalFilesDir = UtilKFileDir.External.getFilesDownloads() ?: run {
             /**
              * [CNetKAppState.STATE_VERIFY_FAIL]
              */
