@@ -86,7 +86,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
                 .connectionFactory(
                     DownloadOkHttp3Connection.Factory().setBuilder(
                         OkHttpClient.Builder()
-                            .sslSocketFactory(UtilKSSLSocketFactory.getTLS(), BaseX509TrustManager())
+                            .sslSocketFactory(UtilKSSLSocketFactory.get_ofTLS(), BaseX509TrustManager())
                             .hostnameVerifier { _, _ -> true }
                     )
                 )
