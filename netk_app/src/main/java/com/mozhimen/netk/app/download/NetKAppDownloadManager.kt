@@ -21,7 +21,7 @@ import com.mozhimen.basick.taskk.handler.TaskKHandler
 import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.javax.net.UtilKSSLSocketFactory
-import com.mozhimen.basick.utilk.kotlin.constraint
+import com.mozhimen.basick.utilk.kotlin.ranges.constraint
 import com.mozhimen.netk.app.NetKApp
 import com.mozhimen.netk.app.cons.CNetKAppErrorCode
 import com.mozhimen.netk.app.cons.CNetKAppState

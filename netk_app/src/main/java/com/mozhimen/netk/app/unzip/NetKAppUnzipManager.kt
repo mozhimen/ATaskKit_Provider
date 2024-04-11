@@ -16,7 +16,7 @@ import com.mozhimen.basick.utilk.kotlin.collections.containsBy
 import com.mozhimen.basick.utilk.kotlin.createFolder
 import com.mozhimen.basick.utilk.kotlin.deleteFolder
 import com.mozhimen.basick.utilk.kotlin.getSplitLastIndexToStart
-import com.mozhimen.basick.utilk.kotlin.constraint
+import com.mozhimen.basick.utilk.kotlin.ranges.constraint
 import com.mozhimen.basick.utilk.kotlin.strFilePath2file
 import com.mozhimen.netk.app.NetKApp
 import com.mozhimen.netk.app.cons.CNetKAppErrorCode
