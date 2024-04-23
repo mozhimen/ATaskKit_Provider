@@ -1,6 +1,7 @@
 package com.mozhimen.netk.app.install
 
 import android.util.Log
+import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
@@ -28,11 +29,11 @@ internal object NetKAppUnInstallManager : IUtilK {
         val list = AppTaskDaoManager.getAppTasksByApkPackageName(apkPackageName)
         list.ifNotEmptyOr({
             it.forEach { appTask ->
-                Log.d(TAG, "onUninstallSuccess: apkPackageName $apkPackageName")
+                UtilKLogWrapper.d(TAG, "onUninstallSuccess: apkPackageName $apkPackageName")
                 onUninstallSuccess(appTask)
             }
         }, {
-            Log.d(TAG, "onUninstallSuccess: removePackage $apkPackageName")
+            UtilKLogWrapper.d(TAG, "onUninstallSuccess: removePackage $apkPackageName")
             InstallKManager.removePackage(apkPackageName)
         })
     }

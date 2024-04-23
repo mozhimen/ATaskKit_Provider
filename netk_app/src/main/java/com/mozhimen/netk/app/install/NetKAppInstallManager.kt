@@ -1,6 +1,7 @@
 package com.mozhimen.netk.app.install
 
 import android.util.Log
+import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.basick.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.basick.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
@@ -31,7 +32,7 @@ internal object NetKAppInstallManager : IUtilK {
     @JvmStatic
     fun install(appTask: AppTask, fileApk: File) {
         if (!appTask.canInstall()) {
-            Log.e(TAG, "install: the task hasn't unzip or verify success")
+            UtilKLogWrapper.e(TAG, "install: the task hasn't unzip or verify success")
             /**
              * Net
              */
@@ -39,7 +40,7 @@ internal object NetKAppInstallManager : IUtilK {
             return
         }
 //        if (appTask.isTaskInstall()) {
-//            Log.d(TAG, "install: the task already installing")
+//            UtilKLogWrapper.d(TAG, "install: the task already installing")
 //            return
 //        }
 //        /**
@@ -58,12 +59,12 @@ internal object NetKAppInstallManager : IUtilK {
         list.ifNotEmptyOr({
             it.forEach { appTask ->
                 if (appTask.apkVersionCode <= versionCode) {
-                    Log.d(TAG, "onInstallSuccess: apkPackageName $apkPackageName")
+                    UtilKLogWrapper.d(TAG, "onInstallSuccess: apkPackageName $apkPackageName")
                     onInstallSuccess(appTask)
                 }
             }
         }, {
-            Log.d(TAG, "onInstallSuccess: addPackage $apkPackageName")
+            UtilKLogWrapper.d(TAG, "onInstallSuccess: addPackage $apkPackageName")
             InstallKManager.addPackage(apkPackageName)
         })
     }
@@ -73,11 +74,11 @@ internal object NetKAppInstallManager : IUtilK {
         val list = AppTaskDaoManager.getAppTasksByApkPackageName(apkPackageName)
         list.ifNotEmptyOr({
             it.forEach { appTask ->
-                Log.d(TAG, "onInstallSuccess: apkPackageName $apkPackageName")
+                UtilKLogWrapper.d(TAG, "onInstallSuccess: apkPackageName $apkPackageName")
                 onInstallSuccess(appTask)
             }
         }, {
-            Log.d(TAG, "onInstallSuccess: addPackage $apkPackageName")
+            UtilKLogWrapper.d(TAG, "onInstallSuccess: addPackage $apkPackageName")
             InstallKManager.addPackage(apkPackageName)
         })
     }

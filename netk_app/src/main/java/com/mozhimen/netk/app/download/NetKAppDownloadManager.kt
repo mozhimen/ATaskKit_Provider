@@ -2,6 +2,7 @@ package com.mozhimen.netk.app.download
 
 import android.content.Context
 import android.util.Log
+import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import android.util.SparseArray
 import androidx.core.util.forEach
 import com.liulishuo.okdownload.DownloadTask
@@ -77,7 +78,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
 //                }
 //            }
 
-            Log.d(TAG, "init: resume task num ${_downloadingTasks.size()}")
+            UtilKLogWrapper.d(TAG, "init: resume task num ${_downloadingTasks.size()}")
 //            BreakpointStoreOnSQLite(context, _breakpointCompare)::class.java.name.e(TAG)
 
             val builder = OkDownload.Builder(context)
@@ -117,7 +118,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     @JvmStatic
     fun getDownloadTask(appTask: AppTask): DownloadTask? {
         val externalFilesDir = UtilKFileDir.External.getFilesDownloads() ?: run {
-            Log.d(TAG, "getDownloadTask: get download dir fail")
+            UtilKLogWrapper.d(TAG, "getDownloadTask: get download dir fail")
             return null
         }
         return DownloadTask.Builder(appTask.downloadUrlCurrent, externalFilesDir.absolutePath, appTask.apkFileName, _breakpointCompare).build()
@@ -129,7 +130,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     @JvmStatic
     fun getAppDownloadProgress(appTask: AppTask): MAppDownloadProgress? {
         val downloadTask = getDownloadTask(appTask) ?: run {
-            Log.d(TAG, "downloadPause: get download task fail")
+            UtilKLogWrapper.d(TAG, "downloadPause: get download task fail")
             return null
         }
         return _downloadingTasks[downloadTask.id]
@@ -211,7 +212,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
             }
 
             StatusUtil.Status.COMPLETED -> {
-                Log.d(TAG, "download: StatusUtil.Status.COMPLETED")
+                UtilKLogWrapper.d(TAG, "download: StatusUtil.Status.COMPLETED")
 //                onDownloadSuccess(appTask)
 //                return
             }
@@ -254,7 +255,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     @JvmStatic
     fun downloadPause(appTask: AppTask) {
         val downloadTask = getDownloadTask(appTask) ?: run {
-            Log.d(TAG, "downloadPause: get download task fail")
+            UtilKLogWrapper.d(TAG, "downloadPause: get download task fail")
             return
         }
         downloadTask.cancel()//取消任务
@@ -269,13 +270,13 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     fun downloadResumeAllDelay(delayMills: Long) {
         TaskKHandler.postDelayed(delayMills) {
             _downloadingTasks.forEach { _, value ->
-                Log.d(TAG, "downloadResumeAll: appTask ${value.appTask}")
+                UtilKLogWrapper.d(TAG, "downloadResumeAll: appTask ${value.appTask}")
                 if (value.appTask.isTaskPause()) {
                     downloadResume(value.appTask)
-                    Log.d(TAG, "downloadResumeAll: 恢复下载 appTask ${value.appTask}")
+                    UtilKLogWrapper.d(TAG, "downloadResumeAll: 恢复下载 appTask ${value.appTask}")
                 } /*else {
                     download(value.appTask)
-                    Log.d(TAG, "downloadResumeAll: 开始下载 appTask ${value.appTask}")
+                    UtilKLogWrapper.d(TAG, "downloadResumeAll: 开始下载 appTask ${value.appTask}")
                 }*/
             }
         }
@@ -285,7 +286,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     fun downloadPauseAll() {
         _downloadingTasks.forEach { _, value ->
             downloadPause(value.appTask)
-            Log.d(TAG, "downloadPauseAll: appTask ${value.appTask}")
+            UtilKLogWrapper.d(TAG, "downloadPauseAll: appTask ${value.appTask}")
         }
     }
 
@@ -295,7 +296,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     @JvmStatic
     fun downloadResume(appTask: AppTask) {
         val downloadTask = getDownloadTask(appTask) ?: run {
-            Log.d(TAG, "downloadResume: get download task fail")
+            UtilKLogWrapper.d(TAG, "downloadResume: get download task fail")
             return
         }
         if (StatusUtil.getStatus(downloadTask) != StatusUtil.Status.RUNNING) {
@@ -320,7 +321,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
 //            TaskKHandler.post {
 //                onDeleteBlock?.invoke(false, CNetKAppErrorCode.CODE_DOWNLOAD_CANT_FIND_TASK)
 //            }
-            Log.d(TAG, "downloadWaitCancel: get download task fail")
+            UtilKLogWrapper.d(TAG, "downloadWaitCancel: get download task fail")
             return
         }
         downloadTask.cancel()//然后取消任务
@@ -340,7 +341,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
 //            TaskKHandler.post {
 //                onDeleteBlock?.invoke(false, CNetKAppErrorCode.CODE_DOWNLOAD_CANT_FIND_TASK)
 //            }
-            Log.d(TAG, "downloadRetry: get download task fail")
+            UtilKLogWrapper.d(TAG, "downloadRetry: get download task fail")
             return
         }
         downloadTask.cancel()//然后取消任务
@@ -357,7 +358,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
 //            TaskKHandler.post {
 //                onDeleteBlock?.invoke(false, CNetKAppErrorCode.CODE_DOWNLOAD_CANT_FIND_TASK)
 //            }
-            Log.d(TAG, "downloadCancel: get download task fail")
+            UtilKLogWrapper.d(TAG, "downloadCancel: get download task fail")
             return
         }
         //        DownloadTask.cancel(arrayOf(downloadTask))
@@ -377,7 +378,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     @JvmStatic
     fun downloadRetryWithClear(appTask: AppTask) {
         val downloadTask = getDownloadTask(appTask) ?: run {
-            Log.d(TAG, "downloadRetryWithClear: get download task fail")
+            UtilKLogWrapper.d(TAG, "downloadRetryWithClear: get download task fail")
             return
         }
         downloadTask.cancel()
@@ -389,7 +390,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     ///////////////////////////////////////////////////////////////////////////////////////
 
     override fun taskStart(downloadTask: DownloadTask, model: Listener1Assist.Listener1Model) {
-        Log.d(TAG, "taskStart: task $downloadTask")
+        UtilKLogWrapper.d(TAG, "taskStart: task $downloadTask")
         var mAppDownloadProgress = _downloadingTasks[downloadTask.id]
         if (mAppDownloadProgress == null) {
             val appTask = AppTaskDaoManager.getByDownloadUrl(downloadTask.url) ?: return
@@ -413,11 +414,11 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     }
 
     override fun retry(downloadTask: DownloadTask, cause: ResumeFailedCause) {
-        Log.d(TAG, "retry: task $downloadTask")
+        UtilKLogWrapper.d(TAG, "retry: task $downloadTask")
     }
 
     override fun connected(downloadTask: DownloadTask, blockCount: Int, currentOffset: Long, totalLength: Long) {
-        Log.d(TAG, "connected: task $downloadTask")
+        UtilKLogWrapper.d(TAG, "connected: task $downloadTask")
     }
 
     override fun progress(downloadTask: DownloadTask, currentOffset: Long, totalLength: Long) {
@@ -431,7 +432,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
             val progress = ((currentOffset.toFloat() / totalLength.toFloat()) * 100f).toInt().constraint(1, 100)
             val offsetFileSizePerSeconds = abs(currentOffset - appTask.appTask.downloadFileSize)
 
-            Log.d(TAG, "progress: $progress currentOffset $currentOffset  totalLength $totalLength")
+            UtilKLogWrapper.d(TAG, "progress: $progress currentOffset $currentOffset  totalLength $totalLength")
             if (appTask.appTask.isTaskPause()) return
             if (progress < appTask.appTask.downloadProgress) return
 
@@ -449,7 +450,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     }
 
     override fun taskEnd(downloadTask: DownloadTask, cause: EndCause, realCause: Exception?, model: Listener1Assist.Listener1Model) {
-        Log.d(TAG, "taskEnd: $downloadTask cause ${cause.name} realCause ${realCause.toString()}")
+        UtilKLogWrapper.d(TAG, "taskEnd: $downloadTask cause ${cause.name} realCause ${realCause.toString()}")
         var mAppDownloadProgress = _downloadingTasks[downloadTask.id]
         if (mAppDownloadProgress == null) {
             val appTask = AppTaskDaoManager.getByDownloadUrl(downloadTask.url) ?: return
@@ -486,7 +487,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
                             appTask.isRetry = true
                             downloadRetry(appTask.appTask)
                             download(appTask.appTask)
-                            Log.d(TAG, "taskEnd: MIN通信问题重试 ${appTask.retryCount}次 appTask ${appTask.appTask}")
+                            UtilKLogWrapper.d(TAG, "taskEnd: MIN通信问题重试 ${appTask.retryCount}次 appTask ${appTask.appTask}")
                         } catch (e: AppDownloadException) {
                             /**
                              * [CNetKAppState.STATE_DOWNLOAD_FAIL]
@@ -501,7 +502,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
                             appTask.isRetry = true
                             downloadRetryWithClear(appTask.appTask)
                             download(appTask.appTask)
-                            Log.d(TAG, "taskEnd: StreamResetException 重新开始下载")
+                            UtilKLogWrapper.d(TAG, "taskEnd: StreamResetException 重新开始下载")
                         } catch (e: AppDownloadException) {
                             /**
                              * [CNetKAppState.STATE_DOWNLOAD_FAIL]
@@ -516,7 +517,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
                             appTask.isRetry = true
                             downloadRetryWithClear(appTask.appTask)
                             download(appTask.appTask)
-                            Log.d(TAG, "taskEnd: MAX通信问题重试 ${appTask.retryCount}次 appTask ${appTask.appTask}")
+                            UtilKLogWrapper.d(TAG, "taskEnd: MAX通信问题重试 ${appTask.retryCount}次 appTask ${appTask.appTask}")
                         } catch (e: AppDownloadException) {
                             */
                     /**

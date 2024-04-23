@@ -2,6 +2,7 @@ package com.mozhimen.netk.app.verify
 
 import android.text.TextUtils
 import android.util.Log
+import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
@@ -28,7 +29,7 @@ internal object NetKAppVerifyManager : IUtilK {
     @JvmStatic
     fun verify(appTask: AppTask) {
         if (appTask.isTaskUnzip()) {
-            Log.d(TAG, "verify: the task already verify")
+            UtilKLogWrapper.d(TAG, "verify: the task already verify")
             return
         }
         /**
@@ -36,7 +37,7 @@ internal object NetKAppVerifyManager : IUtilK {
          */
         NetKApp.onVerifying(appTask)
 
-        Log.d(TAG, "verify: apkFileName ${appTask.apkFileName}")
+        UtilKLogWrapper.d(TAG, "verify: apkFileName ${appTask.apkFileName}")
 
         if (appTask.apkFileName.endsWith(".apk") || appTask.apkFileName.endsWith(".npk")) {//如果文件以.npk结尾则先解压
             verifyApp(appTask)
@@ -45,7 +46,7 @@ internal object NetKAppVerifyManager : IUtilK {
              * [CNetKAppState.STATE_VERIFY_FAIL]
              */
             NetKApp.onVerifyFail(appTask, CNetKAppErrorCode.CODE_VERIFY_FORMAT_INVALID.intAppErrorCode2appDownloadException())
-            Log.d(TAG, "verifyAndUnzipNpk: getFilesDownloadsDir is null")
+            UtilKLogWrapper.d(TAG, "verifyAndUnzipNpk: getFilesDownloadsDir is null")
         }
     }
 
@@ -59,7 +60,7 @@ internal object NetKAppVerifyManager : IUtilK {
         }
 
         if (NetKAppUnzipManager.isUnziping(appTask)) {
-            Log.d(TAG, "verifyAndUnzipNpk: isUnziping")
+            UtilKLogWrapper.d(TAG, "verifyAndUnzipNpk: isUnziping")
             return//正在解压中，不进行操作
         }
 
@@ -68,7 +69,7 @@ internal object NetKAppVerifyManager : IUtilK {
              * [CNetKAppState.STATE_VERIFY_FAIL]
              */
             NetKApp.onVerifyFail(appTask, CNetKAppErrorCode.CODE_VERIFY_DIR_NULL.intAppErrorCode2appDownloadException())
-            Log.e(TAG, "verifyAndUnzipNpk: getFilesDownloadsDir is null")
+            UtilKLogWrapper.e(TAG, "verifyAndUnzipNpk: getFilesDownloadsDir is null")
             return
         }
         val fileApk = File(externalFilesDir, appTask.apkFileName)
@@ -77,7 +78,7 @@ internal object NetKAppVerifyManager : IUtilK {
              * [CNetKAppState.STATE_VERIFY_FAIL]
              */
             NetKApp.onVerifyFail(appTask, CNetKAppErrorCode.CODE_VERIFY_FILE_NOT_EXIST.intAppErrorCode2appDownloadException())
-            Log.e(TAG, "verifyAndUnzipNpk: download file fail")
+            UtilKLogWrapper.e(TAG, "verifyAndUnzipNpk: download file fail")
             return
         }
 
@@ -88,7 +89,7 @@ internal object NetKAppVerifyManager : IUtilK {
                  * [CNetKAppState.STATE_VERIFY_FAIL]
                  */
                 NetKApp.onVerifyFail(appTask, CNetKAppErrorCode.CODE_VERIFY_MD5_FAIL.intAppErrorCode2appDownloadException())
-                Log.e(TAG, "verifyAndUnzipNpk: download file fail")
+                UtilKLogWrapper.e(TAG, "verifyAndUnzipNpk: download file fail")
 
                 NetKApp.taskRetry(appTask.apply {
                     apkPathName = fileApk.file2strFilePath()

@@ -1,6 +1,7 @@
 package com.mozhimen.netk.app.task.db
 
 import android.util.Log
+import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import androidx.annotation.WorkerThread
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.taskk.executor.TaskKExecutor
@@ -232,7 +233,7 @@ object AppTaskDaoManager : IUtilK {
     @WorkerThread
     private fun deleteOnBack(appTask: AppTask) {
         if (_tasks.contains(appTask.taskId)) {
-            Log.d(TAG, "deleteOnBack: _tasks ")
+            UtilKLogWrapper.d(TAG, "deleteOnBack: _tasks ")
             _tasks.remove(appTask.taskId)
         } else return
         AppTaskDbManager.appTaskDao.delete(appTask)

@@ -3,6 +3,7 @@ package com.mozhimen.netk.app.install.helpers
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.basick.elemk.android.content.bases.BaseBroadcastReceiver
 import com.mozhimen.basick.elemk.android.content.cons.CIntent
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
@@ -25,10 +26,10 @@ class NetKAppInstallReceiver : BaseBroadcastReceiver() {
         context?.let {
             intent?.let { intent ->
                 intent.dataString?.let { dataString ->
-                    Log.d(TAG, "onReceive: dataString $dataString")
+                    UtilKLogWrapper.d(TAG, "onReceive: dataString $dataString")
                     val apkPackName = dataString.split(":")[1]
                     if (apkPackName.isEmpty()) return
-                    Log.i(TAG, "onReceive: action ${intent.action} apkPackName $apkPackName")
+                    UtilKLogWrapper.i(TAG, "onReceive: action ${intent.action} apkPackName $apkPackName")
                     when (intent.action) {
                         CIntent.ACTION_PACKAGE_REMOVED -> {//需要主动移除掉保存的应用
                             NetKAppUnInstallManager.onUninstallSuccess(apkPackName)
@@ -40,7 +41,7 @@ class NetKAppInstallReceiver : BaseBroadcastReceiver() {
                                 NetKAppInstallManager.onInstallSuccess(apkPackName, packageInfo.getVersionCode())
                             } else {
                                 NetKAppInstallManager.onInstallSuccess(apkPackName)
-                                Log.e(TAG, "onReceive: cant find packageInfo just now")
+                                UtilKLogWrapper.e(TAG, "onReceive: cant find packageInfo just now")
                             }
                         }
 

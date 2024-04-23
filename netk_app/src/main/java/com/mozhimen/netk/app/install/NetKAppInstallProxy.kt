@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.IntentFilter
 import android.util.Log
+import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.elemk.android.content.bases.BaseBroadcastReceiver
 import com.mozhimen.basick.elemk.android.content.bases.BaseBroadcastReceiverProxy2
@@ -68,7 +69,7 @@ class NetKAppInstallProxy(
         if (UtilKSysRom.isFlyme()) {
             StackKCb.instance.removeFrontBackListener(this)
         }
-        Log.d(TAG, "onDestroy: ")
+        UtilKLogWrapper.d(TAG, "onDestroy: ")
         super.onDestroy(owner)
     }
 
