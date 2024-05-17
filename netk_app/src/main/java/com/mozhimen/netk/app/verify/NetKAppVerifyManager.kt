@@ -7,7 +7,7 @@ import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.java.io.file2strFilePath
-import com.mozhimen.basick.utilk.java.io.file2strMd5
+import com.mozhimen.basick.utilk.java.io.file2strMd5Hex_use_ofStream
 import com.mozhimen.netk.app.NetKApp
 import com.mozhimen.netk.app.cons.CNetKAppErrorCode
 import com.mozhimen.netk.app.cons.CNetKAppState
@@ -83,7 +83,7 @@ internal object NetKAppVerifyManager : IUtilK {
         }
 
         if (isNeedVerify(appTask)) {
-            val apkFileMd5Locale = fileApk.file2strMd5()//取文件的MD5值
+            val apkFileMd5Locale = fileApk.file2strMd5Hex_use_ofStream()//取文件的MD5值
             if (!TextUtils.equals(appTask.apkFileMd5, apkFileMd5Locale)) {
                 /**
                  * [CNetKAppState.STATE_VERIFY_FAIL]
