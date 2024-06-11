@@ -36,4 +36,12 @@ include(':ANetKit_okdownload:okdownload_ext')
 include(':AInstallKit')
 project(':AInstallKit').projectDir = new File("D:\\WorkSpace\\GitHub\\AInstallKit")
 include(':AInstallKit:installk_manager')
+//ALibKit_Jetpack
+include(':ALibKit_Jetpack')
+project(':ALibKit_Jetpack').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Jetpack")
+include(':ALibKit_Jetpack:room')
+//ALibKit_Squareup
+include(':ALibKit_Squareup')
+project(':ALibKit_Squareup').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Squareup")
+include(':ALibKit_Squareup:okhttp3')
 

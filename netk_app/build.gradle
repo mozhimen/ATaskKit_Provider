@@ -43,8 +43,9 @@ dependencies {
     implementation project(':ANetKit_okdownload:okdownload-breakpoint-sqlite')
     implementation project(':ANetKit_okdownload:okdownload-connection-okhttp')
     implementation project(':SwiftKit:basick')
-
-    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.2'
+    implementation project(':ALibKit_Jetpack:room')
+    implementation project(':ALibKit_Squareup:okhttp3')
+    implementation project(':ACacheKit:cachek_datastore')
 
     //kapt
     kapt 'androidx.room:room-compiler:2.5.2'

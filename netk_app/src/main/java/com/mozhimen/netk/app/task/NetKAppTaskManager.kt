@@ -1,7 +1,7 @@
 package com.mozhimen.netk.app.task
 
-import com.mozhimen.basick.cachek.datastore.CacheKDS
-import com.mozhimen.basick.cachek.datastore.temps.CacheKDSVarPropertyBoolean
+import com.mozhimen.cachek.datastore.CacheKDS
+import com.mozhimen.cachek.datastore.temps.CacheKDSVarPropertyBoolean
 import com.mozhimen.basick.utilk.commons.IUtilK
 
 /**
