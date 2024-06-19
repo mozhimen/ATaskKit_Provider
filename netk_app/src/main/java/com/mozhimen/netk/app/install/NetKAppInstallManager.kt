@@ -65,27 +65,27 @@ internal object NetKAppInstallManager : IUtilK {
             }
         }, {
             UtilKLogWrapper.d(TAG, "onInstallSuccess: addPackage $apkPackageName")
-            InstallKManager.addPackage(apkPackageName)
+            InstallKManager.addPackage(apkPackageName, versionCode)
         })
     }
 
-    @JvmStatic
-    fun onInstallSuccess(apkPackageName: String) {
-        val list = AppTaskDaoManager.getAppTasksByApkPackageName(apkPackageName)
-        list.ifNotEmptyOr({
-            it.forEach { appTask ->
-                UtilKLogWrapper.d(TAG, "onInstallSuccess: apkPackageName $apkPackageName")
-                onInstallSuccess(appTask)
-            }
-        }, {
-            UtilKLogWrapper.d(TAG, "onInstallSuccess: addPackage $apkPackageName")
-            InstallKManager.addPackage(apkPackageName)
-        })
-    }
+//    @JvmStatic
+//    fun onInstallSuccess(apkPackageName: String) {
+//        val list = AppTaskDaoManager.getAppTasksByApkPackageName(apkPackageName)
+//        list.ifNotEmptyOr({
+//            it.forEach { appTask ->
+//                UtilKLogWrapper.d(TAG, "onInstallSuccess: apkPackageName $apkPackageName")
+//                onInstallSuccess(appTask)
+//            }
+//        }, {
+//            UtilKLogWrapper.d(TAG, "onInstallSuccess: addPackage $apkPackageName")
+//            InstallKManager.addPackage(apkPackageName)
+//        })
+//    }
 
     @JvmStatic
     fun onInstallSuccess(appTask: AppTask) {
-        InstallKManager.addPackage(appTask.apkPackageName)
+        InstallKManager.addPackage(appTask.apkPackageName, appTask.apkVersionCode)
 
         if (NetKAppTaskManager.isDeleteApkFile) {
             NetKAppUnInstallManager.deleteFileApk(appTask)

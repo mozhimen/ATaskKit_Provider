@@ -36,7 +36,7 @@ class NetKAppInstallProxy(
     receiver: BaseBroadcastReceiver = NetKAppInstallReceiver(),
 ) : BaseBroadcastReceiverProxy2(
     context, owner, receiver,
-    if (UtilKSysRom.isFlyme())
+    if (UtilKSysRom.isMeizu())
         arrayOf(CIntent.ACTION_PACKAGE_REMOVED)
     else
         arrayOf(CIntent.ACTION_PACKAGE_ADDED, CIntent.ACTION_PACKAGE_REPLACED, CIntent.ACTION_PACKAGE_REMOVED)
@@ -53,7 +53,7 @@ class NetKAppInstallProxy(
     /////////////////////////////////////////////////////////////////////////////
 
     override fun registerReceiver() {
-        if (UtilKSysRom.isFlyme()) {
+        if (UtilKSysRom.isMeizu()) {
             StackKCb.instance.addFrontBackListener(this)
         }
         val intentFilter = IntentFilter()
@@ -66,7 +66,7 @@ class NetKAppInstallProxy(
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
-        if (UtilKSysRom.isFlyme()) {
+        if (UtilKSysRom.isMeizu()) {
             StackKCb.instance.removeFrontBackListener(this)
         }
         UtilKLogWrapper.d(TAG, "onDestroy: ")

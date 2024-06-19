@@ -40,7 +40,7 @@ class NetKAppInstallReceiver : BaseBroadcastReceiver() {
                             if (packageInfo != null) {
                                 NetKAppInstallManager.onInstallSuccess(apkPackName, packageInfo.getVersionCode())
                             } else {
-                                NetKAppInstallManager.onInstallSuccess(apkPackName)
+                                NetKAppInstallManager.onInstallSuccess(apkPackName, -1)
                                 UtilKLogWrapper.e(TAG, "onReceive: cant find packageInfo just now")
                             }
                         }

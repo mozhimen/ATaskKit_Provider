@@ -9,6 +9,7 @@ import androidx.core.app.NotificationCompat
 import com.mozhimen.basick.elemk.android.app.cons.CNotificationManager
 import com.mozhimen.basick.utilk.android.app.UtilKNotificationManager
 import com.mozhimen.basick.utilk.android.app.UtilKPendingIntent
+import com.mozhimen.basick.utilk.android.app.UtilKPendingIntentWrapper
 import com.mozhimen.basick.utilk.android.content.UtilKApplicationInfo
 import com.mozhimen.basick.utilk.android.os.UtilKBuildVersion
 import com.mozhimen.netk.app.R
@@ -69,13 +70,13 @@ object NetKAppNotificationUtil {
 //            }
             appTask.taskState == CNetKAppTaskState.STATE_TASK_SUCCESS -> {
                 intent?.let {
-                    builder.setContentIntent(UtilKPendingIntent.get_ofActivity(context, it))
+                    builder.setContentIntent(UtilKPendingIntentWrapper.get_ofActivity_IMMUTABLE(0, it))
                 }
             }
 
             appTask.isUnzipSuccess() -> {
                 intent?.let {
-                    builder.setContentIntent(UtilKPendingIntent.get_ofActivity(context, it))
+                    builder.setContentIntent(UtilKPendingIntentWrapper.get_ofActivity_IMMUTABLE(0, it))
                 }
             }
 

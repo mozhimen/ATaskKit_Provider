@@ -11,6 +11,7 @@ import com.mozhimen.basick.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.basick.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.basick.utilk.android.app.UtilKNotificationManager
 import com.mozhimen.basick.utilk.android.app.UtilKPendingIntent
+import com.mozhimen.basick.utilk.android.app.UtilKPendingIntentWrapper
 import com.mozhimen.basick.utilk.android.content.UtilKApplicationInfo
 import com.mozhimen.netk.app.R
 import com.mozhimen.netk.app.cons.CNetKAppState
@@ -27,7 +28,7 @@ import com.mozhimen.netk.app.utils.NetKAppNotificationUtil
  */
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
-class NetKAppNotificationProxy(private val _activity: AppCompatActivity) : BaseWakeBefDestroyLifecycleObserver() {
+class NetKAppNotificationProxy : BaseWakeBefDestroyLifecycleObserver() {
     private val _builders = mutableMapOf<Int, NotificationCompat.Builder>()
     private val _notificationManager by lazy {
         UtilKNotificationManager.get(_context)
@@ -42,10 +43,10 @@ class NetKAppNotificationProxy(private val _activity: AppCompatActivity) : BaseW
         title: String,
         appTask: AppTask,
         intent: Intent? = null,
-        @DrawableRes notifierSmallIcon: Int = UtilKApplicationInfo.getIcon_ofCxt(_activity)
+        @DrawableRes notifierSmallIcon: Int = UtilKApplicationInfo.getIcon_ofCxt(_context)
     ) {
         val builder: NotificationCompat.Builder = _builders[id] ?: run {
-            NotificationCompat.Builder(_activity, NetKAppNotificationUtil.NETK_APP_NOTIFICATION_CHANNEL_ID)
+            NotificationCompat.Builder(_context, NetKAppNotificationUtil.NETK_APP_NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(notifierSmallIcon)
                 .also { _builders[id] = it }
         }
@@ -59,21 +60,21 @@ class NetKAppNotificationProxy(private val _activity: AppCompatActivity) : BaseW
         }
         //子标题
         if (appTask.downloadProgress in 1..99) {// don't use setContentInfo(deprecated in API level 24)
-            builder.setSubText(_activity.getString(R.string.netk_app_notifier_subtext_placeholder, appTask.downloadProgress))
+            builder.setSubText(_context.getString(R.string.netk_app_notifier_subtext_placeholder, appTask.downloadProgress))
         } else {
             builder.setSubText("")
         }
         when {
             appTask.taskState == CNetKAppTaskState.STATE_TASK_SUCCESS -> {
                 intent?.let {
-                    builder.setContentIntent(UtilKPendingIntent.get_ofActivity(_activity, it))
+                    builder.setContentIntent(UtilKPendingIntentWrapper.get_ofActivity_IMMUTABLE(0, it))
                 }
                 builder.setProgress(0, 0, false)
             }
 
             appTask.taskState == CNetKAppState.STATE_UNZIP_SUCCESS -> {
                 intent?.let {
-                    builder.setContentIntent(UtilKPendingIntent.get_ofActivity(_activity, it))
+                    builder.setContentIntent(UtilKPendingIntentWrapper.get_ofActivity_IMMUTABLE(0, it))
                 }
                 builder.setProgress(0, 0, false)
             }
@@ -90,7 +91,7 @@ class NetKAppNotificationProxy(private val _activity: AppCompatActivity) : BaseW
     }
 
     fun cancelNotification(id: Int) {
-        UtilKNotificationManager.get(_activity).cancel(id)
+        UtilKNotificationManager.get(_context).cancel(id)
         if (_builders.containsKey(id)) {
             _builders.remove(id)
         }
@@ -99,7 +100,7 @@ class NetKAppNotificationProxy(private val _activity: AppCompatActivity) : BaseW
     override fun onDestroy(owner: LifecycleOwner) {
         try {
             _builders.forEach { (t, _) ->
-                UtilKNotificationManager.get(_activity).cancel(t)
+                UtilKNotificationManager.get(_context).cancel(t)
             }
             _builders.clear()
         } catch (e: Exception) {
