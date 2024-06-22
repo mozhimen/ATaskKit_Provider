@@ -1,20 +1,18 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
 }
 
 android {
-    namespace 'com.mozhimen.netk.app.test'
+    namespace 'com.mozhimen.netk.app.install.splits.ackpine'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.mozhimen.netk.app.test"
-        minSdk 24
-        targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        minSdk 19
+        multiDexEnabled true
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -30,16 +28,14 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    buildFeatures {
-        viewBinding true
-    }
 }
 
 dependencies {
     implementation project(':SwiftKit:basick')
-    implementation project(':core')
+    api project(project.path.replace(project.name, '') + ':install')
+    implementation project(':AInstallKit:installk_splits_ackpine')
+    implementation project(':AManifestKit_XXPermissions:manifestk_xxpermissions')
 
-    //test
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'

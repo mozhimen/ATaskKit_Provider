@@ -8,7 +8,7 @@ dependencyResolutionManagement {
         maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
         maven { url 'https://maven.aliyun.com/repository/grails-core' }
         maven { url 'https://raw.githubusercontent.com/saki4510t/libcommon/master/repository/' }
-        maven { url 'https://gitee.com/liuchaoya/libcommon/raw/master/repository/' }
+        maven { url 'https://gitee.com/liuchaoya/libcommon/raw/mNeaster/repository/' }
         maven { url "https://repo.eclipse.org/content/repositories/paho-snapshots/" }
         maven { url 'https://developer.huawei.com/repo/' }
         maven { url "https://jitpack.io" }
@@ -20,7 +20,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "ANetKit_App"
 include ':app'
-include ':netk_app'
+include ':core'
+include ':install'
+include ':install_splits_ackpine'
 //SwiftKit
 include ':SwiftKit'
 project(':SwiftKit').projectDir = new File("D:\\WorkSpace\\GitHub\\SwiftKit")
@@ -36,12 +38,31 @@ include(':ANetKit_okdownload:okdownload_ext')
 include(':AInstallKit')
 project(':AInstallKit').projectDir = new File("D:\\WorkSpace\\GitHub\\AInstallKit")
 include(':AInstallKit:installk_manager')
+include(':AInstallKit:installk_splits_ackpine')
 //ALibKit_Jetpack
 include(':ALibKit_Jetpack')
 project(':ALibKit_Jetpack').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Jetpack")
 include(':ALibKit_Jetpack:room')
+include(':ALibKit_Jetpack:datastore')
+include(':ALibKit_Jetpack:startup')
 //ALibKit_Squareup
 include(':ALibKit_Squareup')
 project(':ALibKit_Squareup').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Squareup")
 include(':ALibKit_Squareup:okhttp3')
-
+//ACacheKit
+include(':ACacheKit')
+project(':ACacheKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ACacheKit")
+include(':ACacheKit:cachek_datastore')
+include(':ACacheKit:cachek_basic')
+//AInstallKit_Ackpine
+include(':AInstallKit_Ackpine')
+project(':AInstallKit_Ackpine').projectDir = new File("D:\\WorkSpace\\GitHub\\AInstallKit_Ackpine")
+include(':AInstallKit_Ackpine:ackpine-splits')
+include(':AInstallKit_Ackpine:ackpine-ktx')
+include(':AInstallKit_Ackpine:ackpine-core')
+include(':AInstallKit_Ackpine:ackpine-runtime')
+//AManifestKit_XXPermissions
+include(':AManifestKit_XXPermissions')
+project(':AManifestKit_XXPermissions').projectDir = new File("D:\\WorkSpace\\GitHub\\AManifestKit_XXPermissions")
+include(':AManifestKit_XXPermissions:library')
+include(':AManifestKit_XXPermissions:manifestk_xxpermissions')
