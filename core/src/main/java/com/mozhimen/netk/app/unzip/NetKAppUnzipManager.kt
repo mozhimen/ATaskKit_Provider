@@ -138,7 +138,7 @@ internal object NetKAppUnzipManager : IUtilK {
     private fun unzipOnBack(appTask: AppTask): String {
         _unzippingTasks.add(appTask)//开始解压，添加到列表中
 
-        val externalFilesDownloadDir = UtilKFileDir.External.getFilesDownloads() ?: run {
+        val externalFilesDownloadDir = NetKApp.getDownloadPath() ?: run {
             throw CNetKAppErrorCode.CODE_UNZIP_DIR_NULL.intAppErrorCode2appDownloadException()
         }
         val fileSource = appTask.apkPathName.strFilePath2file()

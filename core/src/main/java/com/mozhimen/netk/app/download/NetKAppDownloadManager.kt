@@ -117,7 +117,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
 
     @JvmStatic
     fun getDownloadTask(appTask: AppTask): DownloadTask? {
-        val externalFilesDir = UtilKFileDir.External.getFilesDownloads() ?: run {
+        val externalFilesDir = NetKApp.getDownloadPath() ?: run {
             UtilKLogWrapper.d(TAG, "getDownloadTask: get download dir fail")
             return null
         }
@@ -193,7 +193,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     @Throws(AppDownloadException::class)
     @JvmStatic
     fun download(appTask: AppTask) {
-        val externalFilesDir = UtilKFileDir.External.getFilesDownloads()
+        val externalFilesDir = NetKApp.getDownloadPath()
             ?: throw CNetKAppErrorCode.CODE_DOWNLOAD_PATH_NOT_EXIST.intAppErrorCode2appDownloadException()
         val downloadTask = DownloadTask.Builder(appTask.downloadUrlCurrent, externalFilesDir, _breakpointCompare)//先构建一个Task 框架可以保证Id唯一
             .setConnectionCount(1)

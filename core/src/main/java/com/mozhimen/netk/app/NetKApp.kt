@@ -41,6 +41,7 @@ import com.mozhimen.netk.app.task.NetKAppTaskManager
 import com.mozhimen.netk.app.task.db.AppTask
 import com.mozhimen.netk.app.task.cons.CNetKAppTaskState
 import com.mozhimen.netk.app.utils.intAppState2strAppState
+import java.io.File
 
 /**
  * @ClassName NetKAppDownload
@@ -453,6 +454,9 @@ object NetKApp : INetKAppState, BaseUtilK() {
     fun isDeleteApkFile(): Boolean =
         NetKAppTaskManager.isDeleteApkFile
 
+    @JvmStatic
+    fun getDownloadPath(): File? =
+        UtilKFileDir.External.getFilesDownloads()
     //endregion
 
     /////////////////////////////////////////////////////////////////
@@ -761,11 +765,7 @@ object NetKApp : INetKAppState, BaseUtilK() {
     }
 
     private fun applyAppTaskStateException(
-        appTask: AppTask,
-        state: Int,
-        exception: AppDownloadException,
-        progress: Int = 0,
-        onNext: I_Listener? = null
+        appTask: AppTask, state: Int, exception: AppDownloadException, progress: Int = 0, onNext: I_Listener? = null
     ) {
         appTask.apply {
             this.taskState = state

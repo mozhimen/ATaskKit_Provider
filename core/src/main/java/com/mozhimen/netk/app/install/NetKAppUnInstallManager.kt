@@ -7,7 +7,19 @@ import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.java.io.deleteFile
 import com.mozhimen.basick.utilk.java.io.deleteFolder
+import com.mozhimen.basick.utilk.java.io.isFileExist
+import com.mozhimen.basick.utilk.java.io.isFolder
+import com.mozhimen.basick.utilk.kotlin.appendStrLineBreak
 import com.mozhimen.basick.utilk.kotlin.collections.ifNotEmptyOr
+import com.mozhimen.basick.utilk.kotlin.deleteFile
+import com.mozhimen.basick.utilk.kotlin.deleteFolder
+import com.mozhimen.basick.utilk.kotlin.getStrAssetParentPath
+import com.mozhimen.basick.utilk.kotlin.getStrFileNameNoExtension
+import com.mozhimen.basick.utilk.kotlin.getStrFileParentPath
+import com.mozhimen.basick.utilk.kotlin.getStrFilePathNoExtension
+import com.mozhimen.basick.utilk.kotlin.getStrFolderPath
+import com.mozhimen.basick.utilk.kotlin.isFileExist
+import com.mozhimen.basick.utilk.kotlin.isFolderExist
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.netk.app.NetKApp
 import com.mozhimen.netk.app.cons.CNetKAppState
@@ -56,11 +68,23 @@ internal object NetKAppUnInstallManager : IUtilK {
      */
     @JvmStatic
     fun deleteFileApk(appTask: AppTask): Boolean {
-        val externalFilesDir = UtilKFileDir.External.getFilesDownloads() ?: return true
-        File(externalFilesDir, appTask.apkFileName).deleteFile()
-        if (appTask.apkFileName.endsWith(".npk")) {//如果是npk,删除解压的文件夹
-            File(externalFilesDir, appTask.apkFileName.split(".npk")[0]).deleteFolder()
+        try {
+            if (appTask.apkPathName.isFileExist()) {
+                appTask.apkPathName.deleteFile()
+                UtilKLogWrapper.d(TAG, "deleteFileApk: deleteFile")
+            }
+
+            val gameFolder = appTask.apkPathName.getStrFilePathNoExtension()?.getStrFolderPath()
+            if (gameFolder != null && gameFolder.isFolderExist()/*appTask.apkFileName.endsWith(".npk") && */) {//如果是npk,删除解压的文件夹
+                gameFolder.deleteFolder()
+                UtilKLogWrapper.d(TAG, "deleteFileApk: deleteFolder")
+            }
+
+            UtilKLogWrapper.w(TAG, "deleteFileApk path ${appTask.apkPathName} name ${appTask.apkFileName} gameFolder $gameFolder")
+            return true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
         }
-        return true
     }
 }
