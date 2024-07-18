@@ -1,21 +1,11 @@
 package com.mozhimen.netk.app.install
 
-import android.util.Log
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
+import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.basick.utilk.commons.IUtilK
-import com.mozhimen.basick.utilk.java.io.UtilKFileDir
-import com.mozhimen.basick.utilk.java.io.deleteFile
-import com.mozhimen.basick.utilk.java.io.deleteFolder
-import com.mozhimen.basick.utilk.java.io.isFileExist
-import com.mozhimen.basick.utilk.java.io.isFolder
-import com.mozhimen.basick.utilk.kotlin.appendStrLineBreak
 import com.mozhimen.basick.utilk.kotlin.collections.ifNotEmptyOr
 import com.mozhimen.basick.utilk.kotlin.deleteFile
 import com.mozhimen.basick.utilk.kotlin.deleteFolder
-import com.mozhimen.basick.utilk.kotlin.getStrAssetParentPath
-import com.mozhimen.basick.utilk.kotlin.getStrFileNameNoExtension
-import com.mozhimen.basick.utilk.kotlin.getStrFileParentPath
 import com.mozhimen.basick.utilk.kotlin.getStrFilePathNoExtension
 import com.mozhimen.basick.utilk.kotlin.getStrFolderPath
 import com.mozhimen.basick.utilk.kotlin.isFileExist
@@ -25,7 +15,6 @@ import com.mozhimen.netk.app.NetKApp
 import com.mozhimen.netk.app.cons.CNetKAppState
 import com.mozhimen.netk.app.task.db.AppTask
 import com.mozhimen.netk.app.task.db.AppTaskDaoManager
-import java.io.File
 
 /**
  * @ClassName NetKAppUnInstallManager
