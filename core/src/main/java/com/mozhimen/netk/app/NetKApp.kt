@@ -2,7 +2,6 @@ package com.mozhimen.netk.app
 
 import android.content.Context
 import android.content.pm.PackageInfo
-import android.util.Log
 import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import androidx.annotation.AnyThread
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -42,6 +41,7 @@ import com.mozhimen.netk.app.task.db.AppTask
 import com.mozhimen.netk.app.task.cons.CNetKAppTaskState
 import com.mozhimen.netk.app.utils.intAppState2strAppState
 import java.io.File
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * @ClassName NetKAppDownload
@@ -51,43 +51,60 @@ import java.io.File
  * @Version 1.0
  */
 @OApiInit_InApplication
-object NetKApp : INetKAppState, BaseUtilK() {
+class NetKApp : INetKAppState, BaseUtilK() {
     private val _appDownloadStateListeners = mutableListOf<INetKAppState>()
 
     @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class)
     private val _netKAppInstallProxy by lazy { NetKAppInstallProxy(_context, ProcessLifecycleOwner.get()) }
 
+    private val _isInitNetKApp = AtomicBoolean(false)
+
     @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class)
     val netKAppInstallProxy get() = _netKAppInstallProxy
+
+    /////////////////////////////////////////////////////////////////
+
+    companion object {
+        @JvmStatic
+        val instance = INSTANCE.holder
+    }
+
+    private object INSTANCE {
+        val holder = NetKApp()
+    }
 
     /////////////////////////////////////////////////////////////////
     // init
     /////////////////////////////////////////////////////////////////
     //region # init
     @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class, OPermission_REQUEST_INSTALL_PACKAGES::class)
-    @JvmStatic
     fun init(context: Context, compare: IBreakpointCompare, strSourceApkNameUnzip: String = ""): NetKApp {
-        _netKAppInstallProxy.bindLifecycle(ProcessLifecycleOwner.get())// 注册应用安装的监听 InstalledApkReceiver.registerReceiver(this)
+        if (_isInitNetKApp.compareAndSet(false,true)){
+            _netKAppInstallProxy.bindLifecycle(ProcessLifecycleOwner.get())// 注册应用安装的监听 InstalledApkReceiver.registerReceiver(this)
 //        NetKOkDownloadExt.init(context)
-        AppTaskDbManager.init(context)
-        NetKAppInstallManager.init()
-        InstallKManager.apply {
-            init(context)
-            registerPackagesChangeListener(object : IPackagesChangeListener {
-                override fun onPackageAdd(packageInfo: PackageInfo) {
-                    NetKAppInstallManager.onInstallSuccess(packageInfo.packageName, UtilKPackageInfo.getVersionCode(packageInfo))
-                }
+            AppTaskDbManager.init(context)
+            NetKAppInstallManager.init()
+            InstallKManager.apply {
+                init(context)
+                registerPackagesChangeListener(object : IPackagesChangeListener {
+                    override fun onPackageAdd(packageInfo: PackageInfo) {
+                        NetKAppInstallManager.onInstallSuccess(packageInfo.packageName, UtilKPackageInfo.getVersionCode(packageInfo))
+                    }
 
-                override fun onPackageRemove(packageInfo: PackageInfo) {
-                    NetKAppUnInstallManager.onUninstallSuccess(packageInfo.packageName)
-                }
-            })
+                    override fun onPackageRemove(packageInfo: PackageInfo) {
+                        NetKAppUnInstallManager.onUninstallSuccess(packageInfo.packageName)
+                    }
+                })
+            }
+            NetKAppUnzipManager.init(strSourceApkNameUnzip)
+            NetKAppDownloadManager.init(context, compare)
+            resetUpdateAppStatus()
         }
-        NetKAppUnzipManager.init(strSourceApkNameUnzip)
-        NetKAppDownloadManager.init(context, compare)
-        resetUpdateAppStatus()
         return this
     }
+
+    fun isInit():Boolean =
+        _isInitNetKApp.get()
 
     private fun resetUpdateAppStatus() {
         val appTask = getAppTaskByApkPackageName_VersionCode(UtilKPackage.getPackageName(), UtilKPackage.getVersionCode())
@@ -97,19 +114,16 @@ object NetKApp : INetKAppState, BaseUtilK() {
     }
 
     @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class)
-    @JvmStatic
     fun addInstallProvider(provider: INetKAppInstallProvider) {
         NetKAppInstallManager.addInstallProvider(provider)
     }
 
-    @JvmStatic
     fun registerDownloadStateListener(listener: INetKAppState) {
         if (!_appDownloadStateListeners.contains(listener)) {
             _appDownloadStateListeners.add(listener)
         }
     }
 
-    @JvmStatic
     fun unregisterDownloadListener(listener: INetKAppState) {
         val indexOf = _appDownloadStateListeners.indexOf(listener)
         if (indexOf >= 0)
@@ -121,7 +135,6 @@ object NetKApp : INetKAppState, BaseUtilK() {
     // control
     /////////////////////////////////////////////////////////////////
     //region # control
-    @JvmStatic
     fun taskRetry(appTask: AppTask) {
         NetKAppUnInstallManager.deleteFileApk(appTask)//删除本地文件.apk + .npk
 
@@ -136,7 +149,6 @@ object NetKApp : INetKAppState, BaseUtilK() {
         }
     }
 
-    @JvmStatic
     fun taskStart(appTask: AppTask) {
         try {
             if (appTask.isTaskProcess() && !appTask.isTaskPause()) {
@@ -209,7 +221,6 @@ object NetKApp : INetKAppState, BaseUtilK() {
     }
 
     @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class)
-    @JvmStatic
     fun taskCancel(appTask: AppTask/*, onCancelBlock: IAB_Listener<Boolean, Int>? = null*/) {
         UtilKLogWrapper.d(TAG, "taskCancel: appTask $appTask")
         if (!appTask.isTaskProcess()) {
@@ -234,7 +245,6 @@ object NetKApp : INetKAppState, BaseUtilK() {
         }
     }
 
-    @JvmStatic
     fun taskPause(appTask: AppTask) {
         if (!appTask.isTaskProcess()) {
             UtilKLogWrapper.d(TAG, "taskPause: task is not process")
@@ -246,7 +256,6 @@ object NetKApp : INetKAppState, BaseUtilK() {
         }
     }
 
-    @JvmStatic
     fun taskResume(appTask: AppTask) {
         UtilKLogWrapper.d(TAG, "taskResume: ")
         if (!appTask.isTaskProcess()) {
@@ -260,31 +269,27 @@ object NetKApp : INetKAppState, BaseUtilK() {
     }
 
     @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class)
-    @JvmStatic
     fun taskInstall(appTask: AppTask) {
         NetKAppInstallManager.install(appTask, appTask.apkPathName.strFilePath2file())
     }
 
     @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class)
-    @JvmStatic
     fun resetTaskStateOfInstall(appTask: AppTask) {
         NetKAppInstallManager.onInstallSuccess(appTask.apkPackageName, appTask.apkVersionCode)
     }
 
-    @JvmStatic
     fun taskUnzip(appTask: AppTask) {
         if (appTask.apkPathName.isNotEmpty()) {
             NetKAppUnzipManager.unzip(appTask)
         }
     }
 
-    @JvmStatic
     fun taskDelete(appTask: AppTask) {
-        AppTaskDaoManager.delete(appTask)
-        NetKAppUnInstallManager.deleteFileApk(appTask)
+//        AppTaskDaoManager.delete(appTask)
+//        NetKAppUnInstallManager.deleteFileApk(appTask)
+        taskCancel(appTask)
     }
 
-    @JvmStatic
     fun onDestroy() {
         NetKAppDownloadManager.downloadPauseAll()
     }
@@ -294,7 +299,6 @@ object NetKApp : INetKAppState, BaseUtilK() {
     // state
     /////////////////////////////////////////////////////////////////
     //region # state
-    @JvmStatic
     fun generateAppTaskByPackageName(appTask: AppTask): AppTask {
         if (
             getAppTaskByTaskId_PackageName_VersionCode(appTask.taskId, appTask.apkPackageName, appTask.apkVersionCode) == null &&
@@ -369,11 +373,9 @@ object NetKApp : INetKAppState, BaseUtilK() {
 
     /////////////////////////////////////////////////////////////////
 
-    @JvmStatic
     fun getAppTasksIsProcess(): List<AppTask> =
         AppTaskDaoManager.getAppTasksIsProcess()
 
-    @JvmStatic
     fun getAppTasksIsInstalled(): List<AppTask> =
         AppTaskDaoManager.getAppTasksIsInstalled()
 
@@ -383,14 +385,12 @@ object NetKApp : INetKAppState, BaseUtilK() {
 //    fun getAppTaskByTaskId_PackageName(taskId: String, packageName: String): AppTask? =
 //        AppTaskDaoManager.getByTaskId_PackageName(taskId, packageName)
 
-    @JvmStatic
     fun getAppTaskByTaskId_PackageName_VersionCode(taskId: String, packageName: String, versionCode: Int): AppTask? =
         AppTaskDaoManager.getByTaskId_PackageName_VersionCode(taskId, packageName, versionCode)
 
     /**
      * 通过保存名称获取下载信息
      */
-    @JvmStatic
     fun getAppTaskByApkName(apkName: String): AppTask? {
         return AppTaskDaoManager.getByApkName(apkName)
     }
@@ -409,12 +409,15 @@ object NetKApp : INetKAppState, BaseUtilK() {
         return AppTaskDaoManager.getByApkPackageName_VersionCode(apkPackageName, versionCode)
     }
 
+    fun getAppTaskByApkPathName(apkPathName: String): AppTask? {
+        return AppTaskDaoManager.getByApkPathName(apkPathName)
+    }
+
     /////////////////////////////////////////////////////////////////
 
     /**
      * 是否有正在下载的任务
      */
-    @JvmStatic
     @AnyThread
     fun hasDownloading(): Boolean {
         return AppTaskDaoManager.hasDownloading()
@@ -423,7 +426,6 @@ object NetKApp : INetKAppState, BaseUtilK() {
     /**
      * 是否有正在校验的任务
      */
-    @JvmStatic
     fun hasVerifying(): Boolean {
         return AppTaskDaoManager.hasVerifying()
     }
@@ -431,7 +433,6 @@ object NetKApp : INetKAppState, BaseUtilK() {
     /**
      * 是否有正在解压的任务
      */
-    @JvmStatic
     fun hasUnziping(): Boolean {
         return AppTaskDaoManager.hasUnziping()
     }
@@ -440,21 +441,17 @@ object NetKApp : INetKAppState, BaseUtilK() {
      * 判断是否正在下载中
      * @return true 正在下载中  false 当前不是正在下载中
      */
-    @JvmStatic
     fun isDownloading(appTask: AppTask): Boolean {
         return NetKAppDownloadManager.getAppDownloadProgress(appTask)?.isDownloading() ?: false//查询下载状态
     }
 
-    @JvmStatic
     fun isDeleteApkFile(isDelete: Boolean) {
         NetKAppTaskManager.isDeleteApkFile = isDelete
     }
 
-    @JvmStatic
     fun isDeleteApkFile(): Boolean =
         NetKAppTaskManager.isDeleteApkFile
 
-    @JvmStatic
     fun getDownloadPath(): File? =
         UtilKFileDir.External.getFilesDownloads()
     //endregion

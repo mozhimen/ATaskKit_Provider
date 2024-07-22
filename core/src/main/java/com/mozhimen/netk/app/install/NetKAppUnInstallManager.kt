@@ -47,7 +47,7 @@ internal object NetKAppUnInstallManager : IUtilK {
         /**
          * [CNetKAppState.STATE_UNINSTALL_SUCCESS]
          */
-        NetKApp.onUninstallSuccess(appTask)
+        NetKApp.instance.onUninstallSuccess(appTask)
     }
 
     ///////////////////////////////////////////////////////////////////

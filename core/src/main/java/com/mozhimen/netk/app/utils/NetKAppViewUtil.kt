@@ -82,7 +82,7 @@ object NetKAppViewUtil {
 //                }
                 //如果是下载中，则暂停
                 CNetKAppState.STATE_DOWNLOADING -> {
-//                    NetKApp.taskPause(appTask)
+//                    NetKApp.instance.taskPause(appTask)
                     onPause.invoke(it.context, appTask)
                 }
                 //如果是暂停、取消，则恢复
@@ -90,7 +90,7 @@ object NetKAppViewUtil {
 //                AppState.APP_STATE_DOWNLOAD_CANCELED,
 //                AppState.APP_STATE_PENDING_CANCELED -> {
 //                    button.setText("等待中")
-//                    NetKApp.taskResume(appTask)
+//                    NetKApp.instance.taskResume(appTask)
                     onResume.invoke(it.context, appTask)
                 }
                 //等待中
@@ -109,7 +109,7 @@ object NetKAppViewUtil {
 //                    download(it.context, button, fileParams)
 //                }
                 CNetKAppState.STATE_VERIFY_SUCCESS, CNetKAppState.STATE_UNZIPING -> {
-//                    NetKApp.unzip(appTask)
+//                    NetKApp.instance.unzip(appTask)
                     onUnzip.invoke(it.context, appTask)
                 }
 

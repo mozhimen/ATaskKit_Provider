@@ -74,7 +74,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
 //                    /**
 //                     * [CNetKAppState.STATE_DOWNLOAD_CANCEL]
 //                     */
-//                    NetKApp.onDownloadCancel(it)
+//                    NetKApp.instance.onDownloadCancel(it)
 //                }
 //            }
 
@@ -117,7 +117,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
 
     @JvmStatic
     fun getDownloadTask(appTask: AppTask): DownloadTask? {
-        val externalFilesDir = NetKApp.getDownloadPath() ?: run {
+        val externalFilesDir = NetKApp.instance.getDownloadPath() ?: run {
             UtilKLogWrapper.d(TAG, "getDownloadTask: get download dir fail")
             return null
         }
@@ -193,7 +193,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     @Throws(AppDownloadException::class)
     @JvmStatic
     fun download(appTask: AppTask) {
-        val externalFilesDir = NetKApp.getDownloadPath()
+        val externalFilesDir = NetKApp.instance.getDownloadPath()
             ?: throw CNetKAppErrorCode.CODE_DOWNLOAD_PATH_NOT_EXIST.intAppErrorCode2appDownloadException()
         val downloadTask = DownloadTask.Builder(appTask.downloadUrlCurrent, externalFilesDir, _breakpointCompare)//先构建一个Task 框架可以保证Id唯一
             .setConnectionCount(1)
@@ -247,7 +247,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
         /**
          * [CNetKAppState.STATE_DOWNLOADING]
          */
-        NetKApp.onDownloading(appTask, appTask.downloadProgress.constraint(1, 100), currentIndex.toLong(), appTask.apkFileSize, 0)
+        NetKApp.instance.onDownloading(appTask, appTask.downloadProgress.constraint(1, 100), currentIndex.toLong(), appTask.apkFileSize, 0)
 //        }
 //        listener?.onSuccess()
     }
@@ -263,7 +263,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
         /**
          * [CNetKAppState.STATE_DOWNLOAD_PAUSE]
          */
-        NetKApp.onDownloadPause(appTask)
+        NetKApp.instance.onDownloadPause(appTask)
     }
 
     @JvmStatic
@@ -309,7 +309,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
         /**
          * [CNetKAppState.STATE_DOWNLOADING]
          */
-        NetKApp.onDownloading(appTask, appTask.downloadProgress.constraint(1, 100), appTask.downloadFileSize, appTask.apkFileSize, BLOCK_SIZE_MIN)
+        NetKApp.instance.onDownloading(appTask, appTask.downloadProgress.constraint(1, 100), appTask.downloadFileSize, appTask.apkFileSize, BLOCK_SIZE_MIN)
     }
 
     /**
@@ -332,7 +332,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
         /**
          * [CNetKAppState.STATE_DOWNLOAD_CANCEL]
          */
-        NetKApp.onDownloadCancel(appTask)
+        NetKApp.instance.onDownloadCancel(appTask)
     }
 
     @JvmStatic
@@ -372,7 +372,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
         /**
          * [CNetKAppState.STATE_DOWNLOAD_CANCEL]
          */
-        NetKApp.onDownloadCancel(appTask)
+        NetKApp.instance.onDownloadCancel(appTask)
     }
 
     @JvmStatic
@@ -402,13 +402,13 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
 //                /**
 //                 * [CNetKAppState.STATE_DOWNLOAD_WAIT]
 //                 */
-//                NetKApp.onDownloadWait(appTask.appTask.apply { downloadId = downloadTask.id })
+//                NetKApp.instance.onDownloadWait(appTask.appTask.apply { downloadId = downloadTask.id })
 //            } else {
             val currentIndex = (appTask.appTask.downloadProgress.toFloat() / 100f) * appTask.appTask.apkFileSize.toFloat()
             /**
              * [CNetKAppState.STATE_DOWNLOADING]
              */
-            NetKApp.onDownloading(appTask.appTask, appTask.appTask.downloadProgress.constraint(1, 100), currentIndex.toLong(), appTask.appTask.apkFileSize, 0)
+            NetKApp.instance.onDownloading(appTask.appTask, appTask.appTask.downloadProgress.constraint(1, 100), currentIndex.toLong(), appTask.appTask.apkFileSize, 0)
 //            }
         }
     }
@@ -439,7 +439,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
             /**
              * [CNetKAppState.STATE_DOWNLOADING]
              */
-            NetKApp.onDownloading(
+            NetKApp.instance.onDownloading(
                 appTask.appTask.apply {
                     downloadProgress = progress
                     downloadFileSize = currentOffset
@@ -474,7 +474,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
                     /**
                      * [CNetKAppState.STATE_DOWNLOAD_CANCEL]
                      */
-                    NetKApp.onDownloadCancel(appTask.appTask)//下载取消
+                    NetKApp.instance.onDownloadCancel(appTask.appTask)//下载取消
                 }
 
                 else -> {
@@ -492,7 +492,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
                             /**
                              * [CNetKAppState.STATE_DOWNLOAD_FAIL]
                              */
-                            NetKApp.onDownloadFail(appTask.appTask, e)
+                            NetKApp.instance.onDownloadFail(appTask.appTask, e)
                             _downloadingTasks.delete(downloadTask.id)//从队列里移除掉
                         }
                         return
@@ -507,7 +507,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
                             /**
                              * [CNetKAppState.STATE_DOWNLOAD_FAIL]
                              */
-                            NetKApp.onDownloadFail(appTask.appTask, e)
+                            NetKApp.instance.onDownloadFail(appTask.appTask, e)
                             _downloadingTasks.delete(downloadTask.id)//从队列里移除掉
                         }
                         return
@@ -523,7 +523,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
                     /**
                      * [CNetKAppState.STATE_DOWNLOAD_FAIL]
                      *//*
-                            NetKApp.onDownloadFail(appTask.appTask, e)
+                            NetKApp.instance.onDownloadFail(appTask.appTask, e)
                             _downloadingTasks.delete(downloadTask.id)//从队列里移除掉
                         }
                         return
@@ -532,7 +532,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
                     /**
                      * [CNetKAppState.STATE_DOWNLOAD_FAIL]
                      */
-                    NetKApp.onDownloadFail(appTask.appTask, realCause)
+                    NetKApp.instance.onDownloadFail(appTask.appTask, realCause)
                 }
             }
         }
@@ -546,7 +546,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
         /**
          * [CNetKAppState.STATE_DOWNLOAD_SUCCESS]
          */
-        NetKApp.onDownloadSuccess(appTask)//下载完成，去安装
+        NetKApp.instance.onDownloadSuccess(appTask)//下载完成，去安装
 
         NetKAppVerifyManager.verify(appTask)//下载完成，去安装
     }

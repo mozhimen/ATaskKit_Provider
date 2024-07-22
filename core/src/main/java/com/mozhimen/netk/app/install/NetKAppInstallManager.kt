@@ -55,7 +55,7 @@ internal object NetKAppInstallManager : IUtilK {
             /**
              * Net
              */
-            NetKApp.onInstallFail(appTask, CNetKAppErrorCode.CODE_INSTALL_HAST_VERIFY_OR_UNZIP.intAppErrorCode2appDownloadException())
+            NetKApp.instance.onInstallFail(appTask, CNetKAppErrorCode.CODE_INSTALL_HAST_VERIFY_OR_UNZIP.intAppErrorCode2appDownloadException())
             return
         }
 //        if (appTask.isTaskInstall()) {
@@ -65,9 +65,9 @@ internal object NetKAppInstallManager : IUtilK {
 //        /**
 //         * [CNetKAppState.STATE_INSTALLING]
 //         */
-//        NetKApp.onInstalling(appTask)
+//        NetKApp.instance.onInstalling(appTask)
 
-        NetKApp.netKAppInstallProxy.setAppTask(appTask)
+        NetKApp.instance.netKAppInstallProxy.setAppTask(appTask)
 
         _installProviders.get(fileApk.extension)?.install(fileApk)
     }
@@ -113,7 +113,7 @@ internal object NetKAppInstallManager : IUtilK {
         /**
          * [CNetKAppState.STATE_INSTALL_SUCCESS]
          */
-        NetKApp.onInstallSuccess(appTask)
+        NetKApp.instance.onInstallSuccess(appTask)
     }
 
     /////////////////////////////////////////////////////
@@ -125,7 +125,7 @@ internal object NetKAppInstallManager : IUtilK {
         /**
          * [CNetKAppState.STATE_INSTALL_CANCEL]
          */
-        NetKApp.onInstallCancel(appTask)
+        NetKApp.instance.onInstallCancel(appTask)
     }
 
     /////////////////////////////////////////////////////

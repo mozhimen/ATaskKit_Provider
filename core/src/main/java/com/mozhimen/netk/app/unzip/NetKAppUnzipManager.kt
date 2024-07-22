@@ -84,7 +84,7 @@ internal object NetKAppUnzipManager : IUtilK {
         /**
          * [CNetKAppState.STATE_UNZIPING]
          */
-        NetKApp.onUnziping(appTask, 100, appTask.apkFileSize, appTask.apkFileSize, 0)
+        NetKApp.instance.onUnziping(appTask, 100, appTask.apkFileSize, appTask.apkFileSize, 0)
 
         if (appTask.apkFileName.endsWith("apk") && !appTask.apkUnzipNeed) {
             onUnzipSuccess(appTask)
@@ -111,7 +111,7 @@ internal object NetKAppUnzipManager : IUtilK {
                     /**
                      * [CNetKAppState.STATE_UNZIP_FAIL]
                      */
-                    NetKApp.onUnzipFail(appTask, e)
+                    NetKApp.instance.onUnzipFail(appTask, e)
                 }
             }
         }
@@ -123,7 +123,7 @@ internal object NetKAppUnzipManager : IUtilK {
         /**
          * [CNetKAppState.STATE_UNZIP_SUCCESS]
          */
-        NetKApp.onUnzipSuccess(appTask)
+        NetKApp.instance.onUnzipSuccess(appTask)
     }
 
     private fun onUnziping(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
@@ -131,14 +131,14 @@ internal object NetKAppUnzipManager : IUtilK {
         /**
          * [CNetKAppState.STATE_UNZIPING]
          */
-        NetKApp.onUnziping(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
+        NetKApp.instance.onUnziping(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
     }
 
     @WorkerThread
     private fun unzipOnBack(appTask: AppTask): String {
         _unzippingTasks.add(appTask)//开始解压，添加到列表中
 
-        val externalFilesDownloadDir = NetKApp.getDownloadPath() ?: run {
+        val externalFilesDownloadDir = NetKApp.instance.getDownloadPath() ?: run {
             throw CNetKAppErrorCode.CODE_UNZIP_DIR_NULL.intAppErrorCode2appDownloadException()
         }
         val fileSource = appTask.apkPathName.strFilePath2file()

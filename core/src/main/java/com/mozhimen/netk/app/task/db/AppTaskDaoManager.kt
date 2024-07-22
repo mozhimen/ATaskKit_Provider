@@ -101,6 +101,10 @@ object AppTaskDaoManager : IUtilK {
         return _tasks.filter { it.value.apkName == apkName }.map { it.value }.getOrNull(0)
     }
 
+    fun getByApkPathName(apkPathName:String):AppTask? {
+        return _tasks.filter { it.value.apkPathName == apkPathName }.map { it.value }.getOrNull(0)
+    }
+
 //    @JvmStatic
 //    fun getAllAtTaskDownloadOrWaitOrPause(): List<AppTask> {
 //        return _tasks.filter { it.value.isTaskDownload() /*|| it.value.taskState == CNetKAppTaskState.STATE_TASK_WAIT*/ || it.value.taskState == CNetKAppTaskState.STATE_TASK_PAUSE }
