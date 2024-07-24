@@ -70,7 +70,7 @@ object CNetKAppState {
 
     @JvmStatic
     fun canInstall(state: Int): Boolean =
-        state == STATE_VERIFY_SUCCESS || state == STATE_UNZIP_SUCCESS || state == STATE_INSTALLING
+        /*state == STATE_VERIFY_SUCCESS ||*/ state == STATE_UNZIP_SUCCESS || state == STATE_INSTALLING
 
     //////////////////////////////////////////////////////////////
     //卸载

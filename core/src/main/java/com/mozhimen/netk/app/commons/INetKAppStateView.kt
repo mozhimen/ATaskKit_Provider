@@ -12,7 +12,7 @@ import com.mozhimen.netk.app.task.db.AppTask
  * @Date 2023/11/16 10:58
  * @Version 1.0
  */
-interface INetKAppStateView<V : View> {
+interface INetKAppStateView<V> {
     fun onTaskCreate(view: V?, appTask: AppTask, isUpdate: Boolean)
 
     //    fun onTaskWait(view: V?, appTask: AppTask) //任务等待的回调
