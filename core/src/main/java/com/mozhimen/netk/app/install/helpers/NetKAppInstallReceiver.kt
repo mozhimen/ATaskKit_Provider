@@ -8,7 +8,7 @@ import com.mozhimen.basick.elemk.android.content.cons.CIntent
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.lintk.optins.permission.OPermission_QUERY_ALL_PACKAGES
 import com.mozhimen.basick.utilk.android.content.UtilKPackage
-import com.mozhimen.basick.utilk.android.content.getVersionCode
+import com.mozhimen.basick.utilk.android.content.UtilKPackageInfo
 import com.mozhimen.netk.app.install.NetKAppInstallManager
 import com.mozhimen.netk.app.install.NetKAppUnInstallManager
 
@@ -37,7 +37,7 @@ class NetKAppInstallReceiver : BaseBroadcastReceiver() {
                         CIntent.ACTION_PACKAGE_ADDED, CIntent.ACTION_PACKAGE_REPLACED -> {//有应用发生变化，强制刷新应用
                             val packageInfo = UtilKPackage.getInstalledPackages(context, false).find { it.packageName == apkPackName }
                             if (packageInfo != null) {
-                                NetKAppInstallManager.onInstallSuccess(apkPackName, packageInfo.getVersionCode())
+                                NetKAppInstallManager.onInstallSuccess(apkPackName, UtilKPackageInfo.getVersionCode(packageInfo))
                             } else {
                                 NetKAppInstallManager.onInstallSuccess(apkPackName, -1)
                                 UtilKLogWrapper.e(TAG, "onReceive: cant find packageInfo just now")
