@@ -3,7 +3,6 @@ package com.mozhimen.netk.app.install
 import android.app.Activity
 import android.content.Context
 import android.content.IntentFilter
-import android.util.Log
 import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.elemk.android.content.bases.BaseBroadcastReceiver
@@ -18,7 +17,6 @@ import com.mozhimen.basick.utilk.android.content.UtilKPackage
 import com.mozhimen.basick.utilk.wrapper.UtilKSysRom
 import com.mozhimen.netk.app.install.helpers.NetKAppInstallReceiver
 import com.mozhimen.netk.app.task.db.AppTask
-import java.lang.ref.WeakReference
 
 /**
  * @ClassName InstallKFlyme
@@ -73,7 +71,7 @@ class NetKAppInstallProxy(
         super.onDestroy(owner)
     }
 
-    override fun onChanged(isFront: Boolean, activityRef: WeakReference<Activity>?) {
+    override fun onChanged(isFront: Boolean, activity: Activity) {
         if (isFront) {
             if (_appTask != null && UtilKPackage.hasPackage(_context, _appTask!!.apkPackageName)) {
                 NetKAppInstallManager.onInstallSuccess(_appTask!!)

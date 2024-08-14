@@ -12,7 +12,6 @@ import com.mozhimen.basick.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.basick.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
-import com.mozhimen.basick.postk.event.PostKEventLiveData
 import com.mozhimen.basick.utilk.android.content.UtilKPackage
 import com.mozhimen.basick.utilk.wrapper.UtilKPermission
 import com.mozhimen.basick.utilk.android.content.UtilKPackageInfo
@@ -40,6 +39,7 @@ import com.mozhimen.netk.app.task.NetKAppTaskManager
 import com.mozhimen.netk.app.task.db.AppTask
 import com.mozhimen.netk.app.task.cons.CNetKAppTaskState
 import com.mozhimen.netk.app.utils.intAppState2strAppState
+import com.mozhimen.postk.livedata.PostKLiveData
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -503,7 +503,7 @@ class NetKApp : INetKAppState, BaseUtilK() {
                 }
                 applyAppTaskState(appTask, CNetKAppTaskState.STATE_TASK_CANCEL, finishType = finishType, onNext = {
 //                    //推送任务取消的指令
-                    PostKEventLiveData.instance.with<String>(CNetKAppEvent.EVENT_TASK_FINISH_OR_FAIL).postValue(appTask.taskId)
+                    PostKLiveData.instance.with<String>(CNetKAppEvent.EVENT_TASK_FINISH_OR_FAIL).postValue(appTask.taskId)
 
                     /**
                      * [CNetKAppTaskState.STATE_TASK_CREATE]
@@ -519,7 +519,7 @@ class NetKApp : INetKAppState, BaseUtilK() {
 //                }
                 applyAppTaskState(appTask, CNetKAppTaskState.STATE_TASK_FAIL, finishType = finishType, onNext = {
                     //                    //推送任务失败的指令
-                    PostKEventLiveData.instance.with<String>(CNetKAppEvent.EVENT_TASK_FINISH_OR_FAIL).postValue(appTask.taskId)
+                    PostKLiveData.instance.with<String>(CNetKAppEvent.EVENT_TASK_FINISH_OR_FAIL).postValue(appTask.taskId)
 
                     /**
                      * [CNetKAppTaskState.STATE_TASK_PAUSE]

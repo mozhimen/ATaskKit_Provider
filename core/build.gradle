@@ -45,6 +45,7 @@ dependencies {
     implementation project(':ALibKit_Jetpack:room')
     implementation project(':ALibKit_Squareup:okhttp3')
     implementation project(':ACacheKit:cachek_datastore')
+    implementation project(':APostKit:postk_livedata')
     implementation project(project.path.replace(project.name, '') + ':install')
 
     //kapt
