@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.mozhimen.netk.app.install.splits.ackpine'
+    namespace 'com.mozhimen.taskk.task.provider.install.splits.ackpine'
     compileSdk 34
 
     defaultConfig {
@@ -31,7 +31,7 @@ android {
 
 dependencies {
     implementation project(':SwiftKit:basick')
-    api project(project.path.replace(project.name, '') + ':install')
+    api project(project.path.replace(project.name, '') + ':basic')
     implementation project(':AInstallKit:installk_splits_ackpine')
     implementation project(':AManifestKit_XXPermissions:manifestk_xxpermissions')
 

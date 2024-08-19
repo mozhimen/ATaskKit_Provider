@@ -20,26 +20,26 @@ import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.kotlin.strFilePath2file
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.installk.manager.commons.IPackagesChangeListener
-import com.mozhimen.netk.app.commons.INetKAppState
+import com.mozhimen.netk.app.commons.ITaskState
 import com.mozhimen.netk.app.cons.CNetKAppErrorCode
 import com.mozhimen.netk.app.cons.CNetKAppEvent
 import com.mozhimen.netk.app.cons.CNetKAppState
 import com.mozhimen.netk.app.cons.SNetKAppFinishType
 import com.mozhimen.netk.app.task.db.AppTaskDaoManager
-import com.mozhimen.netk.app.unzip.NetKAppUnzipManager
-import com.mozhimen.netk.app.task.db.AppTaskDbManager
-import com.mozhimen.netk.app.download.NetKAppDownloadManager
-import com.mozhimen.netk.app.download.mos.AppDownloadException
-import com.mozhimen.netk.app.download.mos.intAppErrorCode2appDownloadException
-import com.mozhimen.netk.app.install.NetKAppInstallManager
-import com.mozhimen.netk.app.install.NetKAppInstallProxy
-import com.mozhimen.netk.app.install.NetKAppUnInstallManager
-import com.mozhimen.netk.app.install.commons.INetKAppInstallProvider
+import com.mozhimen.netk.app.tasks.unzip.NetKAppUnzipManager
+import com.mozhimen.taskk.task.provider.db.AppTaskDbManager
+import com.mozhimen.netk.app.tasks.download.NetKAppDownloadManager
+import com.mozhimen.netk.app.tasks.download.mos.intAppErrorCode2appDownloadException
+import com.mozhimen.netk.app.tasks.install.NetKAppInstallManager
+import com.mozhimen.netk.app.tasks.install.NetKAppInstallProxy
+import com.mozhimen.netk.app.tasks.install.NetKAppUnInstallManager
+import com.mozhimen.netk.app.basic.commons.INetKAppInstallProvider
 import com.mozhimen.netk.app.task.NetKAppTaskManager
-import com.mozhimen.netk.app.task.db.AppTask
+import com.mozhimen.taskk.task.provider.db.AppTask
 import com.mozhimen.netk.app.task.cons.CNetKAppTaskState
 import com.mozhimen.netk.app.utils.intAppState2strAppState
 import com.mozhimen.postk.livedata.PostKLiveData
+import com.mozhimen.taskk.task.provider.utils.TaskProviderUtil
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -51,8 +51,8 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @Version 1.0
  */
 @OApiInit_InApplication
-class NetKApp : INetKAppState, BaseUtilK() {
-    private val _appDownloadStateListeners = mutableListOf<INetKAppState>()
+class NetKApp : ITaskState, BaseUtilK() {
+    private val _appDownloadStateListeners = mutableListOf<ITaskState>()
 
     @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class)
     private val _netKAppInstallProxy by lazy { NetKAppInstallProxy(_context, ProcessLifecycleOwner.get()) }
@@ -118,13 +118,13 @@ class NetKApp : INetKAppState, BaseUtilK() {
         NetKAppInstallManager.addInstallProvider(provider)
     }
 
-    fun registerDownloadStateListener(listener: INetKAppState) {
+    fun registerDownloadStateListener(listener: ITaskState) {
         if (!_appDownloadStateListeners.contains(listener)) {
             _appDownloadStateListeners.add(listener)
         }
     }
 
-    fun unregisterDownloadListener(listener: INetKAppState) {
+    fun unregisterDownloadListener(listener: ITaskState) {
         val indexOf = _appDownloadStateListeners.indexOf(listener)
         if (indexOf >= 0)
             _appDownloadStateListeners.removeAt(indexOf)
@@ -136,14 +136,14 @@ class NetKApp : INetKAppState, BaseUtilK() {
     /////////////////////////////////////////////////////////////////
     //region # control
     fun taskRetry(appTask: AppTask) {
-        NetKAppUnInstallManager.deleteFileApk(appTask)//删除本地文件.apk + .npk
+        TaskProviderUtil.deleteFileApk(appTask)//删除本地文件.apk + .npk
 
-        if (appTask.downloadUrlCurrent != appTask.downloadUrl) {//重新使用内部地址下载
-            if (appTask.downloadUrl.isNotEmpty()) {
-                appTask.downloadUrlCurrent = appTask.downloadUrl
+        if (appTask.taskDownloadUrlCurrent != appTask.taskDownloadUrlInside) {//重新使用内部地址下载
+            if (appTask.taskDownloadUrlInside.isNotEmpty()) {
+                appTask.taskDownloadUrlCurrent = appTask.taskDownloadUrlInside
                 taskStart(appTask)
             } else {
-                appTask.apkVerifyNeed = false//重新下载，下次不校验MD5值
+                appTask.taskVerifyEnable = false//重新下载，下次不校验MD5值
                 taskStart(appTask)
             }
         }
@@ -172,20 +172,20 @@ class NetKApp : INetKAppState, BaseUtilK() {
                 return
             }
 
-            if (appTask.apkFileSize != 0L) {
+            if (appTask.taskDownloadFileSizeTotal != 0L) {
                 //当前剩余的空间
                 val availMemory = UtilKFileDir.External.getFilesRootFreeSpace()
                 //需要的最小空间
-                val needMinMemory: Long = (appTask.apkFileSize * 1.2).toLong()
+                val needMinMemory: Long = (appTask.taskDownloadFileSizeTotal * 1.2).toLong()
                 //如果当前需要的空间大于剩余空间，提醒清理空间
                 if (availMemory < needMinMemory) {
                     throw CNetKAppErrorCode.CODE_TASK_NEED_MEMORY_APK.intAppErrorCode2appDownloadException()
                 }
 
                 //判断是否为npk,如果是npk,判断空间是否小于需要的2.2倍，如果小于2.2，提示是否继续
-                if (appTask.apkFileName.endsWith(".npk") || (appTask.apkFileName.endsWith(".apk") && appTask.apkUnzipNeed)) {
+                if (appTask.fileNameExt.endsWith(".npk") || (appTask.fileNameExt.endsWith(".apk") && appTask.taskUnzipEnable)) {
                     //警告空间
-                    val warningsMemory: Long = (appTask.apkFileSize * 2.2).toLong()
+                    val warningsMemory: Long = (appTask.taskDownloadFileSizeTotal * 2.2).toLong()
                     //如果当前空间小于警告空间，
                     if (availMemory < warningsMemory) {
                         /*                    NiuAlertDialog.Builder(currentActivity)
@@ -212,7 +212,7 @@ class NetKApp : INetKAppState, BaseUtilK() {
             onTaskCreate(appTask, appTask.taskState == CNetKAppTaskState.STATE_TASK_UPDATE)
 
             NetKAppDownloadManager.download(appTask/*, listener*/)
-        } catch (exception: AppDownloadException) {
+        } catch (exception: _root_ide_package_.com.mozhimen.netk.app.tasks.download.mos.AppDownloadException) {
             /**
              * [CNetKAppState.STATE_DOWNLOAD_FAIL]
              */
@@ -270,7 +270,7 @@ class NetKApp : INetKAppState, BaseUtilK() {
 
     @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class)
     fun taskInstall(appTask: AppTask) {
-        NetKAppInstallManager.install(appTask, appTask.apkPathName.strFilePath2file())
+        NetKAppInstallManager.install(appTask, appTask.filePathNameExt.strFilePath2file())
     }
 
     @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class)
@@ -279,7 +279,7 @@ class NetKApp : INetKAppState, BaseUtilK() {
     }
 
     fun taskUnzip(appTask: AppTask) {
-        if (appTask.apkPathName.isNotEmpty()) {
+        if (appTask.filePathNameExt.isNotEmpty()) {
             NetKAppUnzipManager.unzip(appTask)
         }
     }
@@ -498,8 +498,8 @@ class NetKApp : INetKAppState, BaseUtilK() {
 
             SNetKAppFinishType.CANCEL -> {
                 appTask.apply {
-                    downloadProgress = 0
-                    downloadFileSize = 0
+                    taskDownloadProgress = 0
+                    taskDownloadFileSize = 0
                 }
                 applyAppTaskState(appTask, CNetKAppTaskState.STATE_TASK_CANCEL, finishType = finishType, onNext = {
 //                    //推送任务取消的指令
@@ -579,8 +579,8 @@ class NetKApp : INetKAppState, BaseUtilK() {
 
     fun onDownloadFail(appTask: AppTask, exception: Exception?) {
         if (exception is ServerCanceledException) {
-            if (exception.responseCode == 404 && appTask.downloadUrlCurrent != appTask.downloadUrl && appTask.downloadUrl.isNotEmpty()) {
-                appTask.downloadUrlCurrent = appTask.downloadUrl
+            if (exception.responseCode == 404 && appTask.taskDownloadUrlCurrent != appTask.taskDownloadUrlInside && appTask.taskDownloadUrlInside.isNotEmpty()) {
+                appTask.taskDownloadUrlCurrent = appTask.taskDownloadUrlInside
                 appTask.taskState = CNetKAppTaskState.STATE_TASK_CREATE
                 taskStart(appTask)
             } else {
@@ -597,7 +597,7 @@ class NetKApp : INetKAppState, BaseUtilK() {
         }
     }
 
-    override fun onDownloadFail(appTask: AppTask, exception: AppDownloadException) {
+    override fun onDownloadFail(appTask: AppTask, exception: _root_ide_package_.com.mozhimen.netk.app.tasks.download.mos.AppDownloadException) {
 //        AppTaskDaoManager.removeAppTaskForDatabase(appTask)
 
         applyAppTaskStateException(appTask, CNetKAppState.STATE_DOWNLOAD_FAIL, exception, onNext = {
@@ -628,7 +628,7 @@ class NetKApp : INetKAppState, BaseUtilK() {
         })
     }
 
-    override fun onVerifyFail(appTask: AppTask, exception: AppDownloadException) {
+    override fun onVerifyFail(appTask: AppTask, exception: _root_ide_package_.com.mozhimen.netk.app.tasks.download.mos.AppDownloadException) {
         applyAppTaskStateException(appTask, CNetKAppState.STATE_VERIFY_FAIL, exception, onNext = {
             /**
              * [CNetKAppTaskState.STATE_TASK_FAIL]
@@ -662,7 +662,7 @@ class NetKApp : INetKAppState, BaseUtilK() {
         })
     }
 
-    override fun onUnzipFail(appTask: AppTask, exception: AppDownloadException) {
+    override fun onUnzipFail(appTask: AppTask, exception: _root_ide_package_.com.mozhimen.netk.app.tasks.download.mos.AppDownloadException) {
         //            AlertTools.showToast("解压失败，请检测存储空间是否足够！")
         applyAppTaskStateException(appTask, CNetKAppState.STATE_UNZIP_FAIL, exception, onNext = {
             /**
@@ -694,7 +694,7 @@ class NetKApp : INetKAppState, BaseUtilK() {
         })
     }
 
-    override fun onInstallFail(appTask: AppTask, exception: AppDownloadException) {
+    override fun onInstallFail(appTask: AppTask, exception: _root_ide_package_.com.mozhimen.netk.app.tasks.download.mos.AppDownloadException) {
         applyAppTaskState(appTask, CNetKAppState.STATE_INSTALL_FAIL, onNext = {
             /**
              * [CNetKAppTaskState.STATE_TASK_FAIL]
@@ -739,11 +739,11 @@ class NetKApp : INetKAppState, BaseUtilK() {
     ) {
         appTask.apply {
             this.taskState = state
-            if (progress > 0) downloadProgress = progress
+            if (progress > 0) taskDownloadProgress = progress
         }
-        UtilKLogWrapper.d(TAG, "applyAppTaskState: id ${appTask.taskId} state ${state.intAppState2strAppState()} progress ${appTask.downloadProgress} appTask $appTask")
+        UtilKLogWrapper.d(TAG, "applyAppTaskState: id ${appTask.taskId} state ${state.intAppState2strAppState()} progress ${appTask.taskDownloadProgress} appTask $appTask")
         AppTaskDaoManager.update(appTask)
-        postAppTaskState(appTask, state, appTask.downloadProgress, finishType, onNext)
+        postAppTaskState(appTask, state, appTask.taskDownloadProgress, finishType, onNext)
     }
 
     private fun applyAppTaskState(
@@ -751,29 +751,29 @@ class NetKApp : INetKAppState, BaseUtilK() {
     ) {
         appTask.apply {
             this.taskState = state
-            if (progress > 0) downloadProgress = progress
+            if (progress > 0) taskDownloadProgress = progress
         }
         UtilKLogWrapper.d(
             TAG,
-            "applyAppTaskState: id ${appTask.taskId} state ${state.intAppState2strAppState()} progress ${appTask.downloadProgress} currentIndex $currentIndex totalIndex $totalIndex offsetIndexPerSeconds $offsetIndexPerSeconds appTask $appTask"
+            "applyAppTaskState: id ${appTask.taskId} state ${state.intAppState2strAppState()} progress ${appTask.taskDownloadProgress} currentIndex $currentIndex totalIndex $totalIndex offsetIndexPerSeconds $offsetIndexPerSeconds appTask $appTask"
         )
         AppTaskDaoManager.update(appTask)
-        postAppTaskState(appTask, state, appTask.downloadProgress, currentIndex, totalIndex, offsetIndexPerSeconds, onNext)
+        postAppTaskState(appTask, state, appTask.taskDownloadProgress, currentIndex, totalIndex, offsetIndexPerSeconds, onNext)
     }
 
     private fun applyAppTaskStateException(
-        appTask: AppTask, state: Int, exception: AppDownloadException, progress: Int = 0, onNext: I_Listener? = null
+        appTask: AppTask, state: Int, exception: _root_ide_package_.com.mozhimen.netk.app.tasks.download.mos.AppDownloadException, progress: Int = 0, onNext: I_Listener? = null
     ) {
         appTask.apply {
             this.taskState = state
-            if (progress > 0) downloadProgress = progress
+            if (progress > 0) taskDownloadProgress = progress
         }
         UtilKLogWrapper.d(TAG, "applyAppTaskState: id ${appTask.taskId} state ${state.intAppState2strAppState()} exception $exception appTask $appTask")
         AppTaskDaoManager.update(appTask)
         postAppTaskState(appTask, state, exception, onNext)
     }
 
-    private fun postAppTaskState(appTask: AppTask, state: Int, exception: AppDownloadException, nextMethod: I_Listener?) {
+    private fun postAppTaskState(appTask: AppTask, state: Int, exception: _root_ide_package_.com.mozhimen.netk.app.tasks.download.mos.AppDownloadException, nextMethod: I_Listener?) {
         for (listener in _appDownloadStateListeners) {
             when (state) {
                 CNetKAppState.STATE_DOWNLOAD_FAIL -> listener.onDownloadFail(appTask, exception)

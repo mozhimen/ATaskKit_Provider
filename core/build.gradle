@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
 }
 
 android {
@@ -42,14 +41,10 @@ dependencies {
     implementation project(':ANetKit_okdownload:okdownload-breakpoint-sqlite')
     implementation project(':ANetKit_okdownload:okdownload-connection-okhttp')
     implementation project(':SwiftKit:basick')
-    implementation project(':ALibKit_Jetpack:room')
     implementation project(':ALibKit_Squareup:okhttp3')
     implementation project(':ACacheKit:cachek_datastore')
     implementation project(':APostKit:postk_livedata')
-    implementation project(project.path.replace(project.name, '') + ':install')
-
-    //kapt
-    kapt 'androidx.room:room-compiler:2.5.2'
+    implementation project(project.path.replace(project.name, '') + ':basic')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

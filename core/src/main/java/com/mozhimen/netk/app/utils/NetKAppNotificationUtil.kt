@@ -8,14 +8,13 @@ import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import com.mozhimen.basick.elemk.android.app.cons.CNotificationManager
 import com.mozhimen.basick.utilk.android.app.UtilKNotificationManager
-import com.mozhimen.basick.utilk.android.app.UtilKPendingIntent
 import com.mozhimen.basick.utilk.android.app.UtilKPendingIntentWrapper
 import com.mozhimen.basick.utilk.android.content.UtilKApplicationInfo
 import com.mozhimen.basick.utilk.android.os.UtilKBuildVersion
 import com.mozhimen.netk.app.R
 import com.mozhimen.netk.app.cons.CNetKAppState
 import com.mozhimen.netk.app.task.cons.CNetKAppTaskState
-import com.mozhimen.netk.app.task.db.AppTask
+import com.mozhimen.taskk.task.provider.db.AppTask
 
 /**
  *
@@ -51,8 +50,8 @@ object NetKAppNotificationUtil {
             ) // canceled when it is clicked by the user.
             .setOngoing(appTask.isTaskProcess())
 
-        if (appTask.downloadProgress >= 0) {// don't use setContentInfo(deprecated in API level 24)
-            builder.setSubText(context.getString(R.string.netk_app_notifier_subtext_placeholder, appTask.downloadProgress))
+        if (appTask.taskDownloadProgress >= 0) {// don't use setContentInfo(deprecated in API level 24)
+            builder.setSubText(context.getString(R.string.netk_app_notifier_subtext_placeholder, appTask.taskDownloadProgress))
         }
         when {
 //            CDownloadManager.STATUS_SUCCESSFUL -> {
@@ -83,8 +82,8 @@ object NetKAppNotificationUtil {
             appTask.isTasking() -> {
                 builder.setProgress(
                     100,
-                    appTask.downloadProgress,
-                    appTask.downloadProgress <= 0 || appTask.taskState == CNetKAppState.STATE_INSTALLING || appTask.taskState == CNetKAppState.STATE_VERIFYING/*percent <= 0*/
+                    appTask.taskDownloadProgress,
+                    appTask.taskDownloadProgress <= 0 || appTask.taskState == CNetKAppState.STATE_INSTALLING || appTask.taskState == CNetKAppState.STATE_VERIFYING/*percent <= 0*/
                 )
             }
 

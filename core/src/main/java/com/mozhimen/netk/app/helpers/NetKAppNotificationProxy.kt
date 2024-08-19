@@ -2,7 +2,6 @@ package com.mozhimen.netk.app.helpers
 
 import android.content.Intent
 import androidx.annotation.DrawableRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.elemk.android.app.cons.CNotificationManager
@@ -10,13 +9,12 @@ import com.mozhimen.basick.elemk.androidx.lifecycle.bases.BaseWakeBefDestroyLife
 import com.mozhimen.basick.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.basick.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.basick.utilk.android.app.UtilKNotificationManager
-import com.mozhimen.basick.utilk.android.app.UtilKPendingIntent
 import com.mozhimen.basick.utilk.android.app.UtilKPendingIntentWrapper
 import com.mozhimen.basick.utilk.android.content.UtilKApplicationInfo
 import com.mozhimen.netk.app.R
 import com.mozhimen.netk.app.cons.CNetKAppState
 import com.mozhimen.netk.app.task.cons.CNetKAppTaskState
-import com.mozhimen.netk.app.task.db.AppTask
+import com.mozhimen.taskk.task.provider.db.AppTask
 import com.mozhimen.netk.app.utils.NetKAppNotificationUtil
 
 /**
@@ -59,8 +57,8 @@ class NetKAppNotificationProxy : BaseWakeBefDestroyLifecycleObserver() {
             setOngoing(appTask.isTaskProcess())
         }
         //子标题
-        if (appTask.downloadProgress in 1..99) {// don't use setContentInfo(deprecated in API level 24)
-            builder.setSubText(_context.getString(R.string.netk_app_notifier_subtext_placeholder, appTask.downloadProgress))
+        if (appTask.taskDownloadProgress in 1..99) {// don't use setContentInfo(deprecated in API level 24)
+            builder.setSubText(_context.getString(R.string.netk_app_notifier_subtext_placeholder, appTask.taskDownloadProgress))
         } else {
             builder.setSubText("")
         }
@@ -82,8 +80,8 @@ class NetKAppNotificationProxy : BaseWakeBefDestroyLifecycleObserver() {
             appTask.isTasking() -> {
                 builder.setProgress(
                     100,
-                    appTask.downloadProgress,
-                    appTask.downloadProgress <= 0 || appTask.downloadProgress >= 100 || appTask.taskState == CNetKAppState.STATE_INSTALLING || appTask.taskState == CNetKAppState.STATE_VERIFYING/*percent <= 0*/
+                    appTask.taskDownloadProgress,
+                    appTask.taskDownloadProgress <= 0 || appTask.taskDownloadProgress >= 100 || appTask.taskState == CNetKAppState.STATE_INSTALLING || appTask.taskState == CNetKAppState.STATE_VERIFYING/*percent <= 0*/
                 )
             }
         }

@@ -18,10 +18,10 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ANetKit_App"
+rootProject.name = "ATaskKit_TaskProvider"
 include ':app'
 include ':core'
-include ':install'
+include ':basic'
 include ':install_splits_ackpine'
 //SwiftKit
 include ':SwiftKit'
@@ -70,3 +70,5 @@ include(':AManifestKit_XXPermissions:manifestk_xxpermissions')
 include(':APostKit')
 project(':APostKit').projectDir = new File("D:\\WorkSpace\\GitHub\\APostKit")
 include(':APostKit:postk_livedata')
+include ':install'
+include ':uninstall'
