@@ -1,2 +1,2 @@
 # ANetKit_App
-Android网络库 -> App下载,验证,更新,安装
+Android任务库 -> 提供App等后缀文件下载,验证,更新,安装的处理流程方案
