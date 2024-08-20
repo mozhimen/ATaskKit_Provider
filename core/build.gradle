@@ -35,7 +35,6 @@ android {
 }
 
 dependencies {
-    implementation project(':AInstallKit:installk_manager')
     implementation project(':ANetKit_okdownload:okdownload')
     implementation project(':ANetKit_okdownload:okdownload_ext')
     implementation project(':ANetKit_okdownload:okdownload-breakpoint-sqlite')

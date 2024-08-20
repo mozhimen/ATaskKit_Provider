@@ -4,17 +4,11 @@ import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.kotlin.collections.ifNotEmptyOr
-import com.mozhimen.basick.utilk.kotlin.deleteFile
-import com.mozhimen.basick.utilk.kotlin.deleteFolder
-import com.mozhimen.basick.utilk.kotlin.getStrFilePathNoExtension
-import com.mozhimen.basick.utilk.kotlin.getStrFolderPath
-import com.mozhimen.basick.utilk.kotlin.isFileExist
-import com.mozhimen.basick.utilk.kotlin.isFolderExist
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.netk.app.NetKApp
 import com.mozhimen.netk.app.cons.CNetKAppState
 import com.mozhimen.taskk.task.provider.db.AppTask
-import com.mozhimen.netk.app.task.db.AppTaskDaoManager
+import com.mozhimen.taskk.task.provider.db.AppTaskDaoManager
 
 /**
  * @ClassName NetKAppUnInstallManager

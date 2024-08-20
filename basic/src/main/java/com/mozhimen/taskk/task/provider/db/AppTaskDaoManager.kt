@@ -1,14 +1,10 @@
-package com.mozhimen.netk.app.task.db
+package com.mozhimen.taskk.task.provider.db
 
 import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import androidx.annotation.WorkerThread
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.taskk.executor.TaskKExecutor
 import com.mozhimen.basick.utilk.commons.IUtilK
-import com.mozhimen.taskk.task.provider.db.AppTaskDbManager
-import com.mozhimen.netk.app.task.cons.CNetKAppTaskState
-import com.mozhimen.netk.app.utils.intAppState2strAppState
-import com.mozhimen.taskk.task.provider.db.AppTask
 import java.lang.Exception
 import java.util.concurrent.ConcurrentHashMap
 

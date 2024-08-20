@@ -14,6 +14,4 @@ interface ITaskProviders<T : ITaskProvider> : ITaskProvider {
     val providerDefault: T
     val providers: ConcurrentHashMap<String, T>
     fun addProvider(provider: T)
-    fun onSuccess(appTask: AppTask)
-    fun onFail(appTask: AppTask)
 }

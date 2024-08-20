@@ -28,7 +28,7 @@ import com.mozhimen.netk.app.download.mos.AppDownloadException
 import com.mozhimen.netk.app.download.mos.MAppDownloadProgress
 import com.mozhimen.netk.app.tasks.download.mos.intAppErrorCode2appDownloadException
 import com.mozhimen.taskk.task.provider.db.AppTask
-import com.mozhimen.netk.app.task.db.AppTaskDaoManager
+import com.mozhimen.taskk.task.provider.db.AppTaskDaoManager
 import com.mozhimen.netk.app.tasks.verify.NetKAppVerifyManager
 import okhttp3.OkHttpClient
 import okhttp3.internal.http2.StreamResetException

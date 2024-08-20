@@ -3,7 +3,7 @@ package com.mozhimen.taskk.task.provider.uninstall
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.basick.utilk.kotlin.collections.ifNotEmptyOr
-import com.mozhimen.netk.app.task.db.AppTaskDaoManager
+import com.mozhimen.taskk.task.provider.db.AppTaskDaoManager
 import com.mozhimen.taskk.task.provider.commons.ITaskProviders
 import com.mozhimen.taskk.task.provider.commons.providers.ITaskProviderUninstall
 import com.mozhimen.taskk.task.provider.db.AppTask
@@ -33,7 +33,7 @@ object TaskProvidersUninstall : ITaskProviders<ITaskProviderUninstall> {
     }
 
     override fun process(appTask: AppTask) {
-        TODO("Not yet implemented")
+        providers[appTask.fileExt]?.process(appTask)
     }
 
     @JvmStatic

@@ -3,12 +3,8 @@ package com.mozhimen.taskk.task.provider.db
 import android.content.Context
 import androidx.annotation.UiThread
 import androidx.room.Room
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
-import com.mozhimen.taskk.task.provider.cons.CState
 import com.mozhimen.netk.app.task.db.AppTaskDao
-import com.mozhimen.netk.app.task.db.AppTaskDaoManager
 
 /**
  * @ClassName DatabaseManager

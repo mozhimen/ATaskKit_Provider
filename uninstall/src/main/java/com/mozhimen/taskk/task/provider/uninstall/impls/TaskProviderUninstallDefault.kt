@@ -16,6 +16,13 @@ class TaskProviderUninstallDefault : ITaskProviderUninstall {
     }
 
     override fun process(appTask: AppTask) {
+        InstallKManager.removePackage(appTask.apkPackageName)
+    }
 
+    override fun onSuccess(appTask: AppTask) {
+
+    }
+
+    override fun onFail(appTask: AppTask) {
     }
 }

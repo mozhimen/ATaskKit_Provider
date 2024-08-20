@@ -13,4 +13,6 @@ import com.mozhimen.taskk.task.provider.db.AppTask
 interface ITaskProvider : IUtilK {
     fun getSupportFileExtensions(): List<String>
     fun process(appTask: AppTask)
+    fun onSuccess(appTask: AppTask)
+    fun onFail(appTask: AppTask)
 }

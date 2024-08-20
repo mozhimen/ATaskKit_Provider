@@ -25,7 +25,7 @@ import com.mozhimen.netk.app.cons.CNetKAppErrorCode
 import com.mozhimen.netk.app.cons.CNetKAppEvent
 import com.mozhimen.netk.app.cons.CNetKAppState
 import com.mozhimen.netk.app.cons.SNetKAppFinishType
-import com.mozhimen.netk.app.task.db.AppTaskDaoManager
+import com.mozhimen.taskk.task.provider.db.AppTaskDaoManager
 import com.mozhimen.netk.app.tasks.unzip.NetKAppUnzipManager
 import com.mozhimen.taskk.task.provider.db.AppTaskDbManager
 import com.mozhimen.netk.app.tasks.download.NetKAppDownloadManager

@@ -11,7 +11,7 @@ import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.netk.app.NetKApp
 import com.mozhimen.netk.app.cons.CNetKAppErrorCode
 import com.mozhimen.taskk.task.provider.db.AppTask
-import com.mozhimen.netk.app.task.db.AppTaskDaoManager
+import com.mozhimen.taskk.task.provider.db.AppTaskDaoManager
 import com.mozhimen.netk.app.cons.CNetKAppState
 import com.mozhimen.netk.app.tasks.download.mos.intAppErrorCode2appDownloadException
 import com.mozhimen.netk.app.basic.commons.INetKAppInstallProvider
