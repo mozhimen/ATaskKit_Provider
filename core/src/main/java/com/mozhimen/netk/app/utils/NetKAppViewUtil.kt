@@ -4,8 +4,8 @@ import android.content.Context
 import android.view.View
 import com.mozhimen.basick.elemk.commons.IAB_Listener
 import com.mozhimen.basick.elemk.commons.I_AListener
-import com.mozhimen.netk.app.cons.CNetKAppState
-import com.mozhimen.netk.app.task.cons.CNetKAppTaskState
+import com.mozhimen.taskk.task.provider.cons.CState
+import com.mozhimen.taskk.task.provider.cons.CTaskState
 import com.mozhimen.taskk.task.provider.db.AppTask
 
 /**
@@ -25,13 +25,13 @@ object NetKAppViewUtil {
         view.setOnLongClickListener {
             val appTask = onGetAppTask.invoke()
             when (appTask.taskState) {
-                /*CNetKAppTaskState.STATE_TASK_WAIT,*/
-                CNetKAppState.STATE_DOWNLOADING, CNetKAppTaskState.STATE_TASK_PAUSE, CNetKAppState.STATE_DOWNLOAD_PAUSE -> {
+                /*CState.STATE_TASK_WAIT,*/
+                CTaskState.STATE_DOWNLOADING, CState.STATE_TASK_PAUSE, CTaskState.STATE_DOWNLOAD_PAUSE -> {
 //                    cancelTask(it.context, appTask)
                     onCancel.invoke(it.context, appTask)
                 }
 
-                CNetKAppState.STATE_UNZIP_SUCCESS, CNetKAppState.STATE_INSTALLING -> {
+                CTaskState.STATE_UNZIP_SUCCESS, CTaskState.STATE_INSTALLING -> {
                     onCancel.invoke(it.context, appTask)
                 }
             }
@@ -58,7 +58,7 @@ object NetKAppViewUtil {
             val appTask: AppTask = onGetAppTask.invoke()
             when (appTask.taskState) {
                 //如果是已安装，则打开App
-                CNetKAppTaskState.STATE_TASK_SUCCESS -> {
+                CState.STATE_TASK_SUCCESS -> {
                     //判断是否有更新，如果有更新，则下载最新版本
 //                    if (appBriefRes.haveUpdate == 1) {
 //                        download(it.context, button, fileParams)
@@ -68,7 +68,7 @@ object NetKAppViewUtil {
                     onOpen.invoke(it.context, appTask)
                 }
                 //如果是未下载，则下载app
-                CNetKAppTaskState.STATE_TASK_CREATE, CNetKAppTaskState.STATE_TASK_UPDATE/*, CNetKAppTaskState.STATE_TASK_WAIT*/ -> {
+                CState.STATE_TASK_CREATE, CState.STATE_TASK_UPDATE/*, CState.STATE_TASK_WAIT*/ -> {
                     //startTask(it.context, appTask)
                     onStart.invoke(it.context, appTask)
                 }
@@ -80,12 +80,12 @@ object NetKAppViewUtil {
 //                    )
 //                }
                 //如果是下载中，则暂停
-                CNetKAppState.STATE_DOWNLOADING -> {
+                CTaskState.STATE_DOWNLOADING -> {
 //                    NetKApp.instance.taskPause(appTask)
                     onPause.invoke(it.context, appTask)
                 }
                 //如果是暂停、取消，则恢复
-                CNetKAppTaskState.STATE_TASK_PAUSE -> {
+                CState.STATE_TASK_PAUSE -> {
 //                AppState.APP_STATE_DOWNLOAD_CANCELED,
 //                AppState.APP_STATE_PENDING_CANCELED -> {
 //                    button.setText("等待中")
@@ -107,12 +107,12 @@ object NetKAppViewUtil {
 //                    textKProgress.setText("等待中")
 //                    download(it.context, button, fileParams)
 //                }
-                CNetKAppState.STATE_VERIFY_SUCCESS, CNetKAppState.STATE_UNZIPING -> {
+                CTaskState.STATE_VERIFY_SUCCESS, CTaskState.STATE_UNZIPING -> {
 //                    NetKApp.instance.unzip(appTask)
                     onUnzip.invoke(it.context, appTask)
                 }
 
-                CNetKAppState.STATE_UNZIP_SUCCESS, CNetKAppState.STATE_INSTALLING -> {
+                CTaskState.STATE_UNZIP_SUCCESS, CTaskState.STATE_INSTALLING -> {
 //                    startInstall(it.context, appTask)
                     onInstall.invoke(it.context, appTask)
                 }

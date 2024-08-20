@@ -35,15 +35,11 @@ android {
 }
 
 dependencies {
-    implementation project(':ANetKit_okdownload:okdownload')
-    implementation project(':ANetKit_okdownload:okdownload_ext')
-    implementation project(':ANetKit_okdownload:okdownload-breakpoint-sqlite')
-    implementation project(':ANetKit_okdownload:okdownload-connection-okhttp')
+
     implementation project(':SwiftKit:basick')
-    implementation project(':ALibKit_Squareup:okhttp3')
-    implementation project(':ACacheKit:cachek_datastore')
-    implementation project(':APostKit:postk_livedata')
-    implementation project(project.path.replace(project.name, '') + ':basic')
+    api project(project.path.replace(project.name, '') + ':basic')
+    api project(project.path.replace(project.name, '') + ':install')
+    api project(project.path.replace(project.name, '') + ':download')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

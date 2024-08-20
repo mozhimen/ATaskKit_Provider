@@ -59,6 +59,8 @@ data class AppTask(
 
     @ColumnInfo(name = "apk_unzip_need")
     var taskUnzipEnable: Boolean,
+    @ColumnInfo(name = "task_unzip_file_path")
+    var taskUnzipFilePath: String,
 
     ////////////////////////////////////////////////////////////////
 

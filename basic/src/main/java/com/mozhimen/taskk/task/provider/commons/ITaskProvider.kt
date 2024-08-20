@@ -2,7 +2,7 @@ package com.mozhimen.taskk.task.provider.commons
 
 import androidx.annotation.CallSuper
 import com.mozhimen.basick.utilk.commons.IUtilK
-import com.mozhimen.taskk.task.provider.commons.sets.ITaskProviderEvent
+import com.mozhimen.taskk.task.provider.cons.STaskFinishType
 import com.mozhimen.taskk.task.provider.db.AppTask
 
 /**
@@ -17,16 +17,6 @@ interface ITaskProvider : IUtilK, ITaskProviderLifecycle, ITaskProviderEvent {
     fun getSupportFileExtensions(): List<String>
 
     @CallSuper
-    override fun onTaskCanceled(taskState: Int, appTask: AppTask) {
-        appTask.taskState = taskState
-    }
-
-    @CallSuper
-    override fun onTaskFailed(taskState: Int, appTask: AppTask) {
-        appTask.taskState = taskState
-    }
-
-    @CallSuper
     override fun onTaskPaused(taskState: Int, appTask: AppTask) {
         appTask.taskState = taskState
     }
@@ -37,7 +27,7 @@ interface ITaskProvider : IUtilK, ITaskProviderLifecycle, ITaskProviderEvent {
     }
 
     @CallSuper
-    override fun onTaskSucceeded(taskState: Int, appTask: AppTask) {
+    override fun onTaskFinished(taskState: Int, finishType: STaskFinishType, appTask: AppTask) {
         appTask.taskState = taskState
     }
 }

@@ -90,6 +90,7 @@ object AppTaskMigrations {
         override fun migrate(db: SupportSQLiteDatabase) {
             db.execSQL("ALTER TABLE netk_app_task ADD COLUMN file_ext TEXT NOT NULL DEFAULT 'apk'")
             db.execSQL("ALTER TABLE netk_app_task ADD COLUMN task_download_file_speed INTEGER NOT NULL DEFAULT 0")
+            db.execSQL("ALTER TABLE netk_app_task ADD COLUMN task_unzip_file_path TEXT NOT NULL DEFAULT ''")
         }
     }
 }

@@ -1,7 +1,10 @@
 package com.mozhimen.taskk.task.provider.commons.providers
 
+import androidx.annotation.CallSuper
 import com.mozhimen.taskk.task.provider.annors.ATaskName
 import com.mozhimen.taskk.task.provider.commons.ITaskProvider
+import com.mozhimen.taskk.task.provider.cons.STaskFinishType
+import com.mozhimen.taskk.task.provider.db.AppTask
 import java.io.File
 
 /**
@@ -16,5 +19,11 @@ interface ITaskProviderDownload : ITaskProvider {
 
     override fun getTaskName(): String {
         return ATaskName.TASK_DOWNLOAD
+    }
+
+    @CallSuper
+    override fun onTaskFinished(taskState: Int, finishType: STaskFinishType, appTask: AppTask) {
+        super.onTaskFinished(taskState, finishType, appTask)
+        appTask.taskDownloadReset()
     }
 }

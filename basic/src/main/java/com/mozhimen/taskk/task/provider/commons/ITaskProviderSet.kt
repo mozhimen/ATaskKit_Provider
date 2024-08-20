@@ -1,5 +1,6 @@
 package com.mozhimen.taskk.task.provider.commons
 
+import com.mozhimen.taskk.task.provider.cons.STaskFinishType
 import com.mozhimen.taskk.task.provider.db.AppTask
 import java.util.concurrent.ConcurrentHashMap
 
@@ -37,31 +38,32 @@ interface ITaskProviderSet<T : ITaskProvider> : ITaskProvider {
         providers[appTask.fileExt]?.taskStart(appTask)
     }
 
-    override fun onStarted(appTask: AppTask) {
-        providers[appTask.fileExt]?.onTaskStarted(appTask)
-    }
-
     override fun taskPause(appTask: AppTask) {
-        providers[appTask.fileExt]?.onTaskPaused(appTask)
+        providers[appTask.fileExt]?.taskPause(appTask)
     }
 
-    override fun onPaused(appTask: AppTask) {
-        providers[appTask.fileExt]?.onTaskPaused(appTask)
+    override fun taskResume(appTask: AppTask) {
+        providers[appTask.fileExt]?.taskResume(appTask)
     }
 
     override fun taskCancel(appTask: AppTask) {
         providers[appTask.fileExt]?.taskCancel(appTask)
     }
 
-    override fun onCanceled(appTask: AppTask) {
-        providers[appTask.fileExt]?.onTaskCanceled(appTask)
+    ////////////////////////////////////////////////////////////////////
+
+    override fun onTaskStarted(taskState: Int, appTask: AppTask) {
+        super.onTaskStarted(taskState, appTask)
+        providers[appTask.fileExt]?.onTaskStarted(taskState,appTask)
     }
 
-    override fun onSucceeded(appTask: AppTask) {
-        providers[appTask.fileExt]?.onTaskSucceeded(appTask)
+    override fun onTaskPaused(taskState: Int, appTask: AppTask) {
+        super.onTaskPaused(taskState, appTask)
+        providers[appTask.fileExt]?.onTaskPaused(taskState,appTask)
     }
 
-    override fun onFailed(appTask: AppTask) {
-        providers[appTask.fileExt]?.onTaskFailed(appTask)
+    override fun onTaskFinished(taskState: Int, finishType: STaskFinishType, appTask: AppTask) {
+        super.onTaskFinished(taskState, finishType, appTask)
+        providers[appTask.fileExt]?.onTaskFinished(taskState, finishType, appTask)
     }
 }

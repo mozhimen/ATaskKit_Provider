@@ -1,5 +1,6 @@
 package com.mozhimen.taskk.task.provider.commons
 
+import com.mozhimen.taskk.task.provider.cons.STaskFinishType
 import com.mozhimen.taskk.task.provider.db.AppTask
 
 /**
@@ -10,9 +11,7 @@ import com.mozhimen.taskk.task.provider.db.AppTask
  * @Version 1.0
  */
 interface ITaskProviderLifecycle {
-    fun onTaskStarted(taskState:Int, appTask: AppTask)
-    fun onTaskPaused(taskState:Int, appTask: AppTask)
-    fun onTaskCanceled(taskState:Int, appTask: AppTask)
-    fun onTaskSucceeded(taskState:Int, appTask: AppTask)
-    fun onTaskFailed(taskState:Int, appTask: AppTask)
+    fun onTaskStarted(taskState: Int, appTask: AppTask)
+    fun onTaskPaused(taskState: Int, appTask: AppTask)
+    fun onTaskFinished(taskState: Int, finishType: STaskFinishType, appTask: AppTask)
 }

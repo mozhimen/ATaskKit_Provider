@@ -12,8 +12,8 @@ import com.mozhimen.basick.utilk.android.app.UtilKPendingIntentWrapper
 import com.mozhimen.basick.utilk.android.content.UtilKApplicationInfo
 import com.mozhimen.basick.utilk.android.os.UtilKBuildVersion
 import com.mozhimen.netk.app.R
-import com.mozhimen.netk.app.cons.CNetKAppState
-import com.mozhimen.netk.app.task.cons.CNetKAppTaskState
+import com.mozhimen.taskk.task.provider.cons.CState
+import com.mozhimen.taskk.task.provider.cons.CTaskState
 import com.mozhimen.taskk.task.provider.db.AppTask
 
 /**
@@ -46,7 +46,7 @@ object NetKAppNotificationUtil {
             .setSmallIcon(notifierSmallIcon)
             .setContentTitle(title)
             .setAutoCancel(
-                !appTask.isTaskProcess() || appTask.taskState == CNetKAppState.STATE_UNZIP_SUCCESS
+                !appTask.isTaskProcess() || appTask.taskState == CTaskState.STATE_UNZIP_SUCCESS
             ) // canceled when it is clicked by the user.
             .setOngoing(appTask.isTaskProcess())
 
@@ -67,7 +67,7 @@ object NetKAppNotificationUtil {
 //                        builder.setContentIntent(pendingIntent)
 //                }
 //            }
-            appTask.taskState == CNetKAppTaskState.STATE_TASK_SUCCESS -> {
+            appTask.taskState == CState.STATE_TASK_SUCCESS -> {
                 intent?.let {
                     builder.setContentIntent(UtilKPendingIntentWrapper.get_ofActivity_IMMUTABLE(0, it))
                 }
@@ -83,7 +83,7 @@ object NetKAppNotificationUtil {
                 builder.setProgress(
                     100,
                     appTask.taskDownloadProgress,
-                    appTask.taskDownloadProgress <= 0 || appTask.taskState == CNetKAppState.STATE_INSTALLING || appTask.taskState == CNetKAppState.STATE_VERIFYING/*percent <= 0*/
+                    appTask.taskDownloadProgress <= 0 || appTask.taskState == CTaskState.STATE_INSTALLING || appTask.taskState == CTaskState.STATE_VERIFYING/*percent <= 0*/
                 )
             }
 

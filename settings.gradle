@@ -1,7 +1,7 @@
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        maven { url "https://plugins.gradle.org/m2/" }
+//        maven { url "https://plugins.gradle.org/m2/" }
         maven { url 'https://maven.aliyun.com/repository/central' }
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/jcenter' }
@@ -76,3 +76,4 @@ include ':uninstall'
 include ':task_provider_apk'
 include ':download'
 include ':download_okdownload'
+include ':tradition'
