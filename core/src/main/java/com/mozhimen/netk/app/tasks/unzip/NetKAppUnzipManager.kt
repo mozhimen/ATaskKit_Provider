@@ -16,7 +16,7 @@ import com.mozhimen.basick.utilk.kotlin.deleteFolder
 import com.mozhimen.basick.utilk.kotlin.getSplitLastIndexToStart
 import com.mozhimen.basick.utilk.kotlin.strFilePath2file
 import com.mozhimen.netk.app.NetKApp
-import com.mozhimen.netk.app.cons.CNetKAppErrorCode
+import com.mozhimen.taskk.task.provider.cons.CErrorCode
 import com.mozhimen.netk.app.cons.CNetKAppState
 import com.mozhimen.netk.app.download.mos.AppDownloadException
 import com.mozhimen.netk.app.download.mos.intAppErrorCode2appDownloadException
@@ -64,7 +64,7 @@ internal object NetKAppUnzipManager : IUtilK {
      */
     @JvmStatic
     fun isUnziping(appTask: AppTask): Boolean {
-        return _unzippingTasks.containsBy { it.taskId == appTask.taskId } && appTask.isTaskUnzip()
+        return _unzippingTasks.containsBy { it.taskId == appTask.taskId } && appTask.atTaskUnzip()
     }
 
     @JvmStatic
@@ -94,9 +94,9 @@ internal object NetKAppUnzipManager : IUtilK {
                 val strPathNameUnzip = unzipOnBack(appTask)
                 UtilKLogWrapper.d(TAG, "unzip: strPathNameUnzip $strPathNameUnzip")
                 if (strPathNameUnzip.isEmpty())
-                    throw CNetKAppErrorCode.CODE_UNZIP_FAIL.intAppErrorCode2appDownloadException()
+                    throw CErrorCode.CODE_UNZIP_FAIL.intAppErrorCode2appDownloadException()
                 else if (!strPathNameUnzip.endsWith("apk"))
-                    throw CNetKAppErrorCode.CODE_UNZIP_FAIL.intAppErrorCode2appDownloadException()
+                    throw CErrorCode.CODE_UNZIP_FAIL.intAppErrorCode2appDownloadException()
 
                 /////////////////////////////////////////////////////////
 
@@ -138,7 +138,7 @@ internal object NetKAppUnzipManager : IUtilK {
         _unzippingTasks.add(appTask)//开始解压，添加到列表中
 
         val externalFilesDownloadDir = NetKApp.instance.getDownloadPath() ?: run {
-            throw CNetKAppErrorCode.CODE_UNZIP_DIR_NULL.intAppErrorCode2appDownloadException()
+            throw CErrorCode.CODE_UNZIP_DIR_NULL.intAppErrorCode2appDownloadException()
         }
         val fileSource = appTask.filePathNameExt.strFilePath2file()
         UtilKLogWrapper.d(TAG, "unzipOnBack: fileSource ${fileSource.absolutePath}")

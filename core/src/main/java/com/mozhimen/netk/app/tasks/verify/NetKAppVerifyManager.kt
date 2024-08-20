@@ -7,7 +7,7 @@ import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.java.io.file2strFilePath
 import com.mozhimen.basick.utilk.java.io.file2strMd5Hex_use_ofStream
 import com.mozhimen.netk.app.NetKApp
-import com.mozhimen.netk.app.cons.CNetKAppErrorCode
+import com.mozhimen.taskk.task.provider.cons.CErrorCode
 import com.mozhimen.netk.app.cons.CNetKAppState
 import com.mozhimen.netk.app.download.mos.intAppErrorCode2appDownloadException
 import com.mozhimen.taskk.task.provider.db.AppTask
@@ -26,7 +26,7 @@ internal object NetKAppVerifyManager : IUtilK {
 
     @JvmStatic
     fun verify(appTask: AppTask) {
-        if (appTask.isTaskUnzip()) {
+        if (appTask.atTaskUnzip()) {
             UtilKLogWrapper.d(TAG, "verify: the task already verify")
             return
         }
@@ -43,7 +43,7 @@ internal object NetKAppVerifyManager : IUtilK {
             /**
              * [CNetKAppState.STATE_VERIFY_FAIL]
              */
-            NetKApp.instance.onVerifyFail(appTask, CNetKAppErrorCode.CODE_VERIFY_FORMAT_INVALID.intAppErrorCode2appDownloadException())
+            NetKApp.instance.onVerifyFail(appTask, CErrorCode.CODE_VERIFY_FORMAT_INVALID.intAppErrorCode2appDownloadException())
             UtilKLogWrapper.d(TAG, "verifyAndUnzipNpk: getFilesDownloadsDir is null")
         }
     }
@@ -66,7 +66,7 @@ internal object NetKAppVerifyManager : IUtilK {
             /**
              * [CNetKAppState.STATE_VERIFY_FAIL]
              */
-            NetKApp.instance.onVerifyFail(appTask, CNetKAppErrorCode.CODE_VERIFY_DIR_NULL.intAppErrorCode2appDownloadException())
+            NetKApp.instance.onVerifyFail(appTask, CErrorCode.CODE_VERIFY_DIR_NULL.intAppErrorCode2appDownloadException())
             UtilKLogWrapper.e(TAG, "verifyAndUnzipNpk: getFilesDownloadsDir is null")
             return
         }
@@ -75,7 +75,7 @@ internal object NetKAppVerifyManager : IUtilK {
             /**
              * [CNetKAppState.STATE_VERIFY_FAIL]
              */
-            NetKApp.instance.onVerifyFail(appTask, CNetKAppErrorCode.CODE_VERIFY_FILE_NOT_EXIST.intAppErrorCode2appDownloadException())
+            NetKApp.instance.onVerifyFail(appTask, CErrorCode.CODE_VERIFY_FILE_NOT_EXIST.intAppErrorCode2appDownloadException())
             UtilKLogWrapper.e(TAG, "verifyAndUnzipNpk: download file fail")
             return
         }
@@ -86,7 +86,7 @@ internal object NetKAppVerifyManager : IUtilK {
                 /**
                  * [CNetKAppState.STATE_VERIFY_FAIL]
                  */
-                NetKApp.instance.onVerifyFail(appTask, CNetKAppErrorCode.CODE_VERIFY_MD5_FAIL.intAppErrorCode2appDownloadException())
+                NetKApp.instance.onVerifyFail(appTask, CErrorCode.CODE_VERIFY_MD5_FAIL.intAppErrorCode2appDownloadException())
                 UtilKLogWrapper.e(TAG, "verifyAndUnzipNpk: download file fail")
 
                 NetKApp.instance.taskRetry(appTask.apply {

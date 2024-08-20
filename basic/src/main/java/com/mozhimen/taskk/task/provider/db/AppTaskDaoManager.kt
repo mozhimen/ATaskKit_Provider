@@ -2,11 +2,10 @@ package com.mozhimen.taskk.task.provider.db
 
 import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import androidx.annotation.WorkerThread
-import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.taskk.executor.TaskKExecutor
 import com.mozhimen.basick.utilk.commons.IUtilK
-import java.lang.Exception
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.Exception
 
 /**
  * @ClassName AppTaskDaoManager
@@ -15,19 +14,273 @@ import java.util.concurrent.ConcurrentHashMap
  * @Date 2023/11/7 16:08
  * @Version 1.0
  */
-@OApiInit_InApplication
 object AppTaskDaoManager : IUtilK {
-    private val _tasks = ConcurrentHashMap<String, AppTask>()
+    private val _appTasks by lazy { ConcurrentHashMap(AppTaskDb.getAppTaskDao().get_ofAll().associateBy { it.taskId }) }
+
+    //////////////////////////////////////////////////////////
 
     fun init() {
-        TaskKExecutor.execute(TAG + "init") {
-            AppTaskDbManager.appTaskDao.getAll().forEach {
-                _tasks[it.taskId] = it
-            }
-        }
+        UtilKLogWrapper.d(TAG, "init: ${_appTasks["0"]}")
     }
 
     //////////////////////////////////////////////////////////
+
+    @JvmStatic
+    fun get_ofTaskId(taskId: String): AppTask? {
+        return _appTasks[taskId]
+    }
+
+    @JvmStatic
+    fun get_ofTaskId_ApkPackageName_ApkVersionCode(taskId: String, apkPackageName: String, apkVersionCode: Int): AppTask? {
+        val appTask = get_ofTaskId(taskId) ?: return null
+        return if (appTask.apkPackageName == apkPackageName && appTask.apkVersionCode == apkVersionCode) appTask else null
+    }
+
+    @JvmStatic
+    fun get_ofTaskDownloadId(taskDownloadId: Int): AppTask? {
+        return _appTasks.filter { it.value.taskDownloadId == taskDownloadId }.values.first()
+    }
+
+    @JvmStatic
+    fun get_ofTaskDownloadUrlCurrent(taskDownloadUrlCurrent: String): AppTask? {
+        return _appTasks.filter { it.value.taskDownloadUrlCurrent == taskDownloadUrlCurrent }.values.first()
+    }
+
+    //////////////////////////////////////////////////////////
+
+    fun get_ofFileName(fileName: String): AppTask? {
+        return _appTasks.filter { it.value.fileName == fileName }.values.first()
+    }
+
+    fun get_ofFilePathNameExt(filePathNameExt: String): AppTask? {
+        return _appTasks.filter { it.value.filePathNameExt == filePathNameExt }.values.first()
+    }
+
+    //////////////////////////////////////////////////////////
+
+    @JvmStatic
+    fun get_ofApkPackageName_ApkVersionCode(apkPackageName: String, apkVersionCode: Int): AppTask? {
+        return _appTasks.filter { it.value.apkPackageName == apkPackageName && it.value.apkVersionCode == apkVersionCode }.values.first()
+    }
+
+    @JvmStatic
+    fun gets_ofApkPackageName(packageName: String): List<AppTask> {
+        return _appTasks.filter { it.value.apkPackageName == packageName }.values.toList()
+    }
+
+    //////////////////////////////////////////////////////////
+
+    @JvmStatic
+    fun gets_ofIsTaskProcess(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskProcess() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTasking(): List<AppTask> {
+        return _appTasks.filter { it.value.isTasking() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskPause(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskPause() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskSuccess(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskSuccess() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskCancel(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskCancel() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskFail(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskCancel() }.values.toList()
+    }
+
+    ////////////////////////////////////////////////////////////
+
+    @JvmStatic
+    fun gets_ofIsTaskDownloading(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskDownloading() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskVerifying(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskVerifying() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskUnziping(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskUnziping() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskInstalling(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskInstalling() }.values.toList()
+    }
+
+    ////////////////////////////////////////////////////////////
+
+    @JvmStatic
+    fun gets_ofIsTaskDownloadSuccess(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskDownloadSuccess() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskVerifySuccess(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskVerifySuccess() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskUnzipSuccess(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskUnzipSuccess() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskInstallSuccess(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskInstallSuccess() }.values.toList()
+    }
+
+    ////////////////////////////////////////////////////////////
+
+    @JvmStatic
+    fun gets_ofAtTaskDownload(): List<AppTask> {
+        return _appTasks.filter { it.value.atTaskDownload() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofAtTaskVerify(): List<AppTask> {
+        return _appTasks.filter { it.value.atTaskVerify() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofAtTaskUnzip(): List<AppTask> {
+        return _appTasks.filter { it.value.atTaskUnzip() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofAtTaskInstall(): List<AppTask> {
+        return _appTasks.filter { it.value.atTaskInstall() }.values.toList()
+    }
+
+    ////////////////////////////////////////////////////////////
+
+    fun has_ofAtTaskDownload(): Boolean {
+        return gets_ofAtTaskDownload().isNotEmpty()
+    }
+
+    fun has_ofAtTaskVerify(): Boolean {
+        return gets_ofAtTaskVerify().isNotEmpty()
+    }
+
+    fun has_ofAtTaskUnzip(): Boolean {
+        return gets_ofAtTaskUnzip().isNotEmpty()
+    }
+
+    fun has_ofAtTaskInstall(): Boolean {
+        return gets_ofAtTaskInstall().isNotEmpty()
+    }
+
+    //////////////////////////////////////////////////////////
+
+    fun has_ofTaskId(taskId: String): Boolean {
+        return get_ofTaskId(taskId) != null
+    }
+
+    //////////////////////////////////////////////////////////
+
+    fun add(vararg appTasks: AppTask) {
+        TaskKExecutor.execute(TAG + "addAll") {
+            addOrUpdateOnBack(*appTasks)
+        }
+    }
+
+    fun update(appTask: AppTask) {
+        TaskKExecutor.execute(TAG + "update ${appTask.getStrTaskState()}") {
+            addOrUpdateOnBack(appTask)
+        }
+    }
+
+    fun delete(appTask: AppTask) {
+        TaskKExecutor.execute(TAG + "delete") {
+            deleteOnBack(appTask)
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * 删除任务
+     * @param appTask 需要删除的任务
+     */
+    @Synchronized
+    @WorkerThread
+    private fun deleteOnBack(appTask: AppTask) {
+        try {
+            if (has_ofTaskId(appTask.taskId)) {
+                _appTasks.remove(appTask.taskId)
+            } else return
+            AppTaskDb.getAppTaskDao().delete(appTask)
+        }catch (e:Exception){
+            e.printStackTrace()
+            UtilKLogWrapper.e(TAG, "deleteOnBack: ", e)
+        }
+    }
+
+    /**
+     * 同步更新，防止多个线程同时更新，出现问题
+     */
+    @Synchronized
+    @WorkerThread
+    private fun addOrUpdateOnBack(vararg appTasks: AppTask) {
+        try {
+            appTasks.forEach { appTask ->
+                _appTasks[appTask.taskId] = appTask
+                if (has_ofTaskId(appTask.taskId)) {
+                    AppTaskDb.getAppTaskDao().update(appTask)//将本条数据插入到数据库
+                } else {
+                    AppTaskDb.getAppTaskDao().addAll(appTask)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            UtilKLogWrapper.e(TAG, "addOrUpdateOnBack: ", e)
+        }
+    }
+
+//    /*    fun queryAppTask(appBaseInfo: AppBaseInfo): AppTask? {
+//    val iterator = _appTasks.iterator()
+//    while (iterator.hasNext()) {
+//        val next = iterator.next()
+//        if (next.packName == appBaseInfo.packageName) {
+//            //如果Id相同，说明是我们自己安装的,还需要判断下载地址是否相同，如果相同，则返回对象，否则需要重新创建一个
+//            if (next.appId == appBaseInfo.id) {
+//                if (next.currentDownloadUrl == AppDownloadManager.getDownloadUrl(appBaseInfo)) {
+//                    return next
+//                } else {
+//                    //从数据库中删除
+//                    iterator.remove()
+//                    AppDownloadManager.executorService.execute {
+//                        DatabaseManager.appDownloadParamDao.delete(next)
+//                    }
+//                    break
+//                }
+//            }
+//        }
+//    }
+//    return null
+//}*/
+
+//废弃
+//    fun removeAppTaskForDatabase(appTask: AppTask) {
+//        if (appTask.apkPackageName.isEmpty()) return
+//        val appTask1 = getByApkPackageName(appTask.apkPackageName) ?: return//从本地数据库中查询出下载信息//如果查询不到，就不处理
+//        //if (appTask1.apkIsInstalled)//删除数据库中的其他已安装的数据，相同包名的只保留一条已安装的数据
+//        delete(appTask1)
+//    }
 
 //    fun getAllDownloading(countDownLatch: CountDownLatch, list: MutableList<AppTask>) {
 //        TaskKExecutor.execute(TAG + "getAllDownloading") {
@@ -47,218 +300,9 @@ object AppTaskDaoManager : IUtilK {
 //        return null
 //    }
 
-    @JvmStatic
-    fun getByTaskId_PackageName_VersionCode(taskId: String, packageName: String, versionCode: Int): AppTask? {
-//        val appTask: AppTask = _tasks[taskId] ?: kotlin.run {
-//            return null
-//        }
-//        if (appTask.apkPackageName == packageName)
-//            return appTask
-//        return null
-        return _tasks.filter { it.value.taskId == taskId && it.value.apkPackageName == packageName && it.value.apkVersionCode == versionCode }.map { it.value }.getOrNull(0)
-    }
-
-    /**
-     * 根据应用id查询下载对象
-     * @param taskId 应用Id
-     * @return null 表示没有查询到
-     */
-    @JvmStatic
-    fun getByTaskId(taskId: String): AppTask? {
-        return _tasks[taskId]
-    }
-
-//    @JvmStatic
-//    fun getByDownloadId(downloadId: Int): AppTask? {
-//        return _tasks.filter { it.value.downloadId == downloadId }.map { it.value }.getOrNull(0)
-//    }
-
-    @JvmStatic
-    fun getByDownloadUrl(downloadUrlCurrent: String): AppTask? {
-        return _tasks.filter { it.value.taskDownloadUrlCurrent == downloadUrlCurrent }.map { it.value }.getOrNull(0)
-    }
-
-//    /**
-//     * 根据应用包名查询下载对象
-//     * @param packageName 应用Id
-//     * @return null 表示没有查询到
-//     */
-
-    @JvmStatic
-    fun getByApkPackageName_VersionCode(packageName: String, versionCode: Int): AppTask? {
-        return _tasks.filter { it.value.apkPackageName == packageName && it.value.apkVersionCode == versionCode }.map { it.value }.getOrNull(0)
-    }
-
-    /**
-     * 通过保存名称获取下载信息
-     * @param apkName 保存名称
-     * @return 下载信息
-     */
-    fun getByApkName(apkName: String): AppTask? {
-        return _tasks.filter { it.value.fileName == apkName }.map { it.value }.getOrNull(0)
-    }
-
-    fun getByApkPathName(apkPathName:String): AppTask? {
-        return _tasks.filter { it.value.filePathNameExt == apkPathName }.map { it.value }.getOrNull(0)
-    }
-
 //    @JvmStatic
 //    fun getAllAtTaskDownloadOrWaitOrPause(): List<AppTask> {
 //        return _tasks.filter { it.value.isTaskDownload() /*|| it.value.taskState == CNetKAppTaskState.STATE_TASK_WAIT*/ || it.value.taskState == CNetKAppTaskState.STATE_TASK_PAUSE }
 //            .map { it.value }
 //    }
-
-    @JvmStatic
-    fun getAppTasksByApkPackageName(packageName: String): List<AppTask> {
-        return _tasks.filter { it.value.apkPackageName == packageName }.map { it.value }
-    }
-
-    @JvmStatic
-    fun getAppTasksIsDownloading(): List<AppTask> {
-        return _tasks.filter { it.value.isDownloading() }.map { it.value }
-    }
-
-    @JvmStatic
-    fun getAppTasksIsProcess(): List<AppTask> {
-        return _tasks.filter { it.value.isTaskProcess() }.map { it.value }
-    }
-
-    @JvmStatic
-    fun getAppTasksIsInstalled(): List<AppTask> {
-        return _tasks.filter { it.value.isInstalled() }.map { it.value }
-    }
-
-    //////////////////////////////////////////////////////////
-
-    fun hasDownloading(): Boolean {
-        return _tasks.filter { it.value.isTaskDownload() }.isNotEmpty()
-    }
-
-    fun hasVerifying(): Boolean {
-        return _tasks.filter { it.value.isTaskVerify() }.isNotEmpty()
-    }
-
-    fun hasUnziping(): Boolean {
-        return _tasks.filter { it.value.isTaskUnzip() }.isNotEmpty()
-    }
-
-    fun hasInstalling(): Boolean {
-        return _tasks.filter { it.value.isTaskInstall() }.isNotEmpty()
-    }
-
-    //////////////////////////////////////////////////////////
-
-    //废弃
-//    fun removeAppTaskForDatabase(appTask: AppTask) {
-//        if (appTask.apkPackageName.isEmpty()) return
-//        val appTask1 = getByApkPackageName(appTask.apkPackageName) ?: return//从本地数据库中查询出下载信息//如果查询不到，就不处理
-//        //if (appTask1.apkIsInstalled)//删除数据库中的其他已安装的数据，相同包名的只保留一条已安装的数据
-//        delete(appTask1)
-//    }
-
-    fun addAppTask2Database(appTask: AppTask) {
-        val appTask1 = getByTaskId(appTask.taskId)//更新本地数据库中的数据
-        if (appTask1 == null) {
-            addAll(appTask)
-        }
-    }
-
-    //////////////////////////////////////////////////////////
-
-    private fun addAll(vararg appTask: AppTask) {
-        TaskKExecutor.execute(TAG + "addAll") {
-            appTask.forEach {
-                it.taskState = CNetKAppTaskState.STATE_TASK_CREATE
-                it.taskDownloadProgress = 0
-//                it.taskUpdateTime = System.currentTimeMillis()
-            }
-            appTask.forEach {
-                if (_tasks[it.taskId] != null) {
-                    AppTaskDbManager.appTaskDao.update(it)
-                } else {
-                    _tasks[it.taskId] = it
-                    AppTaskDbManager.appTaskDao.addAll(it)
-                }
-            }
-        }
-    }
-
-    /**
-     * 更新数据
-     */
-    fun update(appTask: AppTask) {
-        TaskKExecutor.execute(TAG + "update ${appTask.taskState.intAppState2strAppState()}") {
-            updateOnBack(appTask)
-        }
-    }
-
-    /**
-     * 删除数据
-     */
-    fun delete(appTask: AppTask) {
-        TaskKExecutor.execute(TAG + "delete") {
-            deleteOnBack(appTask)
-        }
-    }
-
-    /*    fun queryAppTask(appBaseInfo: AppBaseInfo): AppTask? {
-        val iterator = _appTasks.iterator()
-        while (iterator.hasNext()) {
-            val next = iterator.next()
-            if (next.packName == appBaseInfo.packageName) {
-                //如果Id相同，说明是我们自己安装的,还需要判断下载地址是否相同，如果相同，则返回对象，否则需要重新创建一个
-                if (next.appId == appBaseInfo.id) {
-                    if (next.currentDownloadUrl == AppDownloadManager.getDownloadUrl(appBaseInfo)) {
-                        return next
-                    } else {
-                        //从数据库中删除
-                        iterator.remove()
-                        AppDownloadManager.executorService.execute {
-                            DatabaseManager.appDownloadParamDao.delete(next)
-                        }
-                        break
-                    }
-                }
-            }
-        }
-        return null
-    }*/
-
-    /////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * 删除任务
-     * @param appTask 需要删除的任务
-     */
-    @Synchronized
-    @WorkerThread
-    private fun deleteOnBack(appTask: AppTask) {
-        if (_tasks.contains(appTask.taskId)) {
-            UtilKLogWrapper.d(TAG, "deleteOnBack: _tasks ")
-            _tasks.remove(appTask.taskId)
-        } else return
-        AppTaskDbManager.appTaskDao.delete(appTask)
-
-    }
-
-    /**
-     * 同步更新，防止多个线程同时更新，出现问题
-     */
-    @Synchronized
-    @WorkerThread
-    private fun updateOnBack(appTask: AppTask) {
-//        appTask.taskUpdateTime = System.currentTimeMillis()
-        try {
-            if (_tasks.containsKey(appTask.taskId)) {
-                AppTaskDbManager.appTaskDao.update(appTask)//将本条数据插入到数据库
-            } else {
-                AppTaskDbManager.appTaskDao.addAll(appTask)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        _tasks[appTask.taskId] = appTask
-    }
-
-
 }

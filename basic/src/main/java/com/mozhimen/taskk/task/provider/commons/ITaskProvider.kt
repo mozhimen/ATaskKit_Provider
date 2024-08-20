@@ -1,6 +1,8 @@
 package com.mozhimen.taskk.task.provider.commons
 
+import androidx.annotation.CallSuper
 import com.mozhimen.basick.utilk.commons.IUtilK
+import com.mozhimen.taskk.task.provider.commons.sets.ITaskProviderEvent
 import com.mozhimen.taskk.task.provider.db.AppTask
 
 /**
@@ -10,9 +12,32 @@ import com.mozhimen.taskk.task.provider.db.AppTask
  * @Date 2024/8/19
  * @Version 1.0
  */
-interface ITaskProvider : IUtilK {
+interface ITaskProvider : IUtilK, ITaskProviderLifecycle, ITaskProviderEvent {
+    fun getTaskName(): String
     fun getSupportFileExtensions(): List<String>
-    fun process(appTask: AppTask)
-    fun onSuccess(appTask: AppTask)
-    fun onFail(appTask: AppTask)
+
+    @CallSuper
+    override fun onTaskCanceled(taskState: Int, appTask: AppTask) {
+        appTask.taskState = taskState
+    }
+
+    @CallSuper
+    override fun onTaskFailed(taskState: Int, appTask: AppTask) {
+        appTask.taskState = taskState
+    }
+
+    @CallSuper
+    override fun onTaskPaused(taskState: Int, appTask: AppTask) {
+        appTask.taskState = taskState
+    }
+
+    @CallSuper
+    override fun onTaskStarted(taskState: Int, appTask: AppTask) {
+        appTask.taskState = taskState
+    }
+
+    @CallSuper
+    override fun onTaskSucceeded(taskState: Int, appTask: AppTask) {
+        appTask.taskState = taskState
+    }
 }

@@ -73,3 +73,6 @@ project(':APostKit').projectDir = new File("D:\\WorkSpace\\GitHub\\APostKit")
 include(':APostKit:postk_livedata')
 include ':install'
 include ':uninstall'
+include ':task_provider_apk'
+include ':download'
+include ':download_okdownload'

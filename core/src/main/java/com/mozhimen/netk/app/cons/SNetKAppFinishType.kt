@@ -1,6 +1,6 @@
 package com.mozhimen.netk.app.cons
 
-import com.mozhimen.netk.app.tasks.download.mos.AppDownloadException
+import com.mozhimen.taskk.provider.download.impls.AppDownloadException
 
 /**
  * @ClassName ENetKAppFinish
@@ -12,5 +12,5 @@ import com.mozhimen.netk.app.tasks.download.mos.AppDownloadException
 sealed class SNetKAppFinishType {
     object SUCCESS : SNetKAppFinishType()
     object CANCEL : SNetKAppFinishType()
-    data class FAIL(val exception: _root_ide_package_.com.mozhimen.netk.app.tasks.download.mos.AppDownloadException) : SNetKAppFinishType()
+    data class FAIL(val exception: com.mozhimen.taskk.provider.download.impls.AppDownloadException) : SNetKAppFinishType()
 }

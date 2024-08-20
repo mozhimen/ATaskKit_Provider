@@ -21,7 +21,7 @@ internal object NetKAppUnInstallManager : IUtilK {
     @OptIn(OApiInit_InApplication::class)
     @JvmStatic
     fun onUninstallSuccess(apkPackageName: String) {
-        val list = AppTaskDaoManager.getAppTasksByApkPackageName(apkPackageName)
+        val list = AppTaskDaoManager.gets_ofApkPackageName(apkPackageName)
         list.ifNotEmptyOr({
             it.forEach { appTask ->
                 UtilKLogWrapper.d(TAG, "onUninstallSuccess: apkPackageName $apkPackageName")

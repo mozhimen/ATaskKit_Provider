@@ -22,11 +22,11 @@ import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.javax.net.UtilKSSLSocketFactory
 import com.mozhimen.basick.utilk.kotlin.ranges.constraint
 import com.mozhimen.netk.app.NetKApp
-import com.mozhimen.netk.app.cons.CNetKAppErrorCode
+import com.mozhimen.taskk.task.provider.cons.CErrorCode
 import com.mozhimen.netk.app.cons.CNetKAppState
 import com.mozhimen.netk.app.download.mos.AppDownloadException
 import com.mozhimen.netk.app.download.mos.MAppDownloadProgress
-import com.mozhimen.netk.app.tasks.download.mos.intAppErrorCode2appDownloadException
+import com.mozhimen.taskk.provider.download.impls.intAppErrorCode2appDownloadException
 import com.mozhimen.taskk.task.provider.db.AppTask
 import com.mozhimen.taskk.task.provider.db.AppTaskDaoManager
 import com.mozhimen.netk.app.tasks.verify.NetKAppVerifyManager
@@ -92,11 +92,11 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
             OkDownload.setSingletonInstance(builder.build())
             DownloadDispatcher.setMaxParallelRunningCount(PARALLEL_RUNNING_COUNT)
 
-            AppTaskDaoManager.getAppTasksIsDownloading().forEach {
+            AppTaskDaoManager.gets_ofIsTaskDownloading().forEach {
                 getDownloadTask(it)?.let { downloadTask ->
                     _downloadingTasks.put(downloadTask.id, MAppDownloadProgress(it))
                 }
-                if (it.isDownloading())
+                if (it.isTaskDownloading())
                     downloadPause(it)
             }
         } catch (e: Exception) {
@@ -192,7 +192,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     @JvmStatic
     fun download(appTask: AppTask) {
         val externalFilesDir = NetKApp.instance.getDownloadPath()
-            ?: throw CNetKAppErrorCode.CODE_DOWNLOAD_PATH_NOT_EXIST.intAppErrorCode2appDownloadException()
+            ?: throw CErrorCode.CODE_DOWNLOAD_PATH_NOT_EXIST.intAppErrorCode2appDownloadException()
         val downloadTask = DownloadTask.Builder(appTask.taskDownloadUrlCurrent, externalFilesDir, _breakpointCompare)//先构建一个Task 框架可以保证Id唯一
             .setConnectionCount(1)
             .setFilename(appTask.fileNameExt)
@@ -307,7 +307,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
         /**
          * [CNetKAppState.STATE_DOWNLOADING]
          */
-        NetKApp.instance.onDownloading(appTask, appTask.taskDownloadProgress.constraint(1, 100), appTask.taskDownloadFileSize, appTask.taskDownloadFileSizeTotal, BLOCK_SIZE_MIN)
+        NetKApp.instance.onDownloading(appTask, appTask.taskDownloadProgress.constraint(1, 100), appTask.taskDownloadFileSizeOffset, appTask.taskDownloadFileSizeTotal, BLOCK_SIZE_MIN)
     }
 
     /**
@@ -391,7 +391,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
         UtilKLogWrapper.d(TAG, "taskStart: task $downloadTask")
         var mAppDownloadProgress = _downloadingTasks[downloadTask.id]
         if (mAppDownloadProgress == null) {
-            val appTask = AppTaskDaoManager.getByDownloadUrl(downloadTask.url) ?: return
+            val appTask = AppTaskDaoManager.get_ofTaskDownloadUrlCurrent(downloadTask.url) ?: return
             _downloadingTasks[downloadTask.id] = MAppDownloadProgress(appTask)
             mAppDownloadProgress = _downloadingTasks[downloadTask.id]
         }
@@ -422,7 +422,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     override fun progress(downloadTask: DownloadTask, currentOffset: Long, totalLength: Long) {
         var mAppDownloadProgress = _downloadingTasks[downloadTask.id]
         if (mAppDownloadProgress == null) {
-            val appTask = AppTaskDaoManager.getByDownloadUrl(downloadTask.url) ?: return
+            val appTask = AppTaskDaoManager.get_ofTaskDownloadUrlCurrent(downloadTask.url) ?: return
             _downloadingTasks[downloadTask.id] = MAppDownloadProgress(appTask)
             mAppDownloadProgress = _downloadingTasks[downloadTask.id]
         }
@@ -451,7 +451,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
         UtilKLogWrapper.d(TAG, "taskEnd: $downloadTask cause ${cause.name} realCause ${realCause.toString()}")
         var mAppDownloadProgress = _downloadingTasks[downloadTask.id]
         if (mAppDownloadProgress == null) {
-            val appTask = AppTaskDaoManager.getByDownloadUrl(downloadTask.url) ?: return
+            val appTask = AppTaskDaoManager.get_ofTaskDownloadUrlCurrent(downloadTask.url) ?: return
             _downloadingTasks[downloadTask.id] = MAppDownloadProgress(appTask)
             mAppDownloadProgress = _downloadingTasks[downloadTask.id]
         }

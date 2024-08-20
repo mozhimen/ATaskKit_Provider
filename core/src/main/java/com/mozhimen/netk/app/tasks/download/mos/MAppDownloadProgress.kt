@@ -15,5 +15,5 @@ data class MAppDownloadProgress(
     var isRetry: Boolean = false
 ) {
     fun isDownloading(): Boolean =
-        appTask.isTaskDownload()
+        appTask.atTaskDownload()
 }

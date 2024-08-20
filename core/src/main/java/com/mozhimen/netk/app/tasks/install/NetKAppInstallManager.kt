@@ -9,11 +9,11 @@ import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.kotlin.collections.ifNotEmptyOr
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.netk.app.NetKApp
-import com.mozhimen.netk.app.cons.CNetKAppErrorCode
+import com.mozhimen.taskk.task.provider.cons.CErrorCode
 import com.mozhimen.taskk.task.provider.db.AppTask
 import com.mozhimen.taskk.task.provider.db.AppTaskDaoManager
 import com.mozhimen.netk.app.cons.CNetKAppState
-import com.mozhimen.netk.app.tasks.download.mos.intAppErrorCode2appDownloadException
+import com.mozhimen.taskk.provider.download.impls.intAppErrorCode2appDownloadException
 import com.mozhimen.netk.app.basic.commons.INetKAppInstallProvider
 import com.mozhimen.netk.app.tasks.install.impls.NetKAppInstallProviderDefault
 import com.mozhimen.netk.app.task.NetKAppTaskManager
@@ -49,12 +49,12 @@ internal object NetKAppInstallManager : IUtilK {
     @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class, OPermission_REQUEST_INSTALL_PACKAGES::class)
     @JvmStatic
     fun install(appTask: AppTask, fileApk: File) {
-        if (!appTask.canInstall()) {
+        if (!appTask.canTaskInstall()) {
             UtilKLogWrapper.e(TAG, "install: the task hasn't unzip or verify success")
             /**
              * Net
              */
-            NetKApp.instance.onInstallFail(appTask, CNetKAppErrorCode.CODE_INSTALL_HAST_VERIFY_OR_UNZIP.intAppErrorCode2appDownloadException())
+            NetKApp.instance.onInstallFail(appTask, CErrorCode.CODE_INSTALL_HAST_VERIFY_OR_UNZIP.intAppErrorCode2appDownloadException())
             return
         }
 //        if (appTask.isTaskInstall()) {
@@ -73,7 +73,7 @@ internal object NetKAppInstallManager : IUtilK {
 
     @JvmStatic
     fun onInstallSuccess(apkPackageName: String, versionCode: Int) {
-        val list = AppTaskDaoManager.getAppTasksByApkPackageName(apkPackageName)
+        val list = AppTaskDaoManager.gets_ofApkPackageName(apkPackageName)
         list.ifNotEmptyOr({
             it.forEach { appTask ->
                 if (appTask.apkVersionCode <= versionCode) {

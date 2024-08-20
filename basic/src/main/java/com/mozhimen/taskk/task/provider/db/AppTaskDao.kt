@@ -17,7 +17,7 @@ import com.mozhimen.taskk.task.provider.db.AppTask
 @Dao
 interface AppTaskDao {
     @Query("select * from netk_app_task")
-    fun getAll(): List<AppTask>
+    fun get_ofAll(): List<AppTask>
 
     @Query("select * from netk_app_task where task_id = :taskId")
     fun get_ofTaskId(taskId: String): List<AppTask>

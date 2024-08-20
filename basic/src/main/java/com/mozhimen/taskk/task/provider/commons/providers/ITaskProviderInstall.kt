@@ -1,5 +1,6 @@
 package com.mozhimen.taskk.task.provider.commons.providers
 
+import com.mozhimen.taskk.task.provider.annors.ATaskName
 import com.mozhimen.taskk.task.provider.commons.ITaskProvider
 
 /**
@@ -9,4 +10,8 @@ import com.mozhimen.taskk.task.provider.commons.ITaskProvider
  * @Date 2024/6/21
  * @Version 1.0
  */
-interface ITaskProviderInstall : ITaskProvider
+interface ITaskProviderInstall : ITaskProvider{
+    override fun getTaskName(): String {
+        return ATaskName.TASK_INSTALL
+    }
+}

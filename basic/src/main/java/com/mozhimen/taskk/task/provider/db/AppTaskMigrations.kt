@@ -89,6 +89,7 @@ object AppTaskMigrations {
     internal val MIGRATION_3_4 = object : Migration(3, 4) {
         override fun migrate(db: SupportSQLiteDatabase) {
             db.execSQL("ALTER TABLE netk_app_task ADD COLUMN file_ext TEXT NOT NULL DEFAULT 'apk'")
+            db.execSQL("ALTER TABLE netk_app_task ADD COLUMN task_download_file_speed INTEGER NOT NULL DEFAULT 0")
         }
     }
 }

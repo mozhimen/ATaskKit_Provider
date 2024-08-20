@@ -1,5 +1,8 @@
 package com.mozhimen.taskk.task.provider.commons.providers
 
+import com.mozhimen.taskk.task.provider.annors.ATaskName
+import com.mozhimen.taskk.task.provider.commons.ITaskProvider
+
 /**
  * @ClassName INetKAppUnzipProvider
  * @Description TODO
@@ -7,4 +10,8 @@ package com.mozhimen.taskk.task.provider.commons.providers
  * @Date 2024/8/19
  * @Version 1.0
  */
-interface ITaskProviderUnzip
+interface ITaskProviderUnzip : ITaskProvider {
+    override fun getTaskName(): String {
+        return ATaskName.TASK_UNZIP
+    }
+}

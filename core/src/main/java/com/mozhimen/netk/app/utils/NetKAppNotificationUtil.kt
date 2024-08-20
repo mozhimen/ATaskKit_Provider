@@ -73,7 +73,7 @@ object NetKAppNotificationUtil {
                 }
             }
 
-            appTask.isUnzipSuccess() -> {
+            appTask.isTaskUnzipSuccess() -> {
                 intent?.let {
                     builder.setContentIntent(UtilKPendingIntentWrapper.get_ofActivity_IMMUTABLE(0, it))
                 }
