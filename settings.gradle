@@ -19,7 +19,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ATaskKit_TaskProvider"
+rootProject.name = "ATaskKit_Provider"
 include ':app'
 include ':core'
 include ':basic'
@@ -73,7 +73,7 @@ project(':APostKit').projectDir = new File("D:\\WorkSpace\\GitHub\\APostKit")
 include(':APostKit:postk_livedata')
 include ':install'
 include ':uninstall'
-include ':task_provider_apk'
+include ':provider_apk'
 include ':download'
 include ':download_okdownload'
 include ':tradition'

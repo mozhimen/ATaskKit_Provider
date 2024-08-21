@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.mozhimen.taskk.task.provider.install'
+    namespace 'com.mozhimen.taskk.provider.install'
     compileSdk 34
 
     defaultConfig {

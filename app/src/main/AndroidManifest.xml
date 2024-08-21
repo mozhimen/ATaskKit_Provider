@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ANetKit_App">
         <activity
-            android:name=".MainActivity"
+            android:name="com.mozhimen.taskk.provider.test.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
             android:label="@string/app_name"

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.mozhimen.taskk.task.provider.uninstall'
+    namespace 'com.mozhimen.taskk.provider.uninstall'
     compileSdk 34
 
     defaultConfig {

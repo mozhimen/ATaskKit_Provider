@@ -40,6 +40,9 @@ dependencies {
     api project(project.path.replace(project.name, '') + ':basic')
     api project(project.path.replace(project.name, '') + ':install')
     api project(project.path.replace(project.name, '') + ':download')
+    api project(project.path.replace(project.name, '') + ':download_okdownload')
+    api project(project.path.replace(project.name, '') + ':provider_apk')
+    implementation project(':AInstallKit:installk_manager')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

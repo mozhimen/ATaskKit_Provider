@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="?attr/fullscreenBackgroundColor"
     android:theme="@style/ThemeOverlay.ANetKit_App.FullscreenContainer"
-    tools:context=".MainActivity">
+    tools:context="com.mozhimen.taskk.provider.test.MainActivity">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,

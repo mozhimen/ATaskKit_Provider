@@ -1,6 +1,6 @@
 package com.mozhimen.taskk.provider.download.mos
 
-import com.mozhimen.taskk.task.provider.db.AppTask
+import com.mozhimen.taskk.provider.basic.db.AppTask
 
 /**
  * @ClassName AppDownloadProgress

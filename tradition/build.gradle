@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.mozhimen.taskk.task.provider.tradition'
+    namespace 'com.mozhimen.taskk.provider.tradition'
     compileSdk 34
 
     defaultConfig {
@@ -42,8 +42,7 @@ dependencies {
     implementation project(':APostKit:postk_livedata')
     implementation project(':AInstallKit:installk_manager')
     implementation project(project.path.replace(project.name, '') + ':basic')
-    implementation project(project.path.replace(project.name, '') + ':core')
-    implementation project(project.path.replace(project.name, '') + ':task_provider_apk')
+    implementation project(project.path.replace(project.name, '') + ':provider_apk')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

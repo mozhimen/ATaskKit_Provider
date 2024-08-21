@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.mozhimen.taskk.task.provider.install.splits.ackpine'
+    namespace 'com.mozhimen.task.provider.install.splits.ackpine'
     compileSdk 34
 
     defaultConfig {
