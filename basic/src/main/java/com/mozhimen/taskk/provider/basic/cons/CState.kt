@@ -33,31 +33,59 @@ object CState {
                 taskState != STATE_TASK_SUCCESS &&
                 taskState != STATE_TASK_FAIL
 
-    /////////////////////////////////////////////////////////////////////
-
-//    @JvmStatic
-//    fun isTaskWait(state: Int): Boolean =
-//        (state % 10) == STATE_TASK_WAIT
+    @JvmStatic
+    fun isTaskCreate(state: Int): Boolean =
+        state == STATE_TASK_CREATE
 
     @JvmStatic
-    fun isTasking(state: Int): Boolean =
-        (state % 10) == STATE_TASKING
+    fun isTaskUpdate(state: Int): Boolean =
+        state == STATE_TASK_UPDATE
 
     @JvmStatic
-    fun isTaskPause(state: Int): Boolean =
-        (state % 10) == STATE_TASK_PAUSE
-
-    /////////////////////////////////////////////////////////////////////
+    fun isTaskCreateOrUpdate(state: Int): Boolean =
+        isTaskCreate(state) or isTaskUpdate(state)
 
     @JvmStatic
-    fun isTaskSuccess(state: Int): Boolean =
-        state == STATE_TASK_SUCCESS
+    fun isTaskUnAvailable(state: Int): Boolean =
+        state == STATE_TASK_UNAVAILABLE
 
     @JvmStatic
     fun isTaskCancel(state: Int): Boolean =
         state == STATE_TASK_CANCEL
 
     @JvmStatic
+    fun isTaskSuccess(state: Int): Boolean =
+        state == STATE_TASK_SUCCESS
+
+    @JvmStatic
     fun isTaskFail(state: Int): Boolean =
         state == STATE_TASK_FAIL
+
+    /////////////////////////////////////////////////////////////////////
+
+    @JvmStatic
+    fun isAnyTasking(state: Int): Boolean =
+        (state % 10) == STATE_TASKING
+
+    @JvmStatic
+    fun isAnyTaskPause(state: Int): Boolean =
+        (state % 10) == STATE_TASK_PAUSE
+
+    @JvmStatic
+    fun isAnyTaskSuccess(state: Int): Boolean =
+        (state % 10) == STATE_TASK_SUCCESS
+
+    @JvmStatic
+    fun isAnyTaskCancel(state: Int): Boolean =
+        (state % 10) == STATE_TASK_CANCEL
+
+    @JvmStatic
+    fun isAnyTaskFail(state: Int): Boolean =
+        (state % 10) == STATE_TASK_FAIL
+
+    /////////////////////////////////////////////////////////////////////
+
+    //    @JvmStatic
+//    fun isTaskWait(state: Int): Boolean =
+//        (state % 10) == STATE_TASK_WAIT
 }

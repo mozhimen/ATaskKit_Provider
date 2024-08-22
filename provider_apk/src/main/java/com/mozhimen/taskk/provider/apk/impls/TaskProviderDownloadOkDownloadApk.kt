@@ -25,7 +25,7 @@ class TaskProviderDownloadOkDownloadApk(iTaskProviderLifecycle: ITaskProviderLif
     @OptIn(OApiInit_InApplication::class)
     override fun taskStart(appTask: AppTask) {
         super.taskStart(appTask)
-        if (InstallKManager.hasPackageName_satisfyVersionCode(appTask.apkPackageName, appTask.apkVersionCode)) {
+        if (InstallKManager.hasPackageName_lessThanInstalledVersionCode(appTask.apkPackageName, appTask.apkVersionCode)) {
             UtilKLogWrapper.d(TAG, "taskStart: hasPackageNameAndSatisfyVersion")
             /**
              * [CTaskState.STATE_INSTALL_SUCCESS]

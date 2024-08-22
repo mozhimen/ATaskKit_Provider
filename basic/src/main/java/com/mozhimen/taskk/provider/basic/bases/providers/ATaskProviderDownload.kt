@@ -17,7 +17,7 @@ import java.io.File
  * @Version 1.0
  */
 abstract class ATaskProviderDownload(iTaskProviderLifecycle: ITaskProviderLifecycle?) : ATaskProvider(iTaskProviderLifecycle) {
-    abstract var _downloadDir: File?
+    protected abstract var _downloadDir: File?
 
     abstract fun taskResumeAll()
     abstract fun taskPauseAll()

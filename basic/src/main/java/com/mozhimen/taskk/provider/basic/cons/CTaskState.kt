@@ -1,6 +1,5 @@
 package com.mozhimen.taskk.provider.basic.cons
 
-
 /**
  * @ClassName CAppDownloadState
  * @Description TODO
@@ -9,7 +8,7 @@ package com.mozhimen.taskk.provider.basic.cons
  * @Version 1.0
  */
 object CTaskState {
-    internal const val STATE_DOWNLOAD_CREATE = 10//STATE_DOWNLOADED = 5//未下载
+    const val STATE_DOWNLOAD_CREATE = 10//STATE_DOWNLOADED = 5//未下载
 
     //    const val STATE_DOWNLOAD_WAIT = STATE_DOWNLOAD_CREATE + CNetKAppTaskState.STATE_TASK_WAIT//11//下载等待
     const val STATE_DOWNLOADING = STATE_DOWNLOAD_CREATE + CState.STATE_TASKING//12//STATE_DOWNLOAD_IN_PROGRESS = 6//正在下载
@@ -36,7 +35,7 @@ object CTaskState {
 
     //////////////////////////////////////////////////////////////
     //校验
-    internal const val STATE_VERIFY_CREATE = 20
+    const val STATE_VERIFY_CREATE = 20
     const val STATE_VERIFYING = STATE_VERIFY_CREATE + CState.STATE_TASKING//20//STATE_CHECKING = 14//校验中
     const val STATE_VERIFY_PAUSE = STATE_VERIFY_CREATE + CState.STATE_TASK_PAUSE//23
     const val STATE_VERIFY_CANCEL = STATE_VERIFY_CREATE + CState.STATE_TASK_CANCEL//27//STATE_CHECKING_SUCCESS = 15//校验成功
@@ -61,7 +60,7 @@ object CTaskState {
 
     //////////////////////////////////////////////////////////////
     //解压
-    internal const val STATE_UNZIP_CREATE = 30
+    const val STATE_UNZIP_CREATE = 30
     const val STATE_UNZIPING = STATE_UNZIP_CREATE + CState.STATE_TASKING//30//STATE_UNPACKING = 11//解压中
     const val STATE_UNZIP_PAUSE = STATE_UNZIP_CREATE + CState.STATE_TASK_PAUSE//33
     const val STATE_UNZIP_CANCEL = STATE_UNZIP_CREATE + CState.STATE_TASK_CANCEL//37//STATE_UNPACKING_SUCCESSFUL = 12//解压成功
@@ -86,7 +85,7 @@ object CTaskState {
 
     //////////////////////////////////////////////////////////////
     //安装
-    internal const val STATE_INSTALL_CREATE = 40
+    const val STATE_INSTALL_CREATE = 40
     const val STATE_INSTALLING = STATE_INSTALL_CREATE + CState.STATE_TASKING//42//STATE_INSTALLING = 1//安装中
     const val STATE_INSTALL_PAUSE = STATE_INSTALL_CREATE + CState.STATE_TASK_PAUSE//43
     const val STATE_INSTALL_CANCEL = STATE_INSTALL_CREATE + CState.STATE_TASK_CANCEL//47//STATE_INSTALLED = 2//安装取消
@@ -112,7 +111,7 @@ object CTaskState {
     //////////////////////////////////////////////////////////////
 
     //打开
-    internal const val STATE_OPEN_CREATE = 50
+    const val STATE_OPEN_CREATE = 50
     const val STATE_OPENING = STATE_OPEN_CREATE + CState.STATE_TASKING//52
     const val STATE_OPEN_PAUSE = STATE_OPEN_CREATE + CState.STATE_TASK_PAUSE//53
     const val STATE_OPEN_CANCEL = STATE_OPEN_CREATE + CState.STATE_TASK_CANCEL//57
@@ -138,7 +137,7 @@ object CTaskState {
     //////////////////////////////////////////////////////////////
 
     //卸载
-    internal const val STATE_UNINSTALL_CREATE = 60
+    const val STATE_UNINSTALL_CREATE = 70
     const val STATE_UNINSTALLING = STATE_UNINSTALL_CREATE + CState.STATE_TASKING//52
     const val STATE_UNINSTALL_PAUSE = STATE_UNINSTALL_CREATE + CState.STATE_TASK_PAUSE//53
     const val STATE_UNINSTALL_CANCEL = STATE_UNINSTALL_CREATE + CState.STATE_TASK_CANCEL//57
@@ -146,7 +145,7 @@ object CTaskState {
     const val STATE_UNINSTALL_FAIL = STATE_UNINSTALL_CREATE + CState.STATE_TASK_FAIL//59
 
     @JvmStatic
-    fun canTaskUnInstall(state: Int): Boolean =
+    fun canTaskUninstall(state: Int): Boolean =
         state in STATE_INSTALL_SUCCESS..STATE_UNINSTALLING
 
     @JvmStatic

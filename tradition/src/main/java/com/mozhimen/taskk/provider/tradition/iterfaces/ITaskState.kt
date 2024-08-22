@@ -1,4 +1,4 @@
-package com.mozhimen.taskk.provider.core.commons
+package com.mozhimen.taskk.provider.tradition.iterfaces
 
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
@@ -12,15 +12,6 @@ import com.mozhimen.taskk.provider.basic.impls.TaskException
  * @Date 2023/10/11 18:24
  * @Version 1.0
  */
-
-interface INetKAppStateBook {
-    //    /**
-//     * 预约状态发生变化的回调
-//     *@param appFileParams 应用Id
-//     *
-//     */
-//    fun onReservationStateChange(appFileParams: AppTask, booked: Boolean)
-}
 
 interface INetKAppStateUninstall {
     fun onUninstallSuccess(appTask: AppTask) {}//应用卸载的监听
@@ -61,26 +52,7 @@ interface INetKAppStateTask {
     fun onTasking(appTask: AppTask, state: Int)//任务进行中
     fun onTaskPause(appTask: AppTask)
     fun onTaskFinish(appTask: AppTask, finishType: STaskFinishType)
-//    /**
-//     * 任务等待取消的回调
-//     */
-//    fun onTaskWaitCancel(appTask: AppTask) {}
-//
-//    /**
-//     * 任务删除的回调
-//     */
-//    fun onTaskCancel(appTask: AppTask) {}
-//
-//    /**
-//     * 任务成功
-//     */
-//    fun onTaskSuccess(appTask: AppTask) {}
-//
-//    /**
-//     * 任务失败
-//     */
-//    fun onTaskFail(appTask: AppTask) {}
-
 }
 
 interface ITaskState : INetKAppStateDownload, INetKAppStateVerify, INetKAppStateUnzip, INetKAppStateInstall, INetKAppStateTask, INetKAppStateUninstall
+

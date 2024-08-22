@@ -17,6 +17,7 @@ import com.mozhimen.taskk.provider.basic.impls.intErrorCode2taskException
 import com.mozhimen.taskk.provider.basic.utils.TaskProviderUtil
 import com.mozhimen.taskk.provider.tradition.NetKApp
 import com.mozhimen.taskk.provider.tradition.impls.NetKAppTaskManager
+import com.mozhimen.taskk.provider.tradition.utils.NetKAppUtil
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
@@ -92,7 +93,7 @@ internal object NetKAppInstallManager : IUtilK {
         InstallKManager.addOrUpdatePackage(appTask.apkPackageName, appTask.apkVersionCode)
 
         if (NetKAppTaskManager.isDeleteApkFile) {
-            TaskProviderUtil.deleteFileApk(appTask)
+            NetKAppUtil.deleteFileApk(appTask)
         }
 
         //将安装状态发给后端
@@ -118,7 +119,7 @@ internal object NetKAppInstallManager : IUtilK {
 
     @JvmStatic
     fun installCancel(appTask: AppTask) {
-        TaskProviderUtil.deleteFileApk(appTask)
+        NetKAppUtil.deleteFileApk(appTask)
 
         /**
          * [CNetKAppState.STATE_INSTALL_CANCEL]

@@ -8,6 +8,7 @@ import com.mozhimen.taskk.provider.basic.interfaces.ITaskProviderEvent
 import com.mozhimen.taskk.provider.basic.interfaces.ITaskProviderLifecycle
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
+import com.mozhimen.taskk.provider.basic.db.AppTaskDaoManager
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -38,19 +39,19 @@ abstract class ATaskProvider(private val _iTaskProviderLifecycle: ITaskProviderL
 
     @CallSuper
     override fun onTaskStarted(taskState: Int, appTask: AppTask) {
-        appTask.taskState = taskState
+        appTask.toNewTaskState(taskState)
         _iTaskProviderLifecycle?.onTaskStarted(taskState, appTask)
     }
 
     @CallSuper
     override fun onTaskPaused(taskState: Int, appTask: AppTask) {
-        appTask.taskState = taskState
+        appTask.toNewTaskState(taskState)
         _iTaskProviderLifecycle?.onTaskPaused(taskState, appTask)
     }
 
     @CallSuper
     override fun onTaskFinished(taskState: Int, finishType: STaskFinishType, appTask: AppTask) {
-        appTask.taskState = taskState
+        appTask.toNewTaskState(taskState)
         _iTaskProviderLifecycle?.onTaskFinished(taskState, finishType, appTask)
     }
 }

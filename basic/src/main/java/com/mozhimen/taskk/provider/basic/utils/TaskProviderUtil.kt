@@ -1,5 +1,6 @@
 package com.mozhimen.taskk.provider.basic.utils
 
+import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
 import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.kotlin.deleteFile
@@ -8,9 +9,11 @@ import com.mozhimen.basick.utilk.kotlin.getStrFilePathNoExtension
 import com.mozhimen.basick.utilk.kotlin.getStrFolderPath
 import com.mozhimen.basick.utilk.kotlin.isFileExist
 import com.mozhimen.basick.utilk.kotlin.isFolderExist
+import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.taskk.provider.basic.cons.CState
 import com.mozhimen.taskk.provider.basic.cons.CTaskState
 import com.mozhimen.taskk.provider.basic.db.AppTask
+import com.mozhimen.taskk.provider.basic.db.AppTaskDaoManager
 
 /**
  * @ClassName TaskProviderUtil
@@ -20,33 +23,6 @@ import com.mozhimen.taskk.provider.basic.db.AppTask
  * @Version 1.0
  */
 object TaskProviderUtil : IUtilK {
-    /**
-     * 删除Apk文件
-     */
-    @JvmStatic
-    fun deleteFileApk(appTask: AppTask): Boolean {
-        try {
-            //删除文件
-            if (appTask.filePathNameExt.isFileExist()) {
-                appTask.filePathNameExt.deleteFile()
-                UtilKLogWrapper.d(TAG, "deleteFileApk: deleteFile")
-            }
-
-            //删除目录
-            val gameFolder = appTask.filePathNameExt.getStrFilePathNoExtension()?.getStrFolderPath()
-            if (gameFolder != null && gameFolder.isFolderExist()/*appTask.apkFileName.endsWith(".npk") && */) {//如果是npk,删除解压的文件夹
-                gameFolder.deleteFolder()
-                UtilKLogWrapper.d(TAG, "deleteFileApk: deleteFolder")
-            }
-
-            UtilKLogWrapper.w(TAG, "deleteFileApk path ${appTask.filePathNameExt} name ${appTask.fileNameExt} gameFolder $gameFolder")
-            return true
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return false
-        }
-    }
-
     @JvmStatic
     fun intTaskState2strTaskState(state: Int): String =
         when (state) {

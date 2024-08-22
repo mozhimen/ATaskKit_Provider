@@ -1,5 +1,6 @@
 package com.mozhimen.taskk.provider.apk.impls
 
+import android.annotation.SuppressLint
 import android.text.TextUtils
 import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.basick.utilk.java.io.file2strFilePath
@@ -44,6 +45,20 @@ class TaskProviderVerifyApk(iTaskProviderLifecycle: ITaskProviderLifecycle) : AT
             onTaskFinished(CTaskState.STATE_VERIFY_SUCCESS, STaskFinishType.SUCCESS, appTask)
         }
     }
+
+    @SuppressLint("MissingSuperCall")
+    override fun taskCancel(appTask: AppTask) {
+
+    }
+
+    @SuppressLint("MissingSuperCall")
+    override fun taskPause(appTask: AppTask) {
+    }
+
+    @SuppressLint("MissingSuperCall")
+    override fun taskResume(appTask: AppTask) {
+    }
+
 
     private fun startVerify(appTask: AppTask) {
         if (appTask.filePathNameExt.isEmpty()) {

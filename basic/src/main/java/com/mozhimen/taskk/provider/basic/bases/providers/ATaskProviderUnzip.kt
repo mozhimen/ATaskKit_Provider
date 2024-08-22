@@ -7,6 +7,7 @@ import com.mozhimen.taskk.provider.basic.cons.CTaskState
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.interfaces.ITaskProviderLifecycle
+import java.io.File
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -17,7 +18,10 @@ import java.util.concurrent.CopyOnWriteArrayList
  * @Version 1.0
  */
 abstract class ATaskProviderUnzip(iTaskProviderLifecycle: ITaskProviderLifecycle?) : ATaskProvider(iTaskProviderLifecycle) {
-    abstract val unzipTasks: CopyOnWriteArrayList<AppTask>
+    protected abstract var _unzipDir: File?
+
+    @Volatile
+    protected var _sniffTargetFile: String = ""
 
     abstract fun getIgnorePaths(): List<String>
 

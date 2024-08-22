@@ -32,7 +32,7 @@ class TaskProviderSetDownload(override val providerDefault: ATaskProviderDownloa
 
     override fun taskStart(appTask: AppTask) {
         try {
-            if (appTask.isTaskProcess() && !appTask.isTaskPause()) {
+            if (appTask.isTaskProcess() && !appTask.isAnyTaskPause()) {
                 UtilKLogWrapper.d(TAG, "taskStart: the task already start")
                 return
             }

@@ -1,11 +1,13 @@
 package com.mozhimen.taskk.provider.basic.bases.providers
 
 import androidx.annotation.CallSuper
+import com.mozhimen.installk.manager.commons.IInstallKReceiverProxy
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.bases.ATaskProvider
 import com.mozhimen.taskk.provider.basic.cons.CTaskState
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
+import com.mozhimen.taskk.provider.basic.interfaces.ITaskProviderInterceptor
 import com.mozhimen.taskk.provider.basic.interfaces.ITaskProviderLifecycle
 
 /**
@@ -16,10 +18,16 @@ import com.mozhimen.taskk.provider.basic.interfaces.ITaskProviderLifecycle
  * @Version 1.0
  */
 abstract class ATaskProviderInstall(iTaskProviderLifecycle: ITaskProviderLifecycle?) : ATaskProvider(iTaskProviderLifecycle) {
+    protected var _iInstallKReceiverProxy: IInstallKReceiverProxy? = null
+
+    fun setInstallKReceiverProxy(iInstallKReceiverProxy: IInstallKReceiverProxy): ATaskProviderInstall {
+        _iInstallKReceiverProxy = iInstallKReceiverProxy
+        return this
+    }
+
     override fun getTaskName(): String {
         return ATaskName.TASK_INSTALL
     }
-
 
     @CallSuper
     override fun taskStart(appTask: AppTask) {

@@ -99,28 +99,53 @@ data class AppTask(
     fun getStrTaskState(): String =
         TaskProviderUtil.intTaskState2strTaskState(taskState)
 
+    fun toNewTaskState(taskStateNew: Int) {
+        taskState = taskStateNew
+        AppTaskDaoManager.addOrUpdate(this)
+    }
+
     ////////////////////////////////////////////////////////////
 
     fun isTaskProcess(): Boolean =
-        /*!apkIsInstalled &&*/ CState.isTaskProcess(taskState)
+         CState.isTaskProcess(taskState)
 
-//    fun isTaskWait(): Boolean =
-//        !apkIsInstalled && CNetKAppTaskState.isTaskWait(taskState)
+    fun isTaskCreate(): Boolean =
+        CState.isTaskCreate(taskState)
 
-    fun isTasking(): Boolean =
-        /*!apkIsInstalled &&*/ CState.isTasking(taskState)
+    fun isTaskUpdate(): Boolean =
+        CState.isTaskUpdate(taskState)
 
-    fun isTaskPause(): Boolean =
-        /*!apkIsInstalled &&*/ CState.isTaskPause(taskState)
+    fun isTaskCreateOrUpdate(): Boolean =
+        CState.isTaskCreateOrUpdate(taskState)
 
-    fun isTaskSuccess(): Boolean =
-        CState.isTaskSuccess(taskState)
+    fun isTaskUnAvailable(): Boolean =
+        CState.isTaskUnAvailable(taskState)
 
     fun isTaskCancel(): Boolean =
         CState.isTaskCancel(taskState)
 
+    fun isTaskSuccess(): Boolean =
+        CState.isTaskSuccess(taskState)
+
     fun isTaskFail(): Boolean =
         CState.isTaskFail(taskState)
+
+    ////////////////////////////////////////////////////////////
+
+    fun isAnyTasking(): Boolean =
+         CState.isAnyTasking(taskState)
+
+    fun isAnyTaskPause(): Boolean =
+         CState.isAnyTaskPause(taskState)
+
+    fun isAnyTaskSuccess(): Boolean =
+        CState.isAnyTaskSuccess(taskState)
+
+    fun isAnyTaskCancel(): Boolean =
+        CState.isAnyTaskCancel(taskState)
+
+    fun isAnyTaskFail(): Boolean =
+        CState.isAnyTaskFail(taskState)
 
     ////////////////////////////////////////////////////////////
 
@@ -128,10 +153,10 @@ data class AppTask(
         CTaskState.canTaskDownload(taskState)
 
     fun atTaskDownload(): Boolean =
-        /*!apkIsInstalled &&*/ CTaskState.atTaskDownload(taskState)
+         CTaskState.atTaskDownload(taskState)
 
     fun isTaskDownloading(): Boolean =
-        /*!apkIsInstalled &&*/ CTaskState.isTaskDownloading(taskState)
+         CTaskState.isTaskDownloading(taskState)
 
     fun isTaskDownloadSuccess(): Boolean =
         CTaskState.isTaskDownloadSuccess(taskState)
@@ -142,7 +167,7 @@ data class AppTask(
         CTaskState.canTaskVerify(taskState)
 
     fun atTaskVerify(): Boolean =
-        /*!apkIsInstalled &&*/ CTaskState.atTaskVerify(taskState)
+         CTaskState.atTaskVerify(taskState)
 
     fun isTaskVerifying(): Boolean =
         CTaskState.isTaskVerifying(taskState)
@@ -156,7 +181,7 @@ data class AppTask(
         CTaskState.canTaskUnzip(taskState)
 
     fun atTaskUnzip(): Boolean =
-        /*!apkIsInstalled &&*/ CTaskState.atTaskUnzip(taskState)
+         CTaskState.atTaskUnzip(taskState)
 
     fun isTaskUnziping(): Boolean =
         CTaskState.isTaskUnziping(taskState)
@@ -170,13 +195,41 @@ data class AppTask(
         CTaskState.canTaskInstall(taskState)
 
     fun atTaskInstall(): Boolean =
-        /*!apkIsInstalled &&*/ CTaskState.atTaskInstall(taskState)
+         CTaskState.atTaskInstall(taskState)
 
     fun isTaskInstalling(): Boolean =
         CTaskState.isTaskInstalling(taskState)
 
     fun isTaskInstallSuccess(): Boolean =
         CTaskState.isTaskInstallSuccess(taskState)
+
+    ////////////////////////////////////////////////////////////
+
+    fun canTaskOpen(): Boolean =
+        CTaskState.canTaskOpen(taskState)
+
+    fun atTaskOpen(): Boolean =
+         CTaskState.atTaskOpen(taskState)
+
+    fun isTaskOpening(): Boolean =
+        CTaskState.isTaskOpening(taskState)
+
+    fun isTaskOpenSuccess(): Boolean =
+        CTaskState.isTaskOpenSuccess(taskState)
+
+    ////////////////////////////////////////////////////////////
+
+    fun canTaskUninstall(): Boolean =
+        CTaskState.canTaskUninstall(taskState)
+
+    fun atTaskUninstall(): Boolean =
+         CTaskState.atTaskUninstall(taskState)
+
+    fun isTaskUninstalling(): Boolean =
+        CTaskState.isTaskUninstalling(taskState)
+
+    fun isTaskUninstallSuccess(): Boolean =
+        CTaskState.isTaskUninstallSuccess(taskState)
 
     ////////////////////////////////////////////////////////////
 
@@ -243,4 +296,7 @@ data class AppTask(
         result = 31 * result + apkVersionName.hashCode()
         return result
     }
+
+    //    fun isTaskWait(): Boolean =
+//        !apkIsInstalled && CNetKAppTaskState.isTaskWait(taskState)
 }

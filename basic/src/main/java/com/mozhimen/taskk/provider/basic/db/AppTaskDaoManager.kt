@@ -19,12 +19,6 @@ object AppTaskDaoManager : IUtilK {
 
     //////////////////////////////////////////////////////////
 
-    fun init() {
-        UtilKLogWrapper.d(TAG, "init: ${_appTasks["0"]}")
-    }
-
-    //////////////////////////////////////////////////////////
-
     @JvmStatic
     fun get_ofTaskId(taskId: String): AppTask? {
         return _appTasks[taskId]
@@ -82,27 +76,27 @@ object AppTaskDaoManager : IUtilK {
 
     @JvmStatic
     fun gets_ofIsTasking(): List<AppTask> {
-        return _appTasks.filter { it.value.isTasking() }.values.toList()
+        return _appTasks.filter { it.value.isAnyTasking() }.values.toList()
     }
 
     @JvmStatic
     fun gets_ofIsTaskPause(): List<AppTask> {
-        return _appTasks.filter { it.value.isTaskPause() }.values.toList()
+        return _appTasks.filter { it.value.isAnyTaskPause() }.values.toList()
     }
 
     @JvmStatic
     fun gets_ofIsTaskSuccess(): List<AppTask> {
-        return _appTasks.filter { it.value.isTaskSuccess() }.values.toList()
+        return _appTasks.filter { it.value.isAnyTaskSuccess() }.values.toList()
     }
 
     @JvmStatic
     fun gets_ofIsTaskCancel(): List<AppTask> {
-        return _appTasks.filter { it.value.isTaskCancel() }.values.toList()
+        return _appTasks.filter { it.value.isAnyTaskCancel() }.values.toList()
     }
 
     @JvmStatic
     fun gets_ofIsTaskFail(): List<AppTask> {
-        return _appTasks.filter { it.value.isTaskCancel() }.values.toList()
+        return _appTasks.filter { it.value.isAnyTaskCancel() }.values.toList()
     }
 
     ////////////////////////////////////////////////////////////
@@ -197,15 +191,9 @@ object AppTaskDaoManager : IUtilK {
 
     //////////////////////////////////////////////////////////
 
-    fun add(vararg appTasks: AppTask) {
-        TaskKExecutor.execute(TAG + "addAll") {
+    fun addOrUpdate(vararg appTasks: AppTask) {
+        TaskKExecutor.execute(TAG + "addOrUpdate") {
             addOrUpdateOnBack(*appTasks)
-        }
-    }
-
-    fun update(appTask: AppTask) {
-        TaskKExecutor.execute(TAG + "update ${appTask.getStrTaskState()}") {
-            addOrUpdateOnBack(appTask)
         }
     }
 

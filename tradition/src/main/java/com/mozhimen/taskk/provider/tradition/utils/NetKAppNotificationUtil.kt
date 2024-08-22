@@ -1,4 +1,4 @@
-package com.mozhimen.taskk.provider.core.utils
+package com.mozhimen.taskk.provider.tradition.utils
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
@@ -46,9 +46,9 @@ object NetKAppNotificationUtil {
             .setSmallIcon(notifierSmallIcon)
             .setContentTitle(title)
             .setAutoCancel(
-                !appTask.isTaskProcess() || appTask.taskState == CTaskState.STATE_UNZIP_SUCCESS
+                !appTask.isTaskProcess()
             ) // canceled when it is clicked by the user.
-            .setOngoing(appTask.isTaskProcess())
+            .setOngoing(appTask.isAnyTasking())
 
         if (appTask.taskDownloadProgress >= 0) {// don't use setContentInfo(deprecated in API level 24)
             builder.setSubText(context.getString(R.string.netk_app_notifier_subtext_placeholder, appTask.taskDownloadProgress))
@@ -79,7 +79,7 @@ object NetKAppNotificationUtil {
                 }
             }
 
-            appTask.isTasking() -> {
+            appTask.isAnyTasking() -> {
                 builder.setProgress(
                     100,
                     appTask.taskDownloadProgress,

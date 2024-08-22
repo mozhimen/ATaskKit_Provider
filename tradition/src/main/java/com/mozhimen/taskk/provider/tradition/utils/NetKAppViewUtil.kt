@@ -1,4 +1,4 @@
-package com.mozhimen.taskk.provider.core.utils
+package com.mozhimen.taskk.provider.tradition.utils
 
 import android.content.Context
 import android.view.View

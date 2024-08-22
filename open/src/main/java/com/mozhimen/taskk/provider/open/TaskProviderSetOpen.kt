@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @Date 2024/8/21 21:24
  * @Version 1.0
  */
-class ATaskProviderSetOpen(override val providerDefault: ATaskProviderOpen) : ATaskProviderSetOpen() {
+class TaskProviderSetOpen(override val providerDefault: ATaskProviderOpen) : ATaskProviderSetOpen() {
     override val providers: ConcurrentHashMap<String, ATaskProviderOpen> = ConcurrentHashMap(providerDefault.getSupportFileExtensions().associateWith { providerDefault })
 
 }

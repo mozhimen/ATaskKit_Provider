@@ -1,8 +1,10 @@
 package com.mozhimen.taskk.provider.apk.impls
 
+import android.annotation.SuppressLint
 import com.mozhimen.taskk.provider.apk.cons.CExt
 import com.mozhimen.taskk.provider.basic.interfaces.ITaskProviderLifecycle
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskProviderUninstall
+import com.mozhimen.taskk.provider.basic.db.AppTask
 
 /**
  * @ClassName TaskProviderUninstallDefault
@@ -14,5 +16,18 @@ import com.mozhimen.taskk.provider.basic.bases.providers.ATaskProviderUninstall
 class TaskProviderUninstallApk(iTaskProviderLifecycle: ITaskProviderLifecycle?) : ATaskProviderUninstall(iTaskProviderLifecycle) {
     override fun getSupportFileExtensions(): List<String> {
         return listOf(CExt.EXT_APK)
+    }
+
+    @SuppressLint("MissingSuperCall")
+    override fun taskCancel(appTask: AppTask) {
+
+    }
+
+    @SuppressLint("MissingSuperCall")
+    override fun taskPause(appTask: AppTask) {
+    }
+
+    @SuppressLint("MissingSuperCall")
+    override fun taskResume(appTask: AppTask) {
     }
 }

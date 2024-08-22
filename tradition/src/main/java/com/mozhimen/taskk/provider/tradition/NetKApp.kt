@@ -30,14 +30,14 @@ import com.mozhimen.taskk.provider.basic.db.AppTaskDaoManager
 import com.mozhimen.taskk.provider.basic.db.AppTaskDb
 import com.mozhimen.taskk.provider.basic.impls.TaskException
 import com.mozhimen.taskk.provider.basic.impls.intErrorCode2taskException
-import com.mozhimen.taskk.provider.basic.utils.TaskProviderUtil
-import com.mozhimen.taskk.provider.core.commons.ITaskState
 import com.mozhimen.taskk.provider.tradition.impls.NetKAppTaskManager
 import com.mozhimen.taskk.provider.core.impls.download.NetKAppDownloadManager
 import com.mozhimen.taskk.provider.core.impls.install.NetKAppInstallManager
 import com.mozhimen.taskk.provider.tradition.impls.install.NetKAppInstallProxy
 import com.mozhimen.taskk.provider.tradition.impls.uninstall.NetKAppUnInstallManager
 import com.mozhimen.taskk.provider.core.impls.unzip.NetKAppUnzipManager
+import com.mozhimen.taskk.provider.tradition.iterfaces.ITaskState
+import com.mozhimen.taskk.provider.tradition.utils.NetKAppUtil
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -134,7 +134,7 @@ class NetKApp : ITaskState, BaseUtilK() {
     /////////////////////////////////////////////////////////////////
     //region # control
     fun taskRetry(appTask: AppTask) {
-        TaskProviderUtil.deleteFileApk(appTask)//删除本地文件.apk + .npk
+        NetKAppUtil.deleteFileApk(appTask)//删除本地文件.apk + .npk
 
         if (appTask.taskDownloadUrlCurrent != appTask.taskDownloadUrlInside) {//重新使用内部地址下载
             if (appTask.taskDownloadUrlInside.isNotEmpty()) {
@@ -149,7 +149,7 @@ class NetKApp : ITaskState, BaseUtilK() {
 
     fun taskStart(appTask: AppTask) {
         try {
-            if (appTask.isTaskProcess() && !appTask.isTaskPause()) {
+            if (appTask.isTaskProcess() && !appTask.isAnyTaskPause()) {
                 UtilKLogWrapper.d(TAG, "taskStart: the task already start")
                 return
             }
@@ -160,7 +160,7 @@ class NetKApp : ITaskState, BaseUtilK() {
 //                onTaskFinish(appTask, ENetKAppFinishType.FAIL(CNetKAppErrorCode.CODE_DOWNLOAD_ENOUGH.intErrorCode2taskException()))
 //                return
 //            }
-            if (InstallKManager.hasPackageName_satisfyVersionCode(appTask.apkPackageName, appTask.apkVersionCode)) {
+            if (InstallKManager.hasPackageName_lessThanInstalledVersionCode(appTask.apkPackageName, appTask.apkVersionCode)) {
                 //throw CNetKAppErrorCode.CODE_TASK_HAS_INSTALL.intErrorCode2taskException()
                 UtilKLogWrapper.d(TAG, "taskStart: hasPackageNameAndSatisfyVersion")
                 /**
@@ -202,7 +202,7 @@ class NetKApp : ITaskState, BaseUtilK() {
                     }
                 }
             }
-            AppTaskDaoManager.add(appTask)
+            AppTaskDaoManager.addOrUpdate(appTask)
 
             /**
              * [CNetKAppTaskState.STATE_TASK_CREATE]
@@ -229,7 +229,7 @@ class NetKApp : ITaskState, BaseUtilK() {
             UtilKLogWrapper.d(TAG, "taskCancel: downloadWaitCancel")
             NetKAppDownloadManager.downloadWaitCancel(appTask*//*, onCancelBlock*//*)
 
-        } else*/ if (appTask.atTaskDownload() && appTask.isTaskDownloading() || appTask.isTaskPause()) {
+        } else*/ if (appTask.atTaskDownload() && appTask.isTaskDownloading() || appTask.isAnyTaskPause()) {
             UtilKLogWrapper.d(TAG, "taskCancel: downloadCancel")
             NetKAppDownloadManager.downloadCancel(appTask/*, onCancelBlock*/)//从数据库中移除掉
         } else if (appTask.atTaskUnzip() && appTask.isTaskUnzipSuccess()) {
@@ -248,7 +248,7 @@ class NetKApp : ITaskState, BaseUtilK() {
             UtilKLogWrapper.d(TAG, "taskPause: task is not process")
             return
         }
-        if (appTask.atTaskDownload() && appTask.isTasking()) {
+        if (appTask.atTaskDownload() && appTask.isAnyTasking()) {
             UtilKLogWrapper.d(TAG, "taskPause: downloadPause")
             NetKAppDownloadManager.downloadPause(appTask)
         }
@@ -260,7 +260,7 @@ class NetKApp : ITaskState, BaseUtilK() {
             UtilKLogWrapper.d(TAG, "downloadResume: task is not process")
             return
         }
-        if (appTask.isTaskPause()) {
+        if (appTask.isAnyTaskPause()) {
             UtilKLogWrapper.d(TAG, "taskPause: downloadResume")
             NetKAppDownloadManager.downloadResume(appTask)
         }
@@ -300,13 +300,13 @@ class NetKApp : ITaskState, BaseUtilK() {
     fun generateAppTaskByPackageName(appTask: AppTask): AppTask {
         if (
             getAppTaskByTaskId_PackageName_VersionCode(appTask.taskId, appTask.apkPackageName, appTask.apkVersionCode) == null &&
-            InstallKManager.hasPackageName_satisfyVersionCode(appTask.apkPackageName, appTask.apkVersionCode)
+            InstallKManager.hasPackageName_lessThanInstalledVersionCode(appTask.apkPackageName, appTask.apkVersionCode)
         ) {
             UtilKLogWrapper.d(TAG, "generateAppTaskByPackageName: hasPackageNameAndSatisfyVersion appTask $appTask")
             onInstallSuccess(appTask/*, ENetKAppFinishType.SUCCESS*/)
         } else if (
             (/*appTask.apkIsInstalled ||*/ appTask.taskState == CState.STATE_TASK_SUCCESS) &&
-            !InstallKManager.hasPackageName_satisfyVersionCode(appTask.apkPackageName, appTask.apkVersionCode)
+            !InstallKManager.hasPackageName_lessThanInstalledVersionCode(appTask.apkPackageName, appTask.apkVersionCode)
         ) {
             when (appTask.taskState) {
                 CState.STATE_TASK_SUCCESS -> {
@@ -721,7 +721,7 @@ class NetKApp : ITaskState, BaseUtilK() {
             if (progress > 0) taskDownloadProgress = progress
         }
         UtilKLogWrapper.d(TAG, "applyAppTaskState: id ${appTask.taskId} state ${appTask.getStrTaskState()} progress ${appTask.taskDownloadProgress} appTask $appTask")
-        AppTaskDaoManager.update(appTask)
+        AppTaskDaoManager.addOrUpdate(appTask)
         postAppTaskState(appTask, state, appTask.taskDownloadProgress, finishType, onNext)
     }
 
@@ -736,7 +736,7 @@ class NetKApp : ITaskState, BaseUtilK() {
             TAG,
             "applyAppTaskState: id ${appTask.taskId} state ${appTask.getStrTaskState()} progress ${appTask.taskDownloadProgress} currentIndex $currentIndex totalIndex $totalIndex offsetIndexPerSeconds $offsetIndexPerSeconds appTask $appTask"
         )
-        AppTaskDaoManager.update(appTask)
+        AppTaskDaoManager.addOrUpdate(appTask)
         postAppTaskState(appTask, state, appTask.taskDownloadProgress, currentIndex, totalIndex, offsetIndexPerSeconds, onNext)
     }
 
@@ -748,7 +748,7 @@ class NetKApp : ITaskState, BaseUtilK() {
             if (progress > 0) taskDownloadProgress = progress
         }
         UtilKLogWrapper.d(TAG, "applyAppTaskState: id ${appTask.taskId} state ${appTask.getStrTaskState()} exception $exception appTask $appTask")
-        AppTaskDaoManager.update(appTask)
+        AppTaskDaoManager.addOrUpdate(appTask)
         postAppTaskState(appTask, state, exception, onNext)
     }
 

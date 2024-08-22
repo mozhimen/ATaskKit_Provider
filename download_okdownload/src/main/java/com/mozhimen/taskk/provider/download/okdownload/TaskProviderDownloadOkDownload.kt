@@ -105,18 +105,19 @@ abstract class TaskProviderDownloadOkDownload(iTaskProviderLifecycle: ITaskProvi
     @SuppressLint("MissingSuperCall")
     override fun taskCancel(appTask: AppTask) {
         //downloadWaitCancel
-        val downloadTask = getDownloadTask(appTask) ?: run {
+        val downloadTask: DownloadTask? = getDownloadTask(appTask)?.apply {
+            cancel()//然后取消任务
+            OkDownload.with().breakpointStore().remove(id)
+            file?.delete()
+        } ?: run {
             UtilKLogWrapper.d(TAG, "downloadWaitCancel: get download task fail")
-            return
+            null
         }
-        downloadTask.cancel()//然后取消任务
-        OkDownload.with().breakpointStore().remove(downloadTask.id)
-        downloadTask.file?.delete()
 
         /**
          * [CNetKAppState.STATE_DOWNLOAD_CANCEL]
          */
-        onTaskFinished(CTaskState.STATE_DOWNLOAD_CANCEL, downloadTask.id, STaskFinishType.CANCEL, appTask)
+        onTaskFinished(CTaskState.STATE_DOWNLOAD_CANCEL, downloadTask?.id ?: appTask.taskDownloadId, STaskFinishType.CANCEL, appTask)
     }
 
     override fun taskPauseAll() {
@@ -144,7 +145,7 @@ abstract class TaskProviderDownloadOkDownload(iTaskProviderLifecycle: ITaskProvi
     override fun taskResumeAll() {
         for ((_, value) in _downloadProgressBundles.entries) {
             UtilKLogWrapper.d(TAG, "downloadResumeAll: appTask ${value.appTask}")
-            if (value.appTask.isTaskPause()) {
+            if (value.appTask.isAnyTaskPause()) {
                 taskResume(value.appTask)
                 UtilKLogWrapper.d(TAG, "downloadResumeAll: 恢复下载 appTask ${value.appTask}")
             }
@@ -213,7 +214,7 @@ abstract class TaskProviderDownloadOkDownload(iTaskProviderLifecycle: ITaskProvi
     }
 
     fun deleteDownloadProgressBundle(downloadId: Int) {
-        if (downloadId != 0)
+        if (downloadId != 0 && _downloadProgressBundles.containsKey(downloadId))
             _downloadProgressBundles.remove(downloadId)
     }
 
@@ -311,7 +312,7 @@ abstract class TaskProviderDownloadOkDownload(iTaskProviderLifecycle: ITaskProvi
             val offsetFileSizePerSeconds = abs(currentOffset - bundle.appTask.taskDownloadFileSizeTotal)
 
             UtilKLogWrapper.d(TAG, "progress: $progress currentOffset $currentOffset  totalLength $totalLength")
-            if (bundle.appTask.isTaskPause()) return
+            if (bundle.appTask.isAnyTaskPause()) return
             if (progress < bundle.appTask.taskDownloadProgress) return
 
             /**
@@ -335,7 +336,7 @@ abstract class TaskProviderDownloadOkDownload(iTaskProviderLifecycle: ITaskProvi
                 }
 
                 EndCause.CANCELED -> {
-                    if (bundle.appTask.isTaskPause() || bundle.appTask.isTaskCancel())
+                    if (bundle.appTask.isAnyTaskPause() || bundle.appTask.isAnyTaskCancel())
                         return
                     if (bundle.isRetry) {
                         bundle.isRetry = false
@@ -349,7 +350,7 @@ abstract class TaskProviderDownloadOkDownload(iTaskProviderLifecycle: ITaskProvi
                 }
 
                 else -> {
-                    if (bundle.appTask.isTaskPause())
+                    if (bundle.appTask.isAnyTaskPause())
                         return
 
                     if (bundle.retryCount < RETRY_COUNT_MIN) {
