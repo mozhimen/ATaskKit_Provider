@@ -18,6 +18,7 @@ import com.mozhimen.basick.utilk.wrapper.UtilKPermission
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.installk.manager.commons.IPackagesChangeListener
 import com.mozhimen.postk.livedata.PostKLiveData
+import com.mozhimen.taskk.provider.apk.impls.TaskProviderDownloadOkDownloadApk
 import com.mozhimen.taskk.provider.apk.impls.TaskProviderInstallApk
 import com.mozhimen.taskk.provider.basic.cons.CErrorCode
 import com.mozhimen.taskk.provider.basic.cons.CState
@@ -65,9 +66,6 @@ class NetKApp : ITaskState, BaseUtilK() {
     private val _isInitNetKApp = AtomicBoolean(false)
 
     private val _iTaskProviderLifecycle: ITaskProviderLifecycle = object : ITaskProviderLifecycle {
-        override fun onTaskCreated(taskState: Int, appTask: AppTask) {
-        }
-
         override fun onTaskStarted(taskState: Int, appTask: AppTask) {
         }
 
@@ -77,10 +75,11 @@ class NetKApp : ITaskState, BaseUtilK() {
         override fun onTaskFinished(taskState: Int, finishType: STaskFinishType, appTask: AppTask) {
         }
     }
-    private val _taskProviderDownloadOkDownload = TaskProviderDownloadOkDownload(_iTaskProviderLifecycle)
+    private val _taskProviderDownloadOkDownload = TaskProviderDownloadOkDownloadApk(_iTaskProviderLifecycle)
+
     private val _taskProviderSetDownload = TaskProviderSetDownload(_taskProviderDownloadOkDownload)
-    private val _taskProviderInstall = TaskProviderInstallApk(_iTaskProviderLifecycle)
-    private val _taskProviderSetInstall = TaskProviderSetInstall(_taskProviderInstall)
+    private val _taskProviderSetUnzip = Task
+    private val _taskProviderSetInstall = TaskProviderSetInstall(TaskProviderInstallApk(_iTaskProviderLifecycle))
 
     /////////////////////////////////////////////////////////////////
     // init

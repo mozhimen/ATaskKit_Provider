@@ -23,6 +23,7 @@ class TaskProviderSetInstallApk(
     private val _iInstallKReceiverProxy: IInstallKReceiverProxy?,
     private val _iTaskProviderInterceptor: ITaskProviderInterceptorApk?
 ) : TaskProviderSetInstall(providerDefault) {
+
     override fun taskStart(appTask: AppTask) {
         if (!appTask.canTaskInstall()) {
             UtilKLogWrapper.e(TAG, "install: the task hasn't unzip or verify success")

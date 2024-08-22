@@ -142,73 +142,12 @@ internal object NetKAppUnzipManager : IUtilK {
         val fileSource = appTask.filePathNameExt.strFilePath2file()
         UtilKLogWrapper.d(TAG, "unzipOnBack: fileSource ${fileSource.absolutePath}")
 
-        val strPathNameApk = if (appTask.fileNameExt.endsWith(".npk"))
-            unzipNpkOnBack(fileSource, externalFilesDownloadDir.absolutePath)
-        else
-            unzipApkOnBack(fileSource, appTask, externalFilesDownloadDir.absolutePath)
-
+        val strPathNameApk = unzipApkOnBack(fileSource, appTask, externalFilesDownloadDir.absolutePath)
         _unzippingTasks.remove(appTask)//解压成功，移除
         return strPathNameApk
     }
 
     //////////////////////////////////////////////////////////////////
-
-    /**
-     * 解压文件
-     * @param fileSource 需要解压的文件
-     * @param strFilePathDest 目标路径 当前项目中使用的是 /Android/data/包名/Download/文件名/
-     */
-    @WorkerThread
-    private fun unzipNpkOnBack(fileSource: File, strFilePathDest: String): String {
-        try {
-            val fileNameReal = fileSource.name.getSplitLastIndexToStart(".", false)//name.subSequence(0, name.lastIndexOf("."))
-            val strFilePathDestReal = (strFilePathDest + File.separator + fileNameReal).also { UtilKLogWrapper.d(TAG, "unzipOnBack: strFilePathDestReal $it") }
-
-            //用来记录apk的文件名
-            var apkName = ""
-            val zipFile = ZipFile(fileSource)
-            val entries = zipFile.entries()
-            val bytes = ByteArray(1024 * 1024)
-            var zipEntry: ZipEntry?
-            while (entries.hasMoreElements()) {
-                zipEntry = entries.nextElement() ?: continue
-                if (zipEntry.name.contains(MAC__IGNORE)) continue
-                if (zipEntry.isDirectory) {
-                    File(strFilePathDestReal, zipEntry.name).createFolder()
-                    continue
-                }
-                var tempFile = File(zipEntry.name)
-
-                tempFile.parentFile?.let {//先判断当前文件是否含有路径 如 Android/obb/包名/xx.obb
-                    tempFile = File(Environment.getExternalStorageDirectory(), tempFile.absolutePath)//根目录/Android/obb/包名/xx.obb
-                } ?: kotlin.run {
-                    tempFile = File(strFilePathDestReal, zipEntry.name)//如果保护路径则需要把文件复制到根目录下指定的文件夹中
-                }
-                tempFile.parentFile?.createFolder()
-                UtilKLogWrapper.d(TAG, "unzipOnBack: tempFilePath ${tempFile.absolutePath}")
-                //如果文件已经存在，则删除
-                tempFile.deleteFile()
-                if (tempFile.name.endsWith(".apk")) {
-                    apkName = tempFile.name
-                }
-                val bufferedOutputStream = BufferedOutputStream(FileOutputStream(tempFile))
-                val inputStream = zipFile.getInputStream(zipEntry)
-                var len: Int
-                while ((inputStream.read(bytes).also { len = it }) != -1) {
-                    bufferedOutputStream.write(bytes, 0, len)
-                }
-                bufferedOutputStream.flushClose()
-                inputStream.close()
-            }
-            zipFile.close()
-            return strFilePathDestReal + File.separator + apkName
-        } catch (e: Exception) {
-            e.printStackTrace()
-            UtilKLogWrapper.e(TAG, "unzipOnBack: error ${e.message}")
-//            throw CNetKAppErrorCode.CODE_UNZIP_FAIL.intErrorCode2taskException()
-            return ""
-        }
-    }
 
     /**
      *

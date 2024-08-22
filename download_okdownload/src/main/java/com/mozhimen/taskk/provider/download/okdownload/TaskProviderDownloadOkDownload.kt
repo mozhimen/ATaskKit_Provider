@@ -1,5 +1,6 @@
 package com.mozhimen.taskk.provider.download.okdownload
 
+import android.annotation.SuppressLint
 import android.content.Context
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.OkDownload
@@ -41,7 +42,7 @@ import kotlin.math.abs
  * @Date 2024/8/20
  * @Version 1.0
  */
-open class TaskProviderDownloadOkDownload(iTaskProviderLifecycle: ITaskProviderLifecycle) : ATaskProviderDownload(iTaskProviderLifecycle) {
+abstract class TaskProviderDownloadOkDownload(iTaskProviderLifecycle: ITaskProviderLifecycle) : ATaskProviderDownload(iTaskProviderLifecycle) {
 
     companion object {
         private const val PARALLEL_RUNNING_COUNT = 3
@@ -101,14 +102,7 @@ open class TaskProviderDownloadOkDownload(iTaskProviderLifecycle: ITaskProviderL
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    override fun getSupportFileExtensions(): List<String> {
-        return listOf("apk")
-    }
-
-    override fun taskStart(appTask: AppTask) {
-
-    }
-
+    @SuppressLint("MissingSuperCall")
     override fun taskCancel(appTask: AppTask) {
         //downloadWaitCancel
         val downloadTask = getDownloadTask(appTask) ?: run {
@@ -142,7 +136,7 @@ open class TaskProviderDownloadOkDownload(iTaskProviderLifecycle: ITaskProviderL
         /**
          * [CNetKAppState.STATE_DOWNLOAD_PAUSE]
          */
-        onTaskPaused(CTaskState.STATE_DOWNLOAD_PAUSE, appTask.apply {
+        super.taskPause(appTask.apply {
             appTask.taskDownloadFileSpeed = 0
         })
     }
@@ -157,6 +151,7 @@ open class TaskProviderDownloadOkDownload(iTaskProviderLifecycle: ITaskProviderL
         }
     }
 
+    @SuppressLint("MissingSuperCall")
     override fun taskResume(appTask: AppTask) {
         val downloadTask = getDownloadTask(appTask) ?: run {
             UtilKLogWrapper.d(TAG, "downloadResume: get download task fail")
@@ -175,11 +170,6 @@ open class TaskProviderDownloadOkDownload(iTaskProviderLifecycle: ITaskProviderL
 
 
     ///////////////////////////////////////////////////////////////////////////////////////
-
-    private fun onTaskCreated(taskState: Int, downloadId: Int, appTask: AppTask) {
-        getDownloadProgressBundle(downloadId, appTask)
-        onTaskCreated(taskState, appTask)
-    }
 
     private fun onTaskStarted(taskState: Int, downloadId: Int, appTask: AppTask) {
         getDownloadProgressBundle(downloadId, appTask)

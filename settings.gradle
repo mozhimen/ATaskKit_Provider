@@ -23,6 +23,13 @@ rootProject.name = "ATaskKit_Provider"
 include ':app'
 include ':core'
 include ':basic'
+include ':install'
+include ':uninstall'
+include ':provider_apk'
+include ':download'
+include ':download_okdownload'
+include ':tradition'
+include ':open'
 include ':install_splits_ackpine'
 //SwiftKit
 include ':SwiftKit'
@@ -71,9 +78,5 @@ include(':AManifestKit_XXPermissions:manifestk_xxpermissions')
 include(':APostKit')
 project(':APostKit').projectDir = new File("D:\\WorkSpace\\GitHub\\APostKit")
 include(':APostKit:postk_livedata')
-include ':install'
-include ':uninstall'
-include ':provider_apk'
-include ':download'
-include ':download_okdownload'
-include ':tradition'
+include ':unzip'
+include ':verify'

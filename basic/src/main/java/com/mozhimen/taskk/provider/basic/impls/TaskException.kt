@@ -16,7 +16,16 @@ fun Int.intErrorCode2taskException(): TaskException =
 fun Int.intErrorCode2taskException(msg: String): TaskException =
     TaskException(this, msg)
 
+fun Exception.exception2taskException(): TaskException =
+    TaskException.exception2taskException(this)
+
 class TaskException : Exception {
+    companion object {
+        @JvmStatic
+        fun exception2taskException(e: Exception): TaskException =
+            TaskException(e)
+    }
+
     constructor(e: Exception) : this(e.hashCode(), e.message ?: "")
     constructor(code: Int) : this(code, code.intErrorCode2strError())
     constructor(code: Int, msg: String) : super() {

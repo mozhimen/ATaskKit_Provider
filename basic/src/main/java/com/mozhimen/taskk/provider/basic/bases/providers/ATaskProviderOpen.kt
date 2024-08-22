@@ -20,24 +20,23 @@ abstract class ATaskProviderOpen(iTaskProviderLifecycle: ITaskProviderLifecycle?
         return ATaskName.TASK_OPEN
     }
 
-
     @CallSuper
     override fun taskStart(appTask: AppTask) {
-        onTaskStarted(CTaskState.STATE_DOWNLOADING, appTask)
+        onTaskStarted(CTaskState.STATE_OPENING, appTask)
     }
 
     @CallSuper
     override fun taskResume(appTask: AppTask) {
-        onTaskStarted(CTaskState.STATE_DOWNLOADING, appTask)
+        onTaskStarted(CTaskState.STATE_OPENING, appTask)
     }
 
     @CallSuper
     override fun taskPause(appTask: AppTask) {
-        onTaskPaused(CTaskState.STATE_DOWNLOAD_PAUSE, appTask)
+        onTaskPaused(CTaskState.STATE_OPEN_PAUSE, appTask)
     }
 
     @CallSuper
     override fun taskCancel(appTask: AppTask) {
-        onTaskFinished(CTaskState.STATE_DOWNLOAD_CANCEL, STaskFinishType.CANCEL, appTask)
+        onTaskFinished(CTaskState.STATE_OPEN_CANCEL, STaskFinishType.CANCEL, appTask)
     }
 }

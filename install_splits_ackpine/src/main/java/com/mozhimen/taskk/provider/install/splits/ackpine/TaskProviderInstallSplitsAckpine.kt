@@ -12,6 +12,7 @@ import com.mozhimen.installk.splits.ackpine.InstallKSplitsAckpine
 import com.mozhimen.installk.splits.ackpine.cons.SInstallState
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskProviderInstall
 import com.mozhimen.taskk.provider.basic.db.AppTask
+import com.mozhimen.taskk.provider.basic.interfaces.ITaskProviderLifecycle
 import java.io.File
 
 /**
@@ -22,9 +23,11 @@ import java.io.File
  * @Version 1.0
  */
 class TaskProviderInstallSplitsAckpine(
+    iTaskProviderLifecycle: ITaskProviderLifecycle,
     private val _applyPermissionListener: IAB_Listener<File, TaskProviderInstallSplitsAckpine>? = null,
     private val _installListener: IA_Listener<SInstallState>? = null
-) : ATaskProviderInstall {
+) : ATaskProviderInstall(iTaskProviderLifecycle) {
+
     override fun getSupportFileExtensions(): List<String> {
         return listOf("zip", "apks", "xapk", "apkm")
     }
@@ -41,18 +44,7 @@ class TaskProviderInstallSplitsAckpine(
         } else {
             installInternal(file)
         }
-    }
-
-    override fun taskPause(appTask: AppTask) {
-
-    }
-
-    override fun taskResume(appTask: AppTask) {
-
-    }
-
-    override fun taskCancel(appTask: AppTask) {
-
+        super.taskStart(appTask)
     }
 
     ////////////////////////////////////////////////////////////

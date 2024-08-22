@@ -111,8 +111,34 @@ object CTaskState {
 
     //////////////////////////////////////////////////////////////
 
+    //打开
+    internal const val STATE_OPEN_CREATE = 50
+    const val STATE_OPENING = STATE_OPEN_CREATE + CState.STATE_TASKING//52
+    const val STATE_OPEN_PAUSE = STATE_OPEN_CREATE + CState.STATE_TASK_PAUSE//53
+    const val STATE_OPEN_CANCEL = STATE_OPEN_CREATE + CState.STATE_TASK_CANCEL//57
+    const val STATE_OPEN_SUCCESS = STATE_OPEN_CREATE + CState.STATE_TASK_SUCCESS//58
+    const val STATE_OPEN_FAIL = STATE_OPEN_CREATE + CState.STATE_TASK_FAIL//59
+
+    @JvmStatic
+    fun canTaskOpen(state: Int): Boolean =
+        state in STATE_INSTALL_SUCCESS..STATE_OPENING
+
+    @JvmStatic
+    fun atTaskOpen(state: Int): Boolean =
+        state in STATE_OPEN_CREATE..STATE_OPEN_FAIL
+
+    @JvmStatic
+    fun isTaskOpening(state: Int): Boolean =
+        state == STATE_OPENING
+
+    @JvmStatic
+    fun isTaskOpenSuccess(state: Int): Boolean =
+        state >= STATE_OPEN_SUCCESS || state == CState.STATE_TASK_SUCCESS
+
+    //////////////////////////////////////////////////////////////
+
     //卸载
-    internal const val STATE_UNINSTALL_CREATE = 50
+    internal const val STATE_UNINSTALL_CREATE = 60
     const val STATE_UNINSTALLING = STATE_UNINSTALL_CREATE + CState.STATE_TASKING//52
     const val STATE_UNINSTALL_PAUSE = STATE_UNINSTALL_CREATE + CState.STATE_TASK_PAUSE//53
     const val STATE_UNINSTALL_CANCEL = STATE_UNINSTALL_CREATE + CState.STATE_TASK_CANCEL//57
@@ -136,30 +162,6 @@ object CTaskState {
         state >= STATE_UNINSTALL_SUCCESS || state == CState.STATE_TASK_SUCCESS
 
     //////////////////////////////////////////////////////////////
-
-    //打开
-    internal const val STATE_OPEN_CREATE = 60
-    const val STATE_OPENING = STATE_OPEN_CREATE + CState.STATE_TASKING//52
-    const val STATE_OPEN_PAUSE = STATE_OPEN_CREATE + CState.STATE_TASK_PAUSE//53
-    const val STATE_OPEN_CANCEL = STATE_OPEN_CREATE + CState.STATE_TASK_CANCEL//57
-    const val STATE_OPEN_SUCCESS = STATE_OPEN_CREATE + CState.STATE_TASK_SUCCESS//58
-    const val STATE_OPEN_FAIL = STATE_OPEN_CREATE + CState.STATE_TASK_FAIL//59
-
-    @JvmStatic
-    fun canTaskOpen(state: Int): Boolean =
-        state in STATE_INSTALL_SUCCESS..STATE_UNINSTALLING
-
-    @JvmStatic
-    fun atTaskOpen(state: Int): Boolean =
-        state in STATE_OPEN_CREATE..STATE_OPEN_FAIL
-
-    @JvmStatic
-    fun isTaskUninstalling(state: Int): Boolean =
-        state == STATE_UNINSTALLING
-
-    @JvmStatic
-    fun isTaskUninstallSuccess(state: Int): Boolean =
-        state >= STATE_UNINSTALL_SUCCESS || state == CState.STATE_TASK_SUCCESS
 
     /*//更新
     const val STATE_UPDATE_CREATE = 50//需要更新
