@@ -18,7 +18,7 @@ import androidx.annotation.StringDef
     ATaskName.TASK_UNINSTALL,
 )
 @Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.TYPE)
+@Target(AnnotationTarget.TYPE,AnnotationTarget.VALUE_PARAMETER)
 annotation class ATaskName {
     companion object {
         const val TASK_DOWNLOAD = "TASK_DOWNLOAD"

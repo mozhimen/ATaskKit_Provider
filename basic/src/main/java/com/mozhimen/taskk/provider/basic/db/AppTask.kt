@@ -1,8 +1,12 @@
 package com.mozhimen.taskk.provider.basic.db
 
+import android.util.Log
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.basick.utilk.commons.IUtilK
+import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.cons.CState
 import com.mozhimen.taskk.provider.basic.cons.CTaskState
 import com.mozhimen.taskk.provider.basic.utils.TaskProviderUtil
@@ -87,7 +91,7 @@ data class AppTask(
     val apkVersionName: String/*,
     @ColumnInfo(name = "apk_is_installed")
     var apkIsInstalled: Boolean,//是否安装0未,1安装*/
-) {
+) : IUtilK {
     fun taskDownloadReset() {
         taskDownloadId = 0
         taskDownloadProgress = 0
@@ -104,10 +108,25 @@ data class AppTask(
         AppTaskDaoManager.addOrUpdate(this)
     }
 
+    fun getCurrentTaskName(): String? {
+        val task: Int = taskState / 10//->哪个环节
+        val state: Int = taskState % 10
+        UtilKLogWrapper.d(TAG, "getCurrentTaskName: task $task state $state")
+        return when (state) {
+            CTaskState.STATE_DOWNLOAD_CREATE / 10 -> ATaskName.TASK_DOWNLOAD//1
+            CTaskState.STATE_VERIFY_CREATE / 10 -> ATaskName.TASK_VERIFY
+            CTaskState.STATE_UNZIP_CREATE / 10 -> ATaskName.TASK_UNZIP
+            CTaskState.STATE_INSTALL_CREATE / 10 -> ATaskName.TASK_INSTALL
+            CTaskState.STATE_OPEN_CREATE / 10 -> ATaskName.TASK_OPEN
+            CTaskState.STATE_UNINSTALL_CREATE / 10 -> ATaskName.TASK_UNINSTALL
+            else -> null
+        }
+    }
+
     ////////////////////////////////////////////////////////////
 
     fun isTaskProcess(): Boolean =
-         CState.isTaskProcess(taskState)
+        CState.isTaskProcess(taskState)
 
     fun isTaskCreate(): Boolean =
         CState.isTaskCreate(taskState)
@@ -133,10 +152,10 @@ data class AppTask(
     ////////////////////////////////////////////////////////////
 
     fun isAnyTasking(): Boolean =
-         CState.isAnyTasking(taskState)
+        CState.isAnyTasking(taskState)
 
     fun isAnyTaskPause(): Boolean =
-         CState.isAnyTaskPause(taskState)
+        CState.isAnyTaskPause(taskState)
 
     fun isAnyTaskSuccess(): Boolean =
         CState.isAnyTaskSuccess(taskState)
@@ -147,16 +166,19 @@ data class AppTask(
     fun isAnyTaskFail(): Boolean =
         CState.isAnyTaskFail(taskState)
 
+    fun isAnyTaskResult(): Boolean =
+        CState.isAnyTaskResult(taskState)
+
     ////////////////////////////////////////////////////////////
 
     fun canTaskDownload(): Boolean =
         CTaskState.canTaskDownload(taskState)
 
     fun atTaskDownload(): Boolean =
-         CTaskState.atTaskDownload(taskState)
+        CTaskState.atTaskDownload(taskState)
 
     fun isTaskDownloading(): Boolean =
-         CTaskState.isTaskDownloading(taskState)
+        CTaskState.isTaskDownloading(taskState)
 
     fun isTaskDownloadSuccess(): Boolean =
         CTaskState.isTaskDownloadSuccess(taskState)
@@ -167,7 +189,7 @@ data class AppTask(
         CTaskState.canTaskVerify(taskState)
 
     fun atTaskVerify(): Boolean =
-         CTaskState.atTaskVerify(taskState)
+        CTaskState.atTaskVerify(taskState)
 
     fun isTaskVerifying(): Boolean =
         CTaskState.isTaskVerifying(taskState)
@@ -181,7 +203,7 @@ data class AppTask(
         CTaskState.canTaskUnzip(taskState)
 
     fun atTaskUnzip(): Boolean =
-         CTaskState.atTaskUnzip(taskState)
+        CTaskState.atTaskUnzip(taskState)
 
     fun isTaskUnziping(): Boolean =
         CTaskState.isTaskUnziping(taskState)
@@ -195,7 +217,7 @@ data class AppTask(
         CTaskState.canTaskInstall(taskState)
 
     fun atTaskInstall(): Boolean =
-         CTaskState.atTaskInstall(taskState)
+        CTaskState.atTaskInstall(taskState)
 
     fun isTaskInstalling(): Boolean =
         CTaskState.isTaskInstalling(taskState)
@@ -209,7 +231,7 @@ data class AppTask(
         CTaskState.canTaskOpen(taskState)
 
     fun atTaskOpen(): Boolean =
-         CTaskState.atTaskOpen(taskState)
+        CTaskState.atTaskOpen(taskState)
 
     fun isTaskOpening(): Boolean =
         CTaskState.isTaskOpening(taskState)
@@ -223,7 +245,7 @@ data class AppTask(
         CTaskState.canTaskUninstall(taskState)
 
     fun atTaskUninstall(): Boolean =
-         CTaskState.atTaskUninstall(taskState)
+        CTaskState.atTaskUninstall(taskState)
 
     fun isTaskUninstalling(): Boolean =
         CTaskState.isTaskUninstalling(taskState)

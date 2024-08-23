@@ -32,8 +32,8 @@ android {
 
 dependencies {
     api project(project.path.replace(project.name, '') + ':basic')
+    implementation project(project.path.replace(project.name, '') + ':core')
     implementation project(project.path.replace(project.name, '') + ':download_okdownload')
-    implementation project(project.path.replace(project.name, '') + ':install')
     implementation project(':SwiftKit:basick')
     implementation project(':ACacheKit:cachek_datastore')
     implementation project(':AInstallKit:installk_manager')

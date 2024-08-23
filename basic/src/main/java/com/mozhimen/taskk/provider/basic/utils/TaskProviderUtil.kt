@@ -1,19 +1,8 @@
 package com.mozhimen.taskk.provider.basic.utils
 
-import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.basick.utilk.commons.IUtilK
-import com.mozhimen.basick.utilk.kotlin.deleteFile
-import com.mozhimen.basick.utilk.kotlin.deleteFolder
-import com.mozhimen.basick.utilk.kotlin.getStrFilePathNoExtension
-import com.mozhimen.basick.utilk.kotlin.getStrFolderPath
-import com.mozhimen.basick.utilk.kotlin.isFileExist
-import com.mozhimen.basick.utilk.kotlin.isFolderExist
-import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.taskk.provider.basic.cons.CState
 import com.mozhimen.taskk.provider.basic.cons.CTaskState
-import com.mozhimen.taskk.provider.basic.db.AppTask
-import com.mozhimen.taskk.provider.basic.db.AppTaskDaoManager
 
 /**
  * @ClassName TaskProviderUtil

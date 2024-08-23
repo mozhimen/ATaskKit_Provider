@@ -8,13 +8,12 @@ import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.basick.utilk.commons.IUtilK
 import com.mozhimen.basick.utilk.kotlin.collections.ifNotEmptyOr
 import com.mozhimen.installk.manager.InstallKManager
-import com.mozhimen.taskk.provider.apk.impls.TaskProviderInstallApk
-import com.mozhimen.taskk.provider.basic.bases.providers.ATaskProviderInstall
+import com.mozhimen.taskk.provider.apk.impls.TaskInstallApk
+import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
 import com.mozhimen.taskk.provider.basic.cons.CErrorCode
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.db.AppTaskDaoManager
 import com.mozhimen.taskk.provider.basic.impls.intErrorCode2taskException
-import com.mozhimen.taskk.provider.basic.utils.TaskProviderUtil
 import com.mozhimen.taskk.provider.tradition.NetKApp
 import com.mozhimen.taskk.provider.tradition.impls.NetKAppTaskManager
 import com.mozhimen.taskk.provider.tradition.utils.NetKAppUtil
@@ -30,15 +29,15 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @OApiInit_InApplication
 internal object NetKAppInstallManager : IUtilK {
-    private val _installProviders: ConcurrentHashMap<String, ATaskProviderInstall> = ConcurrentHashMap()
+    private val _installProviders: ConcurrentHashMap<String, ATaskInstall> = ConcurrentHashMap()
 
     @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class)
     fun init() {
-        _installProviders["apk"] = TaskProviderInstallApk()
+        _installProviders["apk"] = TaskInstallApk()
     }
 
     @JvmStatic
-    fun addInstallProvider(provider: ATaskProviderInstall) {
+    fun addInstallProvider(provider: ATaskInstall) {
         provider.getSupportFileExtensions().forEach { extension ->
             if (!_installProviders.containsKey(extension)) {
                 _installProviders[extension] = provider

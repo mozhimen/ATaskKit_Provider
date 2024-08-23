@@ -83,6 +83,10 @@ object CState {
     fun isAnyTaskFail(state: Int): Boolean =
         (state % 10) == STATE_TASK_FAIL
 
+    @JvmStatic
+    fun isAnyTaskResult(state: Int): Boolean =
+        isAnyTaskFail(state) || isAnyTaskSuccess(state) || isAnyTaskCancel(state)
+
     /////////////////////////////////////////////////////////////////////
 
     //    @JvmStatic

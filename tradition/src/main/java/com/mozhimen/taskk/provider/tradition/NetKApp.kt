@@ -19,7 +19,7 @@ import com.mozhimen.basick.utilk.wrapper.UtilKPermission
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.installk.manager.commons.IPackagesChangeListener
 import com.mozhimen.postk.livedata.PostKLiveData
-import com.mozhimen.taskk.provider.basic.bases.providers.ATaskProviderInstall
+import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
 import com.mozhimen.taskk.provider.basic.cons.CErrorCode
 import com.mozhimen.taskk.provider.basic.cons.CState
 import com.mozhimen.taskk.provider.basic.cons.CTaskEvent
@@ -112,7 +112,7 @@ class NetKApp : ITaskState, BaseUtilK() {
     }
 
     @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class)
-    fun addInstallProvider(provider: ATaskProviderInstall) {
+    fun addInstallProvider(provider: ATaskInstall) {
         NetKAppInstallManager.addInstallProvider(provider)
     }
 
@@ -163,9 +163,6 @@ class NetKApp : ITaskState, BaseUtilK() {
             if (InstallKManager.hasPackageName_lessThanInstalledVersionCode(appTask.apkPackageName, appTask.apkVersionCode)) {
                 //throw CNetKAppErrorCode.CODE_TASK_HAS_INSTALL.intErrorCode2taskException()
                 UtilKLogWrapper.d(TAG, "taskStart: hasPackageNameAndSatisfyVersion")
-                /**
-                 * [CTaskState.STATE_INSTALL_SUCCESS]
-                 */
                 onInstallSuccess(appTask)
                 return
             }

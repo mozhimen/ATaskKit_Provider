@@ -28,7 +28,6 @@ include ':uninstall'
 include ':provider_apk'
 include ':download'
 include ':download_okdownload'
-include ':tradition'
 include ':open'
 include ':install_splits_ackpine'
 //SwiftKit
