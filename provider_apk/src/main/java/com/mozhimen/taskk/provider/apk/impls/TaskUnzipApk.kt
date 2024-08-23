@@ -22,7 +22,7 @@ import com.mozhimen.basick.utilk.kotlin.getStrFolderPath
 import com.mozhimen.basick.utilk.kotlin.ranges.constraint
 import com.mozhimen.basick.utilk.kotlin.strFilePath2file
 import com.mozhimen.taskk.provider.apk.cons.CExt
-import com.mozhimen.taskk.provider.apk.interfaces.ITaskProviderInterceptorApk
+import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUnzip
 import com.mozhimen.taskk.provider.basic.cons.CErrorCode
 import com.mozhimen.taskk.provider.basic.cons.CTaskState
@@ -30,6 +30,7 @@ import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.impls.TaskException
 import com.mozhimen.taskk.provider.basic.impls.intErrorCode2taskException
+import com.mozhimen.taskk.provider.basic.interfaces.ITaskInterceptor
 import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
 import java.io.File
 import java.util.zip.ZipEntry
@@ -48,10 +49,10 @@ class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifecycle)
 
     private val _context = UtilKApplicationWrapper.instance.applicationContext
 
-    protected var _iTaskProviderInterceptor: ITaskProviderInterceptorApk? = null
+    protected var _iTaskInterceptor: ITaskInterceptor? = null
 
-    fun setTaskProviderInterceptor(iTaskProviderInterceptor: ITaskProviderInterceptorApk): TaskUnzipApk {
-        _iTaskProviderInterceptor = iTaskProviderInterceptor
+    fun setTaskInterceptor(iTaskInterceptor: ITaskInterceptor): TaskUnzipApk {
+        _iTaskInterceptor = iTaskInterceptor
         return this
     }
 
@@ -59,7 +60,11 @@ class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifecycle)
         return listOf("__MACOSX/")
     }
 
-    override fun getSupportFileExtensions(): List<String> {
+    override fun getSupportFileTasks(): Map<String, ATask> {
+        return getSupportFileExts().associateWith { this }
+    }
+
+    override fun getSupportFileExts(): List<String> {
         return listOf(CExt.EXT_APK)
     }
 
@@ -88,7 +93,7 @@ class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifecycle)
 
     override fun taskCancel(appTask: AppTask) {
         if (appTask.isTaskUnzipSuccess()) {
-            _iTaskProviderInterceptor?.deleteOrgFiles(appTask)
+            _iTaskInterceptor?.deleteOrgFiles(appTask)
             super.taskCancel(appTask)
         }
     }
@@ -198,7 +203,7 @@ class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifecycle)
                 zipEntryFile.parentFile?.createFolder()
                 zipEntryFile.deleteFile()//如果文件已经存在，则删除
 
-                if (zipEntryFile.name.endsWithWithAny(getSupportFileExtensions())) {
+                if (zipEntryFile.name.endsWithWithAny(getSupportFileTasks().keys)) {
                     strFilePathNameNews.add(zipEntryFile.name)
                     UtilKLogWrapper.d(TAG, "startUnzipOnBack: strFilePathNameNews $strFilePathNameNews")
                 }

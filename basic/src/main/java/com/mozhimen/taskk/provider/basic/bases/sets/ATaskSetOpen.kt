@@ -2,6 +2,7 @@ package com.mozhimen.taskk.provider.basic.bases.sets
 
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.bases.ATaskSet
+import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskOpen
 
 /**
@@ -12,6 +13,7 @@ import com.mozhimen.taskk.provider.basic.bases.providers.ATaskOpen
  * @Version 1.0
  */
 abstract class ATaskSetOpen : ATaskSet<ATaskOpen>() {
+
     override fun getTaskName(): String {
         return ATaskName.TASK_OPEN
     }

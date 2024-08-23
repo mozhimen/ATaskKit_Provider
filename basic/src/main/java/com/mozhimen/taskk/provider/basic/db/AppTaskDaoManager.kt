@@ -15,7 +15,16 @@ import kotlin.Exception
  * @Version 1.0
  */
 object AppTaskDaoManager : IUtilK {
-    private val _appTasks by lazy { ConcurrentHashMap(AppTaskDb.getAppTaskDao().get_ofAll().associateBy { it.taskId }) }
+    private val _appTasks: ConcurrentHashMap<String, AppTask> = ConcurrentHashMap()
+
+    //////////////////////////////////////////////////////////
+
+    fun init() {
+        TaskKExecutor.execute(TAG + "init") {
+            _appTasks.putAll(AppTaskDb.getAppTaskDao().get_ofAll().associateBy { it.taskId })
+            UtilKLogWrapper.d(TAG, "init: _appTasks $_appTasks")
+        }
+    }
 
     //////////////////////////////////////////////////////////
 
@@ -31,31 +40,31 @@ object AppTaskDaoManager : IUtilK {
     }
 
     @JvmStatic
+    fun get_ofApkPackageName_ApkVersionCode(apkPackageName: String, apkVersionCode: Int): AppTask? {
+        return _appTasks.filter { it.value.apkPackageName == apkPackageName && it.value.apkVersionCode == apkVersionCode }.values.firstOrNull()
+    }
+
+    @JvmStatic
     fun get_ofTaskDownloadId(taskDownloadId: Int): AppTask? {
-        return _appTasks.filter { it.value.taskDownloadId == taskDownloadId }.values.first()
+        return _appTasks.filter { it.value.taskDownloadId == taskDownloadId }.values.firstOrNull()
     }
 
     @JvmStatic
     fun get_ofTaskDownloadUrlCurrent(taskDownloadUrlCurrent: String): AppTask? {
-        return _appTasks.filter { it.value.taskDownloadUrlCurrent == taskDownloadUrlCurrent }.values.first()
+        return _appTasks.filter { it.value.taskDownloadUrlCurrent == taskDownloadUrlCurrent }.values.firstOrNull()
     }
 
     //////////////////////////////////////////////////////////
 
     fun get_ofFileName(fileName: String): AppTask? {
-        return _appTasks.filter { it.value.fileName == fileName }.values.first()
+        return _appTasks.filter { it.value.fileName == fileName }.values.firstOrNull()
     }
 
     fun get_ofFilePathNameExt(filePathNameExt: String): AppTask? {
-        return _appTasks.filter { it.value.filePathNameExt == filePathNameExt }.values.first()
+        return _appTasks.filter { it.value.filePathNameExt == filePathNameExt }.values.firstOrNull()
     }
 
     //////////////////////////////////////////////////////////
-
-    @JvmStatic
-    fun get_ofApkPackageName_ApkVersionCode(apkPackageName: String, apkVersionCode: Int): AppTask? {
-        return _appTasks.filter { it.value.apkPackageName == apkPackageName && it.value.apkVersionCode == apkVersionCode }.values.first()
-    }
 
     @JvmStatic
     fun gets_ofApkPackageName(packageName: String): List<AppTask> {
@@ -64,7 +73,8 @@ object AppTaskDaoManager : IUtilK {
 
     @JvmStatic
     fun gets_ofApkPackageName_satisfyApkVersionCode(packageName: String, apkVersionCode: Int): List<AppTask> {
-        return _appTasks.filter { it.value.apkPackageName == packageName && it.value.apkVersionCode <= apkVersionCode }.values.toList()
+        return _appTasks.filter { it.value.apkPackageName == packageName && it.value.apkVersionCode >= apkVersionCode }.values.toList()
+            .also { UtilKLogWrapper.d(TAG, "gets_ofApkPackageName_satisfyApkVersionCode: $it") }
     }
 
     //////////////////////////////////////////////////////////
@@ -75,72 +85,70 @@ object AppTaskDaoManager : IUtilK {
     }
 
     @JvmStatic
-    fun gets_ofIsTasking(): List<AppTask> {
-        return _appTasks.filter { it.value.isAnyTasking() }.values.toList()
+    fun gets_ofIsTaskCreate(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskCreate() }.values.toList()
     }
 
     @JvmStatic
-    fun gets_ofIsTaskPause(): List<AppTask> {
-        return _appTasks.filter { it.value.isAnyTaskPause() }.values.toList()
+    fun gets_ofIsTaskUpdate(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskUpdate() }.values.toList()
     }
 
     @JvmStatic
-    fun gets_ofIsTaskSuccess(): List<AppTask> {
-        return _appTasks.filter { it.value.isAnyTaskSuccess() }.values.toList()
+    fun gets_ofIsTaskCreateOrUpdate(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskCreateOrUpdate() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskUnAvailable(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskUnAvailable() }.values.toList()
     }
 
     @JvmStatic
     fun gets_ofIsTaskCancel(): List<AppTask> {
-        return _appTasks.filter { it.value.isAnyTaskCancel() }.values.toList()
+        return _appTasks.filter { it.value.isTaskCancel() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskSuccess(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskSuccess() }.values.toList()
     }
 
     @JvmStatic
     fun gets_ofIsTaskFail(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskFail() }.values.toList()
+    }
+
+    //////////////////////////////////////////////////////////
+
+    @JvmStatic
+    fun gets_ofIsAnyTasking(): List<AppTask> {
+        return _appTasks.filter { it.value.isAnyTasking() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsAnyTaskPause(): List<AppTask> {
+        return _appTasks.filter { it.value.isAnyTaskPause() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsAnyTaskSuccess(): List<AppTask> {
+        return _appTasks.filter { it.value.isAnyTaskSuccess() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsAnyTaskCancel(): List<AppTask> {
         return _appTasks.filter { it.value.isAnyTaskCancel() }.values.toList()
     }
 
-    ////////////////////////////////////////////////////////////
-
     @JvmStatic
-    fun gets_ofIsTaskDownloading(): List<AppTask> {
-        return _appTasks.filter { it.value.isTaskDownloading() }.values.toList()
+    fun gets_ofIsAnyTaskFail(): List<AppTask> {
+        return _appTasks.filter { it.value.isAnyTaskFail() }.values.toList()
     }
 
     @JvmStatic
-    fun gets_ofIsTaskVerifying(): List<AppTask> {
-        return _appTasks.filter { it.value.isTaskVerifying() }.values.toList()
-    }
-
-    @JvmStatic
-    fun gets_ofIsTaskUnziping(): List<AppTask> {
-        return _appTasks.filter { it.value.isTaskUnziping() }.values.toList()
-    }
-
-    @JvmStatic
-    fun gets_ofIsTaskInstalling(): List<AppTask> {
-        return _appTasks.filter { it.value.isTaskInstalling() }.values.toList()
-    }
-
-    ////////////////////////////////////////////////////////////
-
-    @JvmStatic
-    fun gets_ofIsTaskDownloadSuccess(): List<AppTask> {
-        return _appTasks.filter { it.value.isTaskDownloadSuccess() }.values.toList()
-    }
-
-    @JvmStatic
-    fun gets_ofIsTaskVerifySuccess(): List<AppTask> {
-        return _appTasks.filter { it.value.isTaskVerifySuccess() }.values.toList()
-    }
-
-    @JvmStatic
-    fun gets_ofIsTaskUnzipSuccess(): List<AppTask> {
-        return _appTasks.filter { it.value.isTaskUnzipSuccess() }.values.toList()
-    }
-
-    @JvmStatic
-    fun gets_ofIsTaskInstallSuccess(): List<AppTask> {
-        return _appTasks.filter { it.value.isTaskInstallSuccess() }.values.toList()
+    fun gets_ofIsAnyTaskResult(): List<AppTask> {
+        return _appTasks.filter { it.value.isAnyTaskResult() }.values.toList()
     }
 
     ////////////////////////////////////////////////////////////
@@ -165,6 +173,80 @@ object AppTaskDaoManager : IUtilK {
         return _appTasks.filter { it.value.atTaskInstall() }.values.toList()
     }
 
+    @JvmStatic
+    fun gets_ofAtTaskOpen(): List<AppTask> {
+        return _appTasks.filter { it.value.atTaskOpen() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofAtTaskUninstall(): List<AppTask> {
+        return _appTasks.filter { it.value.atTaskUninstall() }.values.toList()
+    }
+
+    ////////////////////////////////////////////////////////////
+
+    @JvmStatic
+    fun gets_ofIsTaskDownloading(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskDownloading() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskVerifying(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskVerifying() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskUnziping(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskUnziping() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskInstalling(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskInstalling() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskOpening(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskOpening() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskUninstalling(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskUninstalling() }.values.toList()
+    }
+
+    ////////////////////////////////////////////////////////////
+
+    @JvmStatic
+    fun gets_ofIsTaskDownloadSuccess(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskDownloadSuccess() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskVerifySuccess(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskVerifySuccess() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskUnzipSuccess(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskUnzipSuccess() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskInstallSuccess(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskInstallSuccess() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskOpenSuccess(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskOpenSuccess() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskUninstallSuccess(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskUninstallSuccess() }.values.toList()
+    }
+
     ////////////////////////////////////////////////////////////
 
     fun has_ofAtTaskDownload(): Boolean {
@@ -181,6 +263,14 @@ object AppTaskDaoManager : IUtilK {
 
     fun has_ofAtTaskInstall(): Boolean {
         return gets_ofAtTaskInstall().isNotEmpty()
+    }
+
+    fun has_ofAtTaskOpen(): Boolean {
+        return gets_ofAtTaskOpen().isNotEmpty()
+    }
+
+    fun has_ofAtTaskUninstall(): Boolean {
+        return gets_ofAtTaskUninstall().isNotEmpty()
     }
 
     //////////////////////////////////////////////////////////
@@ -231,10 +321,13 @@ object AppTaskDaoManager : IUtilK {
     private fun addOrUpdateOnBack(vararg appTasks: AppTask) {
         try {
             appTasks.forEach { appTask ->
-                _appTasks[appTask.taskId] = appTask
                 if (has_ofTaskId(appTask.taskId)) {
+                    _appTasks[appTask.taskId] = appTask
+                    UtilKLogWrapper.d(TAG, "addOrUpdateOnBack: update")
                     AppTaskDb.getAppTaskDao().update(appTask)//将本条数据插入到数据库
                 } else {
+                    _appTasks[appTask.taskId] = appTask
+                    UtilKLogWrapper.d(TAG, "addOrUpdateOnBack: addAll")
                     AppTaskDb.getAppTaskDao().addAll(appTask)
                 }
             }

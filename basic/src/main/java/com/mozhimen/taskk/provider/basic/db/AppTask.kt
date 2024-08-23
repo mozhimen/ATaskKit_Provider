@@ -6,6 +6,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.basick.utilk.commons.IUtilK
+import com.mozhimen.basick.utilk.kotlin.getSplitFirstIndexToEnd
+import com.mozhimen.basick.utilk.kotlin.getSplitFirstIndexToStart
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.cons.CState
 import com.mozhimen.taskk.provider.basic.cons.CTaskState
@@ -40,46 +42,46 @@ data class AppTask(
     @ColumnInfo(name = "download_url_current")
     var taskDownloadUrlCurrent: String,//当前使用的下载地址
     @ColumnInfo(name = "download_url")
-    var taskDownloadUrlInside: String,//内部下载地址
+    var taskDownloadUrlInside: String = taskDownloadUrlCurrent,//内部下载地址
     @ColumnInfo(name = "download_url_outside")
-    var taskDownloadUrlOutside: String,//外部下载地址
+    var taskDownloadUrlOutside: String = taskDownloadUrlCurrent,//外部下载地址
     @ColumnInfo(name = "download_progress")
-    var taskDownloadProgress: Int,//下载进度
+    var taskDownloadProgress: Int = 0,//下载进度
     @ColumnInfo(name = "download_file_size")
-    var taskDownloadFileSizeOffset: Long,
+    var taskDownloadFileSizeOffset: Long = 0,
     @ColumnInfo(name = "apk_file_size")
-    var taskDownloadFileSizeTotal: Long,//软件大小
+    var taskDownloadFileSizeTotal: Long = 0,//软件大小
     @ColumnInfo(name = "task_download_file_speed")
-    var taskDownloadFileSpeed: Long,
+    var taskDownloadFileSpeed: Long = 0,
 
     ////////////////////////////////////////////////////////////////
 
     @ColumnInfo(name = "apk_verify_need")
     var taskVerifyEnable: Boolean,//是否需要检测0,不需要,1需要
     @ColumnInfo(name = "apk_file_md5")
-    val taskVerifyFileMd5: String,//文件的MD5值
+    val taskVerifyFileMd5: String = "",//文件的MD5值
 
     ////////////////////////////////////////////////////////////////
 
     @ColumnInfo(name = "apk_unzip_need")
     var taskUnzipEnable: Boolean,
     @ColumnInfo(name = "task_unzip_file_path")
-    var taskUnzipFilePath: String,
+    var taskUnzipFilePath: String = "",
 
     ////////////////////////////////////////////////////////////////
 
     @ColumnInfo(name = "apk_icon_url")
     var fileIconUrl: String,
     @ColumnInfo(name = "apk_icon_Id")
-    val fileIconId: Int,
-    @ColumnInfo(name = "apk_name")
-    val fileName: String,//本地保存的名称 为appid.apk或appid.npk
-    @ColumnInfo(name = "file_ext")
-    val fileExt: String,//文件后缀
+    val fileIconId: Int = 0,
     @ColumnInfo("apk_file_name")
     var fileNameExt: String,//和apkName的区别是有后缀
+    @ColumnInfo(name = "apk_name")
+    val fileName: String = if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitFirstIndexToStart(".") else "",//本地保存的名称 为appid.apk或appid.npk
+    @ColumnInfo(name = "file_ext")
+    val fileExt: String = if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitFirstIndexToEnd(".") else "",//文件后缀
     @ColumnInfo(name = "apk_path_name")
-    var filePathNameExt: String,//本地暂存路径
+    var filePathNameExt: String = "",//本地暂存路径
 
     ////////////////////////////////////////////////////////////////
 
@@ -92,6 +94,47 @@ data class AppTask(
     @ColumnInfo(name = "apk_is_installed")
     var apkIsInstalled: Boolean,//是否安装0未,1安装*/
 ) : IUtilK {
+    constructor(
+        taskId: String,//主键
+        taskState: Int,//下载状态
+        taskDownloadUrlCurrent: String,//当前使用的下载地址
+        taskVerifyEnable: Boolean,//是否需要检测0,不需要,1需要
+        taskVerifyFileMd5: String,//文件的MD5值
+        taskUnzipEnable: Boolean,
+        fileIconUrl: String,
+        fileIconId: Int,
+        fileNameExt: String,//和apkName的区别是有后缀
+        apkPackageName: String,//包名
+        apkVersionCode: Int,
+        apkVersionName: String
+    ) : this(
+        taskId,
+        taskState,
+        taskState,
+        System.currentTimeMillis(),
+        0,
+        taskDownloadUrlCurrent,
+        taskDownloadUrlCurrent,
+        taskDownloadUrlCurrent,
+        0,
+        0,
+        0,
+        0,
+        taskVerifyEnable,
+        taskVerifyFileMd5,
+        taskUnzipEnable,
+        "",
+        fileIconUrl,
+        fileIconId,
+        fileNameExt,
+        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitFirstIndexToStart(".") else "",
+        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitFirstIndexToEnd(".") else "",
+        "",
+        apkPackageName,
+        apkVersionCode,
+        apkVersionName
+    )
+
     fun taskDownloadReset() {
         taskDownloadId = 0
         taskDownloadProgress = 0
@@ -108,11 +151,15 @@ data class AppTask(
         AppTaskDaoManager.addOrUpdate(this)
     }
 
-    fun getCurrentTaskName(): String? {
+    fun getCurrentTaskName(@ATaskName firstTaskName: String = ""): String? {
         val task: Int = taskState / 10//->哪个环节
         val state: Int = taskState % 10
-        UtilKLogWrapper.d(TAG, "getCurrentTaskName: task $task state $state")
-        return when (state) {
+        if (taskState == CState.STATE_TASK_SUCCESS) {
+            UtilKLogWrapper.d(TAG, "getCurrentTaskName: task $task state $state taskName null STATE_TASK_SUCCESS")
+            return null
+        }
+        return when (task) {
+            CState.STATE_TASK_CREATE -> firstTaskName.ifEmpty { null }
             CTaskState.STATE_DOWNLOAD_CREATE / 10 -> ATaskName.TASK_DOWNLOAD//1
             CTaskState.STATE_VERIFY_CREATE / 10 -> ATaskName.TASK_VERIFY
             CTaskState.STATE_UNZIP_CREATE / 10 -> ATaskName.TASK_UNZIP
@@ -120,7 +167,7 @@ data class AppTask(
             CTaskState.STATE_OPEN_CREATE / 10 -> ATaskName.TASK_OPEN
             CTaskState.STATE_UNINSTALL_CREATE / 10 -> ATaskName.TASK_UNINSTALL
             else -> null
-        }
+        }.also { UtilKLogWrapper.d(TAG, "getCurrentTaskName: task $task state $state taskName $it") }
     }
 
     ////////////////////////////////////////////////////////////
@@ -174,81 +221,77 @@ data class AppTask(
     fun canTaskDownload(): Boolean =
         CTaskState.canTaskDownload(taskState)
 
-    fun atTaskDownload(): Boolean =
-        CTaskState.atTaskDownload(taskState)
-
-    fun isTaskDownloading(): Boolean =
-        CTaskState.isTaskDownloading(taskState)
-
-    fun isTaskDownloadSuccess(): Boolean =
-        CTaskState.isTaskDownloadSuccess(taskState)
-
-    ////////////////////////////////////////////////////////////
-
     fun canTaskVerify(): Boolean =
         CTaskState.canTaskVerify(taskState)
-
-    fun atTaskVerify(): Boolean =
-        CTaskState.atTaskVerify(taskState)
-
-    fun isTaskVerifying(): Boolean =
-        CTaskState.isTaskVerifying(taskState)
-
-    fun isTaskVerifySuccess(): Boolean =
-        CTaskState.isTaskVerifySuccess(taskState)
-
-    ////////////////////////////////////////////////////////////
 
     fun canTaskUnzip(): Boolean =
         CTaskState.canTaskUnzip(taskState)
 
-    fun atTaskUnzip(): Boolean =
-        CTaskState.atTaskUnzip(taskState)
-
-    fun isTaskUnziping(): Boolean =
-        CTaskState.isTaskUnziping(taskState)
-
-    fun isTaskUnzipSuccess(): Boolean =
-        CTaskState.isTaskUnzipSuccess(taskState)
-
-    ////////////////////////////////////////////////////////////
-
     fun canTaskInstall(): Boolean =
         CTaskState.canTaskInstall(taskState)
-
-    fun atTaskInstall(): Boolean =
-        CTaskState.atTaskInstall(taskState)
-
-    fun isTaskInstalling(): Boolean =
-        CTaskState.isTaskInstalling(taskState)
-
-    fun isTaskInstallSuccess(): Boolean =
-        CTaskState.isTaskInstallSuccess(taskState)
-
-    ////////////////////////////////////////////////////////////
 
     fun canTaskOpen(): Boolean =
         CTaskState.canTaskOpen(taskState)
 
-    fun atTaskOpen(): Boolean =
-        CTaskState.atTaskOpen(taskState)
-
-    fun isTaskOpening(): Boolean =
-        CTaskState.isTaskOpening(taskState)
-
-    fun isTaskOpenSuccess(): Boolean =
-        CTaskState.isTaskOpenSuccess(taskState)
+    fun canTaskUninstall(): Boolean =
+        CTaskState.canTaskUninstall(taskState)
 
     ////////////////////////////////////////////////////////////
 
-    fun canTaskUninstall(): Boolean =
-        CTaskState.canTaskUninstall(taskState)
+    fun atTaskDownload(): Boolean =
+        CTaskState.atTaskDownload(taskState)
+
+    fun atTaskVerify(): Boolean =
+        CTaskState.atTaskVerify(taskState)
+
+    fun atTaskUnzip(): Boolean =
+        CTaskState.atTaskUnzip(taskState)
+
+    fun atTaskInstall(): Boolean =
+        CTaskState.atTaskInstall(taskState)
+
+    fun atTaskOpen(): Boolean =
+        CTaskState.atTaskOpen(taskState)
 
     fun atTaskUninstall(): Boolean =
         CTaskState.atTaskUninstall(taskState)
 
+    ////////////////////////////////////////////////////////////
+
+    fun isTaskDownloading(): Boolean =
+        CTaskState.isTaskDownloading(taskState)
+
+    fun isTaskVerifying(): Boolean =
+        CTaskState.isTaskVerifying(taskState)
+
+    fun isTaskUnziping(): Boolean =
+        CTaskState.isTaskUnziping(taskState)
+
+    fun isTaskInstalling(): Boolean =
+        CTaskState.isTaskInstalling(taskState)
+
+    fun isTaskOpening(): Boolean =
+        CTaskState.isTaskOpening(taskState)
+
     fun isTaskUninstalling(): Boolean =
         CTaskState.isTaskUninstalling(taskState)
+
+    ////////////////////////////////////////////////////////////
+
+    fun isTaskDownloadSuccess(): Boolean =
+        CTaskState.isTaskDownloadSuccess(taskState)
+
+    fun isTaskVerifySuccess(): Boolean =
+        CTaskState.isTaskVerifySuccess(taskState)
+
+    fun isTaskUnzipSuccess(): Boolean =
+        CTaskState.isTaskUnzipSuccess(taskState)
+
+    fun isTaskInstallSuccess(): Boolean =
+        CTaskState.isTaskInstallSuccess(taskState)
+
+    fun isTaskOpenSuccess(): Boolean =
+        CTaskState.isTaskOpenSuccess(taskState)
 
     fun isTaskUninstallSuccess(): Boolean =
         CTaskState.isTaskUninstallSuccess(taskState)

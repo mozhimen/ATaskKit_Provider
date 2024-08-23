@@ -59,9 +59,9 @@ interface ITaskUninstall {
 }
 
 interface ITask {
-    fun onTaskCreate(appTask: AppTask, isUpdate: Boolean)
-    fun onTaskUnavailable(appTask: AppTask)
-    fun onTaskSuccess(appTask: AppTask)
+    fun onTaskCreate(appTask: AppTask, isUpdate: Boolean){}
+    fun onTaskUnavailable(appTask: AppTask){}
+    fun onTaskSuccess(appTask: AppTask){}
 }
 
 interface ITasks : ITaskDownload, ITaskVerify, ITaskUnzip, ITaskInstall, ITaskOpen, ITaskUninstall, ITask

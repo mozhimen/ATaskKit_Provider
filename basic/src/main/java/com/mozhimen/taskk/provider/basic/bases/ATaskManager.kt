@@ -1,12 +1,18 @@
-package com.mozhimen.taskk.provider.core.bases
+package com.mozhimen.taskk.provider.basic.bases
 
 import android.content.Context
-import android.util.Log
+import androidx.annotation.CallSuper
 import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
+import com.mozhimen.basick.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.basick.utilk.bases.BaseUtilK
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
-import com.mozhimen.taskk.provider.basic.bases.ATaskSet
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetDownload
+import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetInstall
+import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetOpen
+import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetUninstall
+import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetUnzip
+import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetVerify
 import com.mozhimen.taskk.provider.basic.cons.CState
 import com.mozhimen.taskk.provider.basic.cons.CTaskState
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
@@ -16,26 +22,38 @@ import com.mozhimen.taskk.provider.basic.impls.TaskException
 import com.mozhimen.taskk.provider.basic.interfaces.ITask
 import com.mozhimen.taskk.provider.basic.interfaces.ITaskEvent
 import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
-import com.mozhimen.taskk.provider.basic.bases.ATaskProvider
-import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetInstall
-import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetOpen
-import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetUninstall
-import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetUnzip
-import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetVerify
+import com.mozhimen.taskk.provider.basic.interfaces.ITasks
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * @ClassName NetKAppDownload
+ * @ClassName ITaskProviderSets
  * @Description TODO
- * @Author Mozhimen & Kolin Zhao
- * @Date 2023/10/12 9:38
+ * @Author mozhimen
+ * @Date 2024/8/20
  * @Version 1.0
  */
 @OApiInit_InApplication
-abstract class ATaskProviders : ITask, ATaskProvider(), ITaskEvent {
+@OPermission_INTERNET
+abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
+    protected val _isInit = AtomicBoolean(false)
+    protected val _taskListeners = mutableListOf<ITasks>()
+    protected val _taskSets: ConcurrentHashMap<@ATaskName String, ATaskSet<*>> by lazy {
+        ConcurrentHashMap<String, ATaskSet<*>>(
+            getTaskSets().associateBy { it.getTaskName() }
+        )
+    }
+    protected val _taskQuenes by lazy {
+        ConcurrentHashMap<String, List<@ATaskName String>>(getTaskQueues())
+    }
 
     protected val _iTaskLifecycle: ITaskLifecycle = object : ITaskLifecycle {
         override fun onTaskStarted(taskState: Int, appTask: AppTask) {
-            onTask_ofIng(appTask, appTask.taskDownloadProgress, appTask.taskDownloadFileSizeOffset, appTask.taskDownloadFileSizeTotal, appTask.taskDownloadFileSpeed)
+            if (appTask.isAnyTasking()) {
+                onTask_ofIng(appTask, appTask.taskDownloadProgress, appTask.taskDownloadFileSizeOffset, appTask.taskDownloadFileSizeTotal, appTask.taskDownloadFileSpeed)
+            } else {
+                onTask_ofOther(appTask)
+            }
         }
 
         override fun onTaskPaused(taskState: Int, appTask: AppTask) {
@@ -53,39 +71,103 @@ abstract class ATaskProviders : ITask, ATaskProvider(), ITaskEvent {
 
     /////////////////////////////////////////////////////////////////
 
-    override fun init(context: Context) {
-//        _taskProviderInstallApk.setTaskProviderInterceptor(TaskProviderInterceptorApk).setInstallKReceiverProxy(InstallKManager.getInstallKReceiverProxy()).init(context)
+    @CallSuper
+    open fun init(context: Context) {
+        _isInit.compareAndSet(false, true)
+        AppTaskDaoManager.init()
         getTaskSets().forEach {
             it.init(context)
         }
-        super.init(context)
     }
 
-    override fun getNextTaskSet(taskName: String): ATaskSet<*>? {
-        val currentIndex = getTaskQueue().indexOf(taskName)
+    fun hasInit(): Boolean =
+        _isInit.get().also { UtilKLogWrapper.d(TAG, "hasInit: $it") }
+
+    fun registerTaskListener(listener: ITasks) {
+        if (!_taskListeners.contains(listener)) {
+            _taskListeners.add(listener)
+        }
+    }
+
+    fun unregisterTaskListener(listener: ITasks) {
+        val indexOf = _taskListeners.indexOf(listener)
+        if (indexOf >= 0)
+            _taskListeners.removeAt(indexOf)
+    }
+
+    fun getTaskSet(@ATaskName taskName: String): ATaskSet<*>? {
+        return _taskSets[taskName]
+    }
+
+    fun getNextTaskName(fileExt: String, @ATaskName currentTaskName: String): String? {
+        val taskQueue = getTaskQueue(fileExt) ?: return null
+        val currentIndex = taskQueue.indexOf(currentTaskName)
         if (currentIndex < 0) return null
         val nextIndex = currentIndex + 1
-        if (nextIndex in getTaskQueue().indices) {
-            val nextTaskName = getTaskQueue()[nextIndex]
-            return getTaskSet(nextTaskName)
+        return (if (nextIndex in taskQueue.indices) {
+            taskQueue[nextIndex]
         } else
-            return null
+            null).also { UtilKLogWrapper.d(TAG, "getNextTaskName: $it") }
+    }
+
+    fun getNextTaskSet(fileExt: String, @ATaskName taskName: String): ATaskSet<*>? {
+        return getNextTaskName(fileExt, taskName)?.let { getTaskSet(it) }
+    }
+
+    fun getTaskQueue(fileExt: String): List<@ATaskName String>? {
+        return _taskQuenes[fileExt]
     }
 
     fun getAppTaskDaoManager(): AppTaskDaoManager =
         AppTaskDaoManager
 
     /////////////////////////////////////////////////////////////////
-    // control
+
+    fun getTaskSetDownload(): ATaskSetDownload? {
+        return getTaskSet(ATaskName.TASK_DOWNLOAD) as? ATaskSetDownload
+    }
+
+    fun getTaskSetVerify(): ATaskSetVerify? {
+        return getTaskSet(ATaskName.TASK_VERIFY) as? ATaskSetVerify
+    }
+
+    fun getTaskSetUnzip(): ATaskSetUnzip? {
+        return getTaskSet(ATaskName.TASK_UNZIP) as? ATaskSetUnzip
+    }
+
+    fun getTaskSetInstall(): ATaskSetInstall? {
+        return getTaskSet(ATaskName.TASK_INSTALL) as? ATaskSetInstall
+    }
+
+    fun getTaskSetOpen(): ATaskSetOpen? {
+        return getTaskSet(ATaskName.TASK_OPEN) as? ATaskSetOpen
+    }
+
+    fun getTaskSetUninstall(): ATaskSetUninstall? {
+        return getTaskSet(ATaskName.TASK_UNINSTALL) as? ATaskSetUninstall
+    }
+
     /////////////////////////////////////////////////////////////////
-    //region # control
+
+    abstract fun getTaskQueues(): Map<String, List<@ATaskName String>>
+    abstract fun getTaskSets(): List<ATaskSet<*>>
+
+    /////////////////////////////////////////////////////////////////
+
     override fun taskStart(appTask: AppTask) {
         UtilKLogWrapper.d(TAG, "taskStart: appTask $appTask")
-        if (appTask.isTaskProcess()) {
-            UtilKLogWrapper.d(TAG, "taskCancel: task is process")
+        if (appTask.isTaskProcess() && !appTask.isAnyTaskPause() && !appTask.isAnyTaskSuccess()) {
+            UtilKLogWrapper.d(TAG, "taskStart: task is process")
             return
         }
-        getTaskSet(appTask.getCurrentTaskName() ?: return)?.taskStart(appTask)
+        val currentTaskName = appTask.getCurrentTaskName(getTaskQueue(appTask.fileExt)?.getOrNull(0) ?: return) ?: return
+        if (appTask.isAnyTaskSuccess()) {
+            UtilKLogWrapper.d(TAG, "taskStart: getNextTaskSet")
+            getNextTaskSet(appTask.fileExt, currentTaskName)?.taskStart(appTask)
+        } else {
+            UtilKLogWrapper.d(TAG, "taskStart: getTaskSet")
+            getTaskSet(currentTaskName)?.taskStart(appTask)
+        }
     }
 
     override fun taskCancel(appTask: AppTask/*, onCancelBlock: IAB_Listener<Boolean, Int>? = null*/) {
@@ -121,32 +203,6 @@ abstract class ATaskProviders : ITask, ATaskProvider(), ITaskEvent {
         getTaskSet(appTask.getCurrentTaskName() ?: return)?.taskResume(appTask)
     }
 
-    ////////////////////////////////////////////////////////////////////
-
-    fun getTaskSetDownload(): ATaskSetDownload? {
-        return getTaskSet(ATaskName.TASK_DOWNLOAD) as? ATaskSetDownload
-    }
-
-    fun getTaskSetVerify(): ATaskSetVerify? {
-        return getTaskSet(ATaskName.TASK_VERIFY) as? ATaskSetVerify
-    }
-
-    fun getTaskSetUnzip(): ATaskSetUnzip? {
-        return getTaskSet(ATaskName.TASK_UNZIP) as? ATaskSetUnzip
-    }
-
-    fun getTaskSetInstall(): ATaskSetInstall? {
-        return getTaskSet(ATaskName.TASK_INSTALL) as? ATaskSetInstall
-    }
-
-    fun getTaskSetOpen(): ATaskSetOpen? {
-        return getTaskSet(ATaskName.TASK_OPEN) as? ATaskSetOpen
-    }
-
-    fun getTaskSetUninstall(): ATaskSetUninstall? {
-        return getTaskSet(ATaskName.TASK_UNINSTALL) as? ATaskSetUninstall
-    }
-
     /////////////////////////////////////////////////////////////////
 
     override fun onTaskCreate(appTask: AppTask, isUpdate: Boolean) {
@@ -179,7 +235,8 @@ abstract class ATaskProviders : ITask, ATaskProvider(), ITaskEvent {
             }
         }
         //
-        onTaskCreate(appTask, appTask.taskStateInit == CState.STATE_TASK_UPDATE)
+        if (appTask.isAnyTaskFail())
+            onTaskCreate(appTask, appTask.taskStateInit == CState.STATE_TASK_UPDATE)
     }
 
     fun onTask_ofIng(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
@@ -205,6 +262,8 @@ abstract class ATaskProviders : ITask, ATaskProvider(), ITaskEvent {
             when (appTask.taskState) {
                 CState.STATE_TASK_CREATE -> listener.onTaskCreate(appTask, false)
                 CState.STATE_TASK_UPDATE -> listener.onTaskCreate(appTask, true)
+                CState.STATE_TASK_UNAVAILABLE -> listener.onTaskUnavailable(appTask)
+                CState.STATE_TASK_SUCCESS -> listener.onTaskSuccess(appTask)
                 ///////////////////////////////////////////////////////////////////////////////
                 CTaskState.STATE_DOWNLOAD_PAUSE -> listener.onTaskDownloadPause(appTask)
                 CTaskState.STATE_DOWNLOAD_SUCCESS -> listener.onTaskDownloadSuccess(appTask)
@@ -233,7 +292,10 @@ abstract class ATaskProviders : ITask, ATaskProvider(), ITaskEvent {
         }
         //
         if (appTask.isAnyTaskSuccess()) {
-            getNextTaskSet(appTask.getCurrentTaskName() ?: return)?.taskStart(appTask)
+            getNextTaskSet(appTask.fileExt, appTask.getCurrentTaskName() ?: return)?.taskStart(appTask)
+        }
+        if (appTask.isAnyTaskCancel()) {
+            onTaskCreate(appTask, appTask.taskStateInit == CState.STATE_TASK_UPDATE)
         }
     }
 }

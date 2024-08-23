@@ -2,27 +2,31 @@ package com.mozhimen.taskk.provider.basic.bases
 
 import android.content.Context
 import androidx.annotation.CallSuper
-import com.mozhimen.basick.utilk.bases.BaseUtilK
-import com.mozhimen.taskk.provider.basic.annors.ATaskName
-import com.mozhimen.taskk.provider.basic.interfaces.ITasks
-import java.util.concurrent.ConcurrentHashMap
+import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
+import com.mozhimen.basick.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
+import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
+import com.mozhimen.taskk.provider.basic.bases.providers.ATaskOpen
+import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUninstall
+import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUnzip
+import com.mozhimen.taskk.provider.basic.bases.providers.ATaskVerify
+import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * @ClassName ITaskProviderSets
+ * @ClassName ATaskProvider
  * @Description TODO
  * @Author mozhimen
- * @Date 2024/8/20
+ * @Date 2024/8/23
  * @Version 1.0
  */
-abstract class ATaskProvider : BaseUtilK() {
+@OApiInit_InApplication
+@OPermission_INTERNET
+abstract class ATaskProvider(
+    protected val _iTaskLifecycle: ITaskLifecycle,
+    protected val _taskManager: ATaskManager
+) {
     protected val _isInit = AtomicBoolean(false)
-    protected val _taskListeners = mutableListOf<ITasks>()
-    protected val _taskSets: ConcurrentHashMap<String, ATaskSet<*>> by lazy {
-        ConcurrentHashMap<String, ATaskSet<*>>(
-            getTaskSets().associateBy { it.getTaskName() }
-        )
-    }
 
     @CallSuper
     open fun init(context: Context) {
@@ -32,23 +36,31 @@ abstract class ATaskProvider : BaseUtilK() {
     fun hasInit(): Boolean =
         _isInit.get()
 
-    fun registerTaskListener(listener: ITasks) {
-        if (!_taskListeners.contains(listener)) {
-            _taskListeners.add(listener)
-        }
-    }
+    abstract fun getTaskDownload(): ATaskDownload
+    abstract fun getTaskVerify(): ATaskVerify
+    abstract fun getTaskUnzip(): ATaskUnzip
+    abstract fun getTaskInstall(): ATaskInstall
+    abstract fun getTaskOpen(): ATaskOpen
+    abstract fun getTaskUninstall(): ATaskUninstall
+    abstract fun getTaskQueue(): List<String>
 
-    fun unregisterTaskListener(listener: ITasks) {
-        val indexOf = _taskListeners.indexOf(listener)
-        if (indexOf >= 0)
-            _taskListeners.removeAt(indexOf)
+    fun getSupportFileExtensions(): List<String> {
+        val set: Set<String> = listOf(
+            getTaskDownload().getSupportFileExts(),
+            getTaskVerify().getSupportFileExts(),
+            getTaskUnzip().getSupportFileExts(),
+            getTaskInstall().getSupportFileExts(),
+            getTaskOpen().getSupportFileExts(),
+            getTaskUninstall().getSupportFileExts()
+        ).fold(emptySet()) { acc, nex -> acc + nex }
+        return set.toList()
     }
+}
 
-    fun getTaskSet(@ATaskName taskName: String): ATaskSet<*>? {
-        return _taskSets[taskName]
-    }
-
-    abstract fun getTaskQueue(): List<@ATaskName String>
-    abstract fun getTaskSets(): List<ATaskSet<*>>
-    abstract fun getNextTaskSet(@ATaskName taskName: String): ATaskSet<*>?
+fun main() {
+    val list: Set<Int> = listOf(
+        listOf(1, 2, 3),
+        listOf(2, 2, 2)
+    ).fold(emptySet()) { acc, nex -> acc + nex }
+    println(list)
 }

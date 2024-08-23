@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import com.mozhimen.basick.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
 import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.basick.utilk.wrapper.UtilKAppInstall
+import com.mozhimen.installk.manager.commons.IInstallKReceiverProxy
 import com.mozhimen.taskk.provider.apk.cons.CExt
-import com.mozhimen.taskk.provider.apk.interfaces.ITaskProviderInterceptorApk
+import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
+import com.mozhimen.taskk.provider.basic.cons.CState
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
+import com.mozhimen.taskk.provider.basic.interfaces.ITaskInterceptor
 import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
 
 /**
@@ -22,17 +25,22 @@ class TaskInstallApk(
     iTaskLifecycle: ITaskLifecycle,
 ) : ATaskInstall(iTaskLifecycle) {
 
-    protected var _iTaskProviderInterceptor: ITaskProviderInterceptorApk? = null
+    protected var _iInstallKReceiverProxy: IInstallKReceiverProxy? = null
 
-    fun setTaskProviderInterceptor(iTaskProviderInterceptor: ITaskProviderInterceptorApk): TaskInstallApk {
-        _iTaskProviderInterceptor = iTaskProviderInterceptor
+    fun setInstallKReceiverProxy(iInstallKReceiverProxy: IInstallKReceiverProxy): ATaskInstall {
+        _iInstallKReceiverProxy = iInstallKReceiverProxy
         return this
     }
 
-    override fun getSupportFileExtensions(): List<String> {
+    override fun getSupportFileExts(): List<String> {
         return listOf(CExt.EXT_APK)
     }
 
+    override fun getSupportFileTasks(): Map<String, ATask> {
+        return getSupportFileExts().associateWith { this }
+    }
+
+    @SuppressLint("MissingSuperCall")
     @OPermission_REQUEST_INSTALL_PACKAGES
     override fun taskStart(appTask: AppTask) {
         if (!appTask.canTaskInstall()) {
@@ -48,31 +56,6 @@ class TaskInstallApk(
         } else {
             UtilKAppInstall.install_ofView(appTask.filePathNameExt)
         }
-        super.taskStart(appTask)
-    }
-
-    @SuppressLint("MissingSuperCall")
-    override fun taskCancel(appTask: AppTask) {
-    }
-
-    @SuppressLint("MissingSuperCall")
-    override fun taskPause(appTask: AppTask) {
-    }
-
-    @SuppressLint("MissingSuperCall")
-    override fun taskResume(appTask: AppTask) {
-    }
-
-    override fun onTaskFinished(taskState: Int, finishType: STaskFinishType, appTask: AppTask) {
-        when (finishType) {
-            STaskFinishType.SUCCESS -> {
-                if (_iTaskProviderInterceptor?.isAutoDeleteOrgFiles() == true) {
-                    _iTaskProviderInterceptor?.deleteOrgFiles(appTask)
-                }
-            }
-
-            else -> {}
-        }
-        super.onTaskFinished(taskState, finishType, appTask)
+//        super.taskStart(appTask)
     }
 }

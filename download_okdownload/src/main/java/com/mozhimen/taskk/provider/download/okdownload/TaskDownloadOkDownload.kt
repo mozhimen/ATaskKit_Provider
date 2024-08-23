@@ -14,6 +14,7 @@ import com.liulishuo.okdownload.core.file.ExtProcessFileStrategy
 import com.liulishuo.okdownload.core.listener.DownloadListener1
 import com.liulishuo.okdownload.core.listener.assist.Listener1Assist
 import com.mozhimen.basick.elemk.javax.net.bases.BaseX509TrustManager
+import com.mozhimen.basick.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.basick.utilk.javax.net.UtilKSSLSocketFactory
@@ -31,8 +32,8 @@ import com.mozhimen.taskk.provider.download.mos.DownloadProgressBundle
 import okhttp3.OkHttpClient
 import okhttp3.internal.http2.StreamResetException
 import java.io.File
-import java.lang.Exception
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.Exception
 import kotlin.math.abs
 
 /**
@@ -42,6 +43,8 @@ import kotlin.math.abs
  * @Date 2024/8/20
  * @Version 1.0
  */
+@OPermission_INTERNET
+
 abstract class TaskDownloadOkDownload(iTaskLifecycle: ITaskLifecycle) : ATaskDownload(iTaskLifecycle) {
 
     companion object {
@@ -101,6 +104,11 @@ abstract class TaskDownloadOkDownload(iTaskLifecycle: ITaskLifecycle) : ATaskDow
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////
+
+    @SuppressLint("MissingSuperCall")
+    override fun taskStart(appTask: AppTask) {
+        download(appTask)
+    }
 
     @SuppressLint("MissingSuperCall")
     override fun taskCancel(appTask: AppTask) {
@@ -332,7 +340,14 @@ abstract class TaskDownloadOkDownload(iTaskLifecycle: ITaskLifecycle) : ATaskDow
             val bundle = getDownloadProgressBundle(downloadTask.id, appTask)
             when (cause) {
                 EndCause.COMPLETED -> {
-                    onTaskFinished(CTaskState.STATE_DOWNLOAD_SUCCESS, downloadTask.id, STaskFinishType.SUCCESS, bundle.appTask)
+                    try {
+                        val filePathNameExtTemp = downloadTask.file?.absolutePath ?: throw CErrorCode.CODE_TASK_DOWNLOAD_PATH_NOT_EXIST.intErrorCode2taskException()
+                        onTaskFinished(CTaskState.STATE_DOWNLOAD_SUCCESS, downloadTask.id, STaskFinishType.SUCCESS, bundle.appTask.apply {
+                            filePathNameExt = filePathNameExtTemp
+                        })
+                    } catch (e: TaskException) {
+                        onTaskFinished(CTaskState.STATE_DOWNLOAD_FAIL, downloadTask.id, STaskFinishType.FAIL(e), bundle.appTask)
+                    }
                 }
 
                 EndCause.CANCELED -> {

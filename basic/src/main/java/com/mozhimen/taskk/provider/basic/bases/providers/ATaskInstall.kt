@@ -1,12 +1,14 @@
 package com.mozhimen.taskk.provider.basic.bases.providers
 
+import android.annotation.SuppressLint
 import androidx.annotation.CallSuper
-import com.mozhimen.installk.manager.commons.IInstallKReceiverProxy
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.bases.ATask
+import com.mozhimen.taskk.provider.basic.cons.CState
 import com.mozhimen.taskk.provider.basic.cons.CTaskState
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
+import com.mozhimen.taskk.provider.basic.interfaces.ITaskInterceptor
 import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
 
 /**
@@ -17,34 +19,38 @@ import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
  * @Version 1.0
  */
 abstract class ATaskInstall(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifecycle) {
-    protected var _iInstallKReceiverProxy: IInstallKReceiverProxy? = null
 
-    fun setInstallKReceiverProxy(iInstallKReceiverProxy: IInstallKReceiverProxy): ATaskInstall {
-        _iInstallKReceiverProxy = iInstallKReceiverProxy
-        return this
+    protected var _iTaskProviderInterceptor: ITaskInterceptor? = null
+
+    fun setTaskInterceptor(iTaskProviderInterceptor: ITaskInterceptor) {
+        _iTaskProviderInterceptor = iTaskProviderInterceptor
     }
 
     override fun getTaskName(): String {
         return ATaskName.TASK_INSTALL
     }
 
-    @CallSuper
     override fun taskStart(appTask: AppTask) {
-        onTaskStarted(CTaskState.STATE_INSTALLING, appTask)
     }
 
-    @CallSuper
     override fun taskResume(appTask: AppTask) {
-        onTaskStarted(CTaskState.STATE_INSTALLING, appTask)
     }
 
-    @CallSuper
     override fun taskPause(appTask: AppTask) {
-        onTaskPaused(CTaskState.STATE_INSTALL_PAUSE, appTask)
     }
 
-    @CallSuper
     override fun taskCancel(appTask: AppTask) {
-        onTaskFinished(CTaskState.STATE_INSTALL_CANCEL, STaskFinishType.CANCEL, appTask)
+    }
+
+    @SuppressLint("MissingSuperCall")
+    override fun onTaskFinished(taskState: Int, finishType: STaskFinishType, appTask: AppTask) {
+        if (finishType is STaskFinishType.SUCCESS){
+            if (_iTaskProviderInterceptor?.isAutoDeleteOrgFiles() == true) {
+                _iTaskProviderInterceptor?.deleteOrgFiles(appTask)
+            }
+            val taskStateNew = CState.STATE_TASK_SUCCESS
+            appTask.toNewTaskState(taskStateNew)
+            _iTaskLifecycle?.onTaskFinished(taskStateNew, STaskFinishType.SUCCESS, appTask)
+        }
     }
 }

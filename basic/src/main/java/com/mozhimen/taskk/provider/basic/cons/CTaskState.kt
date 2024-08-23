@@ -19,7 +19,7 @@ object CTaskState {
 
     @JvmStatic
     fun canTaskDownload(state: Int): Boolean =
-        state in STATE_DOWNLOAD_CREATE..STATE_DOWNLOADING || state in CState.STATE_TASK_CREATE..CState.STATE_TASK_UPDATE
+        state in STATE_DOWNLOAD_CREATE..STATE_DOWNLOAD_PAUSE || state in CState.STATE_TASK_CREATE..CState.STATE_TASK_UPDATE
 
     @JvmStatic
     fun atTaskDownload(state: Int): Boolean =
@@ -44,7 +44,7 @@ object CTaskState {
 
     @JvmStatic
     fun canTaskVerify(state: Int): Boolean =
-        state in STATE_DOWNLOAD_SUCCESS..STATE_VERIFYING
+        state in STATE_DOWNLOAD_SUCCESS..STATE_VERIFY_PAUSE
 
     @JvmStatic
     fun atTaskVerify(state: Int): Boolean =
@@ -69,7 +69,7 @@ object CTaskState {
 
     @JvmStatic
     fun canTaskUnzip(state: Int): Boolean =
-        state in STATE_VERIFY_SUCCESS..STATE_UNZIPING
+        state in STATE_VERIFY_SUCCESS..STATE_UNZIP_PAUSE
 
     @JvmStatic
     fun atTaskUnzip(state: Int): Boolean =
@@ -94,7 +94,7 @@ object CTaskState {
 
     @JvmStatic
     fun canTaskInstall(state: Int): Boolean =
-        state in STATE_UNZIP_SUCCESS..STATE_INSTALLING
+        state in STATE_UNZIP_SUCCESS..STATE_INSTALL_PAUSE
 
     @JvmStatic
     fun atTaskInstall(state: Int): Boolean =
@@ -120,7 +120,7 @@ object CTaskState {
 
     @JvmStatic
     fun canTaskOpen(state: Int): Boolean =
-        state in STATE_INSTALL_SUCCESS..STATE_OPENING
+        state in STATE_INSTALL_SUCCESS..STATE_OPEN_PAUSE
 
     @JvmStatic
     fun atTaskOpen(state: Int): Boolean =
@@ -146,7 +146,7 @@ object CTaskState {
 
     @JvmStatic
     fun canTaskUninstall(state: Int): Boolean =
-        state in STATE_INSTALL_SUCCESS..STATE_UNINSTALLING
+        state in STATE_INSTALL_SUCCESS..STATE_UNINSTALL_PAUSE
 
     @JvmStatic
     fun atTaskUninstall(state: Int): Boolean =

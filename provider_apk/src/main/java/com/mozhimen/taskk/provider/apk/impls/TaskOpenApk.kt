@@ -5,6 +5,7 @@ import com.mozhimen.basick.lintk.optins.permission.OPermission_QUERY_ALL_PACKAGE
 import com.mozhimen.basick.utilk.android.app.UtilKApplicationWrapper
 import com.mozhimen.basick.utilk.android.content.UtilKContextStart
 import com.mozhimen.taskk.provider.apk.cons.CExt
+import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskOpen
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
@@ -17,7 +18,11 @@ import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
  * @Version 1.0
  */
 class TaskOpenApk(iTaskLifecycle: ITaskLifecycle) : ATaskOpen(iTaskLifecycle) {
-    override fun getSupportFileExtensions(): List<String> {
+    override fun getSupportFileTasks(): Map<String, ATask> {
+        return getSupportFileExts().associateWith { this }
+    }
+
+    override fun getSupportFileExts(): List<String> {
         return listOf(CExt.EXT_APK)
     }
 
@@ -27,11 +32,11 @@ class TaskOpenApk(iTaskLifecycle: ITaskLifecycle) : ATaskOpen(iTaskLifecycle) {
 //        super.taskStart(appTask)
         try {
             val boolean = UtilKContextStart.startContext_ofPackageName(UtilKApplicationWrapper.instance.get(), appTask.apkPackageName)
-            if (boolean) {
+//            if (boolean) {
 //                onTaskFinished(CTaskState.STATE_OPEN_SUCCESS, STaskFinishType.SUCCESS, appTask)
-            } else {
+//            } else {
 //                onTaskFinished(CTaskState.STATE_OPEN_FAIL, STaskFinishType.FAIL(CErrorCode.CODE_TASK_OPEN_FAIL.intErrorCode2taskException()), appTask)
-            }
+//            }
         } catch (e: Exception) {
 //            onTaskFinished(CTaskState.STATE_OPEN_FAIL, STaskFinishType.FAIL(e.exception2taskException()), appTask)
         }

@@ -1,5 +1,6 @@
 package com.mozhimen.taskk.provider.download
 
+import com.mozhimen.basick.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.basick.utilk.java.io.UtilKFileDir
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
@@ -19,8 +20,13 @@ import java.util.concurrent.ConcurrentHashMap
  * @Date 2024/8/20
  * @Version 1.0
  */
-class TaskSetDownload(override val providerDefault: ATaskDownload) : ATaskSetDownload() {
-    override val providers: ConcurrentHashMap<String, ATaskDownload> by lazy { ConcurrentHashMap(providerDefault.getSupportFileExtensions().associateWith { providerDefault }) }
+@OPermission_INTERNET
+class TaskSetDownload(override val providerDefaults: List<ATaskDownload>) : ATaskSetDownload() {
+    override val providers: ConcurrentHashMap<String, ATaskDownload> by lazy {
+        ConcurrentHashMap(
+            providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskDownload>)?.toMutableMap() }.fold(emptyMap()) { acc, nex -> acc + nex }
+        )
+    }
 
     override fun taskPauseAll() {
         providers.forEach { _ -> taskPauseAll() }

@@ -11,6 +11,10 @@ import java.util.concurrent.ConcurrentHashMap
  * @Date 2024/8/19
  * @Version 1.0
  */
-class TaskSetUninstall(override val providerDefault: ATaskUninstall) : ATaskSetUninstall() {
-    override val providers: ConcurrentHashMap<String, ATaskUninstall> by lazy { ConcurrentHashMap(providerDefault.getSupportFileExtensions().associateWith { providerDefault }) }
+class TaskSetUninstall(override val providerDefaults: List<ATaskUninstall>) : ATaskSetUninstall() {
+    override val providers: ConcurrentHashMap<String, ATaskUninstall> by lazy {
+        ConcurrentHashMap(
+            providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskUninstall>)?.toMutableMap() }.fold(emptyMap()) { acc, nex -> acc + nex }
+        )
+    }
 }

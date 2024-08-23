@@ -34,11 +34,11 @@ object ViewUtil {
         view: View,
         onGetAppTask: I_AListener<AppTask>,
         onTaskStart: IAB_Listener<Context, AppTask>,
-        onOpen: IAB_Listener<Context, AppTask>,
-        onPause: IAB_Listener<Context, AppTask>,
-        onResume: IAB_Listener<Context, AppTask>,
-        onInstall: IAB_Listener<Context, AppTask>,
-        onCancel: IAB_Listener<Context, AppTask>
+        onTaskOpen: IAB_Listener<Context, AppTask>,
+        onTaskPause: IAB_Listener<Context, AppTask>,
+        onTaskResume: IAB_Listener<Context, AppTask>,
+        onTaskInstall: IAB_Listener<Context, AppTask>,
+        onTaskCancel: IAB_Listener<Context, AppTask>
     ) {
         view.setOnClickListener {
             val appTask: AppTask = onGetAppTask.invoke()
@@ -48,25 +48,25 @@ object ViewUtil {
                 }
 
                 appTask.isTaskSuccess() -> {
-                    onOpen.invoke(it.context, appTask)
+                    onTaskOpen.invoke(it.context, appTask)
                 }
 
                 appTask.isAnyTasking() -> {
-                    onPause.invoke(it.context, appTask)
+                    onTaskPause.invoke(it.context, appTask)
                 }
 
                 appTask.isAnyTaskPause() -> {
-                    onResume.invoke(it.context, appTask)
+                    onTaskResume.invoke(it.context, appTask)
                 }
 
                 appTask.canTaskInstall()/*CTaskState.STATE_UNZIP_SUCCESS, CTaskState.STATE_INSTALLING*/ -> {
-                    onInstall.invoke(it.context, appTask)
+                    onTaskInstall.invoke(it.context, appTask)
                 }
 
                 else -> {
                 }
             }
         }
-        generateViewLongClickOfAppTask(view, onGetAppTask, onCancel)
+        generateViewLongClickOfAppTask(view, onGetAppTask, onTaskCancel)
     }
 }

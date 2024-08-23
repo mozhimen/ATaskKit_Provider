@@ -1,5 +1,8 @@
 package com.mozhimen.taskk.provider.basic.interfaces
 
+import com.mozhimen.basick.utilk.commons.IUtilK
+import com.mozhimen.taskk.provider.basic.db.AppTask
+
 /**
  * @ClassName ITaskProviderInterceptor
  * @Description TODO
@@ -7,4 +10,8 @@ package com.mozhimen.taskk.provider.basic.interfaces
  * @Date 2024/8/21
  * @Version 1.0
  */
-interface ITaskInterceptor
+interface ITaskInterceptor : IUtilK {
+    fun isAutoDeleteOrgFiles(): Boolean
+    fun deleteOrgFiles(appTask: AppTask)
+    fun isAutoInstall(): Boolean
+}

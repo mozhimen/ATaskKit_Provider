@@ -7,8 +7,8 @@ import com.mozhimen.basick.utilk.kotlin.isFileExist
 import com.mozhimen.basick.utilk.kotlin.strFilePath2file
 import com.mozhimen.cachek.datastore.CacheKDS
 import com.mozhimen.cachek.datastore.temps.CacheKDSVarPropertyBoolean
-import com.mozhimen.taskk.provider.apk.interfaces.ITaskProviderInterceptorApk
 import com.mozhimen.taskk.provider.basic.db.AppTask
+import com.mozhimen.taskk.provider.basic.interfaces.ITaskInterceptor
 
 /**
  * @ClassName TaskProviderInterceptorApk
@@ -17,13 +17,13 @@ import com.mozhimen.taskk.provider.basic.db.AppTask
  * @Date 2024/8/22
  * @Version 1.0
  */
-object TaskProviderInterceptorApk : ITaskProviderInterceptorApk {
+object TaskInterceptorApk : ITaskInterceptor {
     private val _cacheKDSProvider by lazy { CacheKDS.instance.with(NAME) }
-    var isDeleteApkFile by CacheKDSVarPropertyBoolean(_cacheKDSProvider, "is_delete_apk_file", true)
-    var isAutoInstall by CacheKDSVarPropertyBoolean(_cacheKDSProvider, "is_auto_install", true)
+    var is_delete_apk_file by CacheKDSVarPropertyBoolean(_cacheKDSProvider, "is_delete_apk_file", true)
+    var is_auto_install by CacheKDSVarPropertyBoolean(_cacheKDSProvider, "is_auto_install", true)
 
     override fun isAutoDeleteOrgFiles(): Boolean {
-        return isDeleteApkFile
+        return is_delete_apk_file
     }
 
     override fun deleteOrgFiles(appTask: AppTask) {
@@ -47,6 +47,6 @@ object TaskProviderInterceptorApk : ITaskProviderInterceptorApk {
     }
 
     override fun isAutoInstall(): Boolean {
-        return isAutoInstall
+        return is_auto_install
     }
 }

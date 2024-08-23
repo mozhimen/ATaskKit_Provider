@@ -23,21 +23,25 @@ object TaskProviderUtil : IUtilK {
             CTaskState.STATE_DOWNLOAD_FAIL -> "下载失败"
 
             CTaskState.STATE_VERIFYING -> "验证中 "
+            CTaskState.STATE_VERIFY_PAUSE -> "验证暂停"
             CTaskState.STATE_VERIFY_CANCEL -> "验证取消"
             CTaskState.STATE_VERIFY_SUCCESS -> "验证成功"
             CTaskState.STATE_VERIFY_FAIL -> "验证失败"
 
             CTaskState.STATE_UNZIPING -> "解压中 "
+            CTaskState.STATE_UNZIP_PAUSE -> "解压暂停"
             CTaskState.STATE_UNZIP_CANCEL -> "解压取消"
             CTaskState.STATE_UNZIP_SUCCESS -> "解压成功"
             CTaskState.STATE_UNZIP_FAIL -> "解压失败"
 
             CTaskState.STATE_INSTALLING -> "安装中 "
+            CTaskState.STATE_INSTALL_PAUSE -> "安装暂停"
             CTaskState.STATE_INSTALL_CANCEL -> "安装取消"
             CTaskState.STATE_INSTALL_SUCCESS -> "安装成功"
             CTaskState.STATE_INSTALL_FAIL -> "安装失败"
 
             CTaskState.STATE_UNINSTALLING -> "卸载中 "
+            CTaskState.STATE_UNINSTALL_PAUSE -> "卸载暂停"
             CTaskState.STATE_UNINSTALL_CANCEL -> "卸载取消"
             CTaskState.STATE_UNINSTALL_SUCCESS -> "卸载成功"
             CTaskState.STATE_UNINSTALL_FAIL -> "卸载失败"

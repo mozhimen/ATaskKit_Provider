@@ -26,18 +26,12 @@ abstract class ATaskVerify(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifecyc
         onTaskStarted(CTaskState.STATE_VERIFYING, appTask)
     }
 
-    @CallSuper
     override fun taskResume(appTask: AppTask) {
-        onTaskStarted(CTaskState.STATE_VERIFYING, appTask)
     }
 
-    @CallSuper
     override fun taskPause(appTask: AppTask) {
-        onTaskPaused(CTaskState.STATE_VERIFY_PAUSE, appTask)
     }
 
-    @CallSuper
     override fun taskCancel(appTask: AppTask) {
-        onTaskFinished(CTaskState.STATE_VERIFY_CANCEL, STaskFinishType.CANCEL, appTask)
     }
 }

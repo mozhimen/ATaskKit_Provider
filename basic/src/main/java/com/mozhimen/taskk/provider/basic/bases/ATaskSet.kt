@@ -2,7 +2,9 @@ package com.mozhimen.taskk.provider.basic.bases
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.annotation.CallSuper
+import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import java.util.concurrent.ConcurrentHashMap
@@ -15,14 +17,14 @@ import java.util.concurrent.ConcurrentHashMap
  * @Version 1.0
  */
 abstract class ATaskSet<T : ATask> : ATask(null) {
-    abstract val providerDefault: T
+    abstract val providerDefaults: List<T>
     abstract val providers: ConcurrentHashMap<String, T>
 
     ////////////////////////////////////////////////////////////////////
 
     @CallSuper
     override fun init(context: Context) {
-        if (!hasInit()){
+        if (!hasInit()) {
             super.init(context)
             for ((_, value) in providers) {
                 if (!value.hasInit()) {
@@ -33,7 +35,7 @@ abstract class ATaskSet<T : ATask> : ATask(null) {
     }
 
     fun addProvider(context: Context, provider: T, isOverwrite: Boolean) {
-        provider.getSupportFileExtensions().forEach { fileExt ->
+        provider.getSupportFileExts().forEach { fileExt ->
             if (!providers.containsKey(fileExt)) {
                 providers[fileExt] = provider.apply { init(context) }
             } else if (isOverwrite) {
@@ -47,7 +49,11 @@ abstract class ATaskSet<T : ATask> : ATask(null) {
 
     ////////////////////////////////////////////////////////////////////
 
-    override fun getSupportFileExtensions(): List<String> {
+    override fun getSupportFileTasks(): Map<String, T> {
+        return providers
+    }
+
+    override fun getSupportFileExts(): List<String> {
         return providers.keys().toList()
     }
 
@@ -55,22 +61,26 @@ abstract class ATaskSet<T : ATask> : ATask(null) {
 
     @CallSuper
     override fun taskStart(appTask: AppTask) {
-        providers[appTask.fileExt]?.taskStart(appTask)
+        UtilKLogWrapper.d(TAG, "taskStart: ")
+        providers[appTask.fileExt]?.taskStart(appTask) ?: run { UtilKLogWrapper.e(TAG,"taskStart no provider") }
     }
 
     @CallSuper
     override fun taskPause(appTask: AppTask) {
-        providers[appTask.fileExt]?.taskPause(appTask)
+        UtilKLogWrapper.d(TAG, "taskPause: ")
+        providers[appTask.fileExt]?.taskPause(appTask)?: run { UtilKLogWrapper.e(TAG,"taskPause no provider") }
     }
 
     @CallSuper
     override fun taskResume(appTask: AppTask) {
-        providers[appTask.fileExt]?.taskResume(appTask)
+        UtilKLogWrapper.d(TAG, "taskResume: ")
+        providers[appTask.fileExt]?.taskResume(appTask)?: run { UtilKLogWrapper.e(TAG,"taskResume no provider") }
     }
 
     @CallSuper
     override fun taskCancel(appTask: AppTask) {
-        providers[appTask.fileExt]?.taskCancel(appTask)
+        UtilKLogWrapper.d(TAG, "taskCancel: ")
+        providers[appTask.fileExt]?.taskCancel(appTask)?: run { UtilKLogWrapper.e(TAG,"taskCancel no provider") }
     }
 
     ////////////////////////////////////////////////////////////////////

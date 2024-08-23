@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @Date 2024/8/19
  * @Version 1.0
  */
-abstract class ATask(private val _iTaskLifecycle: ITaskLifecycle?) : IUtilK, ITaskLifecycle, ITaskEvent {
+abstract class ATask(protected val _iTaskLifecycle: ITaskLifecycle?) : IUtilK, ITaskLifecycle, ITaskEvent {
     val isInit: AtomicBoolean = AtomicBoolean(false)
 
     //////////////////////////////////////////////////////
@@ -30,8 +30,10 @@ abstract class ATask(private val _iTaskLifecycle: ITaskLifecycle?) : IUtilK, ITa
 
     //////////////////////////////////////////////////////
 
+
     abstract fun getTaskName(): String
-    abstract fun getSupportFileExtensions(): List<String>
+    abstract fun getSupportFileTasks(): Map<String, ATask>
+    abstract fun getSupportFileExts(): List<String>
 
     //////////////////////////////////////////////////////
 

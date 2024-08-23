@@ -1,6 +1,7 @@
 package com.mozhimen.taskk.provider.basic.bases.providers
 
 import androidx.annotation.CallSuper
+import com.mozhimen.basick.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.cons.CTaskState
@@ -16,6 +17,7 @@ import java.io.File
  * @Date 2024/8/20
  * @Version 1.0
  */
+@OPermission_INTERNET
 abstract class ATaskDownload(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifecycle) {
     protected abstract var _downloadDir: File?
 
@@ -48,7 +50,7 @@ abstract class ATaskDownload(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifec
 
     @CallSuper
     override fun onTaskFinished(taskState: Int, finishType: STaskFinishType, appTask: AppTask) {
-        super.onTaskFinished(taskState, finishType, appTask)
         appTask.taskDownloadReset()
+        super.onTaskFinished(taskState, finishType, appTask)
     }
 }

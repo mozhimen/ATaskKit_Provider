@@ -28,6 +28,7 @@ abstract class AppTaskDb : RoomDatabase() {
                         fallbackToDestructiveMigration()//使用该方法会在数据库升级异常时重建数据库，但是所有数据会丢失
                     }
                 }
+                .allowMainThreadQueries()
                 .addMigrations(AppTaskMigrations.MIGRATION_1_2, AppTaskMigrations.MIGRATION_2_3, AppTaskMigrations.MIGRATION_3_4)
                 .build()
         }

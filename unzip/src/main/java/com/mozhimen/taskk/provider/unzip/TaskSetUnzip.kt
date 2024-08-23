@@ -11,6 +11,10 @@ import java.util.concurrent.ConcurrentHashMap
  * @Date 2024/8/21 21:35
  * @Version 1.0
  */
-class TaskSetUnzip(override val providerDefault: ATaskUnzip) : ATaskSetUnzip() {
-    override val providers: ConcurrentHashMap<String, ATaskUnzip> = ConcurrentHashMap(providerDefault.getSupportFileExtensions().associateWith { providerDefault })
+class TaskSetUnzip(override val providerDefaults: List<ATaskUnzip>) : ATaskSetUnzip() {
+    override val providers: ConcurrentHashMap<String, ATaskUnzip> by lazy {
+        ConcurrentHashMap(
+            providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskUnzip>)?.toMutableMap() }.fold(emptyMap()) { acc, nex -> acc + nex }
+        )
+    }
 }

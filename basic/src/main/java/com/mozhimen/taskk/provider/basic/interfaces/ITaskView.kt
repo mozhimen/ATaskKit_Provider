@@ -1,6 +1,5 @@
 package com.mozhimen.taskk.provider.basic.interfaces
 
-import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.impls.TaskException
 
@@ -12,11 +11,11 @@ import com.mozhimen.taskk.provider.basic.impls.TaskException
  * @Version 1.0
  */
 interface ITaskViewDownload<V> {
-    fun onDownloading(view: V?, appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {}//下载进度回调方法
-    fun onDownloadPause(view: V?, appTask: AppTask) {}//下载暂停的回调
-    fun onDownloadCancel(view: V?, appTask: AppTask) {}//下载取消的回调
-    fun onDownloadSuccess(view: V?, appTask: AppTask) {}//下载成功的回调 不做任何事 此时会去校验应用或者解压npk
-    fun onDownloadFail(view: V?, appTask: AppTask, exception: TaskException) {}//下载失败的回调
+    fun onTaskDownloading(view: V?, appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {}//下载进度回调方法
+    fun onTaskDownloadPause(view: V?, appTask: AppTask) {}//下载暂停的回调
+    fun onTaskDownloadCancel(view: V?, appTask: AppTask) {}//下载取消的回调
+    fun onTaskDownloadSuccess(view: V?, appTask: AppTask) {}//下载成功的回调 不做任何事 此时会去校验应用或者解压npk
+    fun onTaskDownloadFail(view: V?, appTask: AppTask, exception: TaskException) {}//下载失败的回调
 }
 
 interface ITaskViewVerify<V> {
@@ -61,6 +60,8 @@ interface ITaskViewUninstall<V> {
 
 interface ITaskView<V> {
     fun onTaskCreate(view: V?, appTask: AppTask, isUpdate: Boolean)
+    fun onTaskUnavailable(view: V?, appTask: AppTask){}
+    fun onTaskSuccess(view: V?, appTask: AppTask){}
 }
 
 interface ITaskViews<V> :

@@ -6,6 +6,7 @@ import com.mozhimen.basick.utilk.java.io.file2strMd5Hex_use_ofStream
 import com.mozhimen.basick.utilk.kotlin.isFileNotExist
 import com.mozhimen.basick.utilk.kotlin.strFilePath2file
 import com.mozhimen.taskk.provider.apk.cons.CExt
+import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskVerify
 import com.mozhimen.taskk.provider.basic.cons.CErrorCode
 import com.mozhimen.taskk.provider.basic.cons.CTaskState
@@ -22,7 +23,11 @@ import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
  * @Version 1.0
  */
 class TaskVerifyApk(iTaskLifecycle: ITaskLifecycle) : ATaskVerify(iTaskLifecycle) {
-    override fun getSupportFileExtensions(): List<String> {
+    override fun getSupportFileTasks(): Map<String, ATask> {
+        return getSupportFileExts().associateWith { this }
+    }
+
+    override fun getSupportFileExts(): List<String> {
         return listOf(CExt.EXT_APK)
     }
 
@@ -41,20 +46,6 @@ class TaskVerifyApk(iTaskLifecycle: ITaskLifecycle) : ATaskVerify(iTaskLifecycle
             onTaskFinished(CTaskState.STATE_VERIFY_SUCCESS, STaskFinishType.SUCCESS, appTask)
         }
     }
-
-    @SuppressLint("MissingSuperCall")
-    override fun taskCancel(appTask: AppTask) {
-
-    }
-
-    @SuppressLint("MissingSuperCall")
-    override fun taskPause(appTask: AppTask) {
-    }
-
-    @SuppressLint("MissingSuperCall")
-    override fun taskResume(appTask: AppTask) {
-    }
-
 
     private fun startVerify(appTask: AppTask) {
         if (appTask.filePathNameExt.isEmpty()) {
