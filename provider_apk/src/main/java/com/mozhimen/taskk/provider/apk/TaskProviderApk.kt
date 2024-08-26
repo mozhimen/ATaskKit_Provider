@@ -38,7 +38,6 @@ import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
  * @Version 1.0
  */
 @OApiInit_InApplication
-@OPermission_INTERNET
 class TaskProviderApk(
     iTaskLifecycle: ITaskLifecycle,
     taskManager: ATaskManager
@@ -67,6 +66,7 @@ class TaskProviderApk(
 
     ////////////////////////////////////////////////////////////////////
 
+    @OPermission_INTERNET
     override fun getTaskDownload(): ATaskDownload {
         return TaskDownloadOkDownloadApk(_iTaskLifecycle).apply {
             _breakpointCompare?.let { setBreakpointCompare(it) }
@@ -140,7 +140,8 @@ class TaskProviderApk(
         val packageName = UtilKPackage.getPackageName()
         val appTask = _taskManager.getAppTaskDaoManager().get_ofApkPackageName_ApkVersionCode(packageName, UtilKPackage.getVersionCode(packageName, 0))
         if (appTask != null && appTask.isTaskProcess()) {
-            _taskManager.onTaskSuccess(appTask)
+//            _taskManager.onTaskSuccess(appTask)
+            _taskManager.onTaskFinish(appTask, STaskFinishType.SUCCESS)
         }
     }
 }

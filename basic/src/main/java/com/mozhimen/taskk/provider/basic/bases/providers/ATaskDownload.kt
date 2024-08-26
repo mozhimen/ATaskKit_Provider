@@ -24,6 +24,9 @@ abstract class ATaskDownload(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifec
     abstract fun taskResumeAll()
     abstract fun taskPauseAll()
 
+    fun getDownloadDir(): File? =
+        _downloadDir
+
     override fun getTaskName(): String {
         return ATaskName.TASK_DOWNLOAD
     }

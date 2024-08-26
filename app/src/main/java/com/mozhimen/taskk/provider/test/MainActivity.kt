@@ -14,6 +14,7 @@ import com.mozhimen.manifestk.xxpermissions.XXPermissionsCheckUtil
 import com.mozhimen.manifestk.xxpermissions.XXPermissionsRequestUtil
 import com.mozhimen.taskk.provider.apk.utils.AppTaskUtil
 import com.mozhimen.taskk.provider.basic.cons.CState
+import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.db.AppTaskDaoManager
 import com.mozhimen.taskk.provider.basic.impls.TaskException
@@ -94,10 +95,9 @@ class MainActivity : BaseActivityVB<ActivityMain2Binding>(), ITasks {
         this.appTask = appTask
     }
 
-    override fun onTaskSuccess(appTask: AppTask) {
+    override fun onTaskFinish(appTask: AppTask, finishType: STaskFinishType) {
         vb.mainTxt.text = appTask.getStrTaskState()
         this.appTask = appTask
-
     }
 
     override fun onTaskUnavailable(appTask: AppTask) {

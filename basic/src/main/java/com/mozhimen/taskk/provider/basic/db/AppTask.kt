@@ -21,19 +21,19 @@ import com.mozhimen.taskk.provider.basic.utils.TaskProviderUtil
  * @Version 1.0
  */
 @Entity(tableName = "netk_app_task")
-data class AppTask(
+data class AppTask constructor(
     @PrimaryKey
     @ColumnInfo(name = "task_id")
     val taskId: String,//主键
     @ColumnInfo(name = "task_state")
-    /**
-     * @see CNetKAppTaskState
-     */
     var taskState: Int,//下载状态
     @ColumnInfo(name = "task_state_init")
     var taskStateInit: Int = taskState,//下载初始状态(便于出现异常时回落)
+    @ColumnInfo(name = "task_name")
+    var taskName: String,
     @ColumnInfo(name = "task_update_time")
     var taskUpdateTime: Long = System.currentTimeMillis(),//更新时间
+
 
     ////////////////////////////////////////////////////////////////
 
@@ -77,9 +77,9 @@ data class AppTask(
     @ColumnInfo("apk_file_name")
     var fileNameExt: String,//和apkName的区别是有后缀
     @ColumnInfo(name = "apk_name")
-    val fileName: String = if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitFirstIndexToStart(".") else "",//本地保存的名称 为appid.apk或appid.npk
+    var fileName: String = if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitFirstIndexToStart(".") else "",//本地保存的名称 为appid.apk或appid.npk
     @ColumnInfo(name = "file_ext")
-    val fileExt: String = if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitFirstIndexToEnd(".") else "",//文件后缀
+    var fileExt: String = if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitFirstIndexToEnd(".") else "",//文件后缀
     @ColumnInfo(name = "apk_path_name")
     var filePathNameExt: String = "",//本地暂存路径
 
@@ -97,6 +97,7 @@ data class AppTask(
     constructor(
         taskId: String,//主键
         taskState: Int,//下载状态
+        taskName:String,
         taskDownloadUrlCurrent: String,//当前使用的下载地址
         taskVerifyEnable: Boolean,//是否需要检测0,不需要,1需要
         taskVerifyFileMd5: String,//文件的MD5值
@@ -111,6 +112,7 @@ data class AppTask(
         taskId,
         taskState,
         taskState,
+        taskName,
         System.currentTimeMillis(),
         0,
         taskDownloadUrlCurrent,
@@ -139,7 +141,6 @@ data class AppTask(
         taskDownloadId = 0
         taskDownloadProgress = 0
         taskDownloadFileSizeOffset = 0
-        taskDownloadFileSizeTotal = 0
         taskDownloadFileSpeed = 0
     }
 

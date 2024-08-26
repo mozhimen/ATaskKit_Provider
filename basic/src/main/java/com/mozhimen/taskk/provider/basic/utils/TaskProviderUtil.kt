@@ -40,6 +40,12 @@ object TaskProviderUtil : IUtilK {
             CTaskState.STATE_INSTALL_SUCCESS -> "安装成功"
             CTaskState.STATE_INSTALL_FAIL -> "安装失败"
 
+            CTaskState.STATE_OPENING -> "打开中 "
+            CTaskState.STATE_OPEN_PAUSE -> "打开暂停"
+            CTaskState.STATE_OPEN_CANCEL -> "打开取消"
+            CTaskState.STATE_OPEN_SUCCESS -> "打开成功"
+            CTaskState.STATE_OPEN_FAIL -> "打开失败"
+
             CTaskState.STATE_UNINSTALLING -> "卸载中 "
             CTaskState.STATE_UNINSTALL_PAUSE -> "卸载暂停"
             CTaskState.STATE_UNINSTALL_CANCEL -> "卸载取消"

@@ -34,7 +34,6 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @Version 1.0
  */
 @OApiInit_InApplication
-@OPermission_INTERNET
 abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
     protected val _isInit = AtomicBoolean(false)
     protected val _taskListeners = mutableListOf<ITasks>()
@@ -123,6 +122,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
 
     /////////////////////////////////////////////////////////////////
 
+    @OptIn(OPermission_INTERNET::class)
     fun getTaskSetDownload(): ATaskSetDownload? {
         return getTaskSet(ATaskName.TASK_DOWNLOAD) as? ATaskSetDownload
     }
@@ -215,9 +215,27 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
         _iTaskLifecycle.onTaskStarted(appTask.taskState, appTask)
     }
 
-    override fun onTaskSuccess(appTask: AppTask) {
-        appTask.toNewTaskState(CState.STATE_TASK_SUCCESS)
-        _iTaskLifecycle.onTaskFinished(appTask.taskState, STaskFinishType.SUCCESS, appTask)
+    fun onTaskSuccess(appTask: AppTask) {
+        onTaskFinish(appTask, STaskFinishType.SUCCESS)
+    }
+
+    fun onTaskCancel(appTask: AppTask) {
+        onTaskFinish(appTask, STaskFinishType.CANCEL)
+    }
+
+    fun onTaskFail(appTask: AppTask, exception: TaskException) {
+        onTaskFinish(appTask, STaskFinishType.FAIL(exception))
+    }
+
+    override fun onTaskFinish(appTask: AppTask, finishType: STaskFinishType) {
+        appTask.toNewTaskState(
+            when (finishType) {
+                STaskFinishType.SUCCESS -> CState.STATE_TASK_SUCCESS
+                STaskFinishType.CANCEL -> CState.STATE_TASK_CANCEL
+                is STaskFinishType.FAIL -> CState.STATE_TASK_FAIL
+            }
+        )
+        _iTaskLifecycle.onTaskFinished(appTask.taskState, finishType, appTask)
     }
 
     /////////////////////////////////////////////////////////////////
@@ -226,6 +244,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
         UtilKLogWrapper.d(TAG, "postState_ofFail: id ${appTask.taskId} state ${appTask.getStrTaskState()} exception ${exception.msg} appTask $appTask")
         for (listener in _taskListeners) {
             when (appTask.taskState) {
+                CState.STATE_TASK_FAIL -> listener.onTaskFinish(appTask, STaskFinishType.FAIL(exception))
                 CTaskState.STATE_DOWNLOAD_FAIL -> listener.onTaskDownloadFail(appTask, exception)
                 CTaskState.STATE_VERIFY_FAIL -> listener.onTaskVerifyFail(appTask, exception)
                 CTaskState.STATE_UNZIP_FAIL -> listener.onTaskUnzipFail(appTask, exception)
@@ -235,8 +254,11 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             }
         }
         //
-        if (appTask.isAnyTaskFail())
+        if (appTask.isTaskFail())
             onTaskCreate(appTask, appTask.taskStateInit == CState.STATE_TASK_UPDATE)
+        else if (appTask.isAnyTaskFail())
+            onTaskFinish(appTask, STaskFinishType.FAIL(exception))
+
     }
 
     fun onTask_ofIng(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
@@ -263,7 +285,8 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
                 CState.STATE_TASK_CREATE -> listener.onTaskCreate(appTask, false)
                 CState.STATE_TASK_UPDATE -> listener.onTaskCreate(appTask, true)
                 CState.STATE_TASK_UNAVAILABLE -> listener.onTaskUnavailable(appTask)
-                CState.STATE_TASK_SUCCESS -> listener.onTaskSuccess(appTask)
+                CState.STATE_TASK_SUCCESS -> listener.onTaskFinish(appTask, STaskFinishType.SUCCESS)
+                CState.STATE_TASK_CANCEL -> listener.onTaskFinish(appTask, STaskFinishType.CANCEL)
                 ///////////////////////////////////////////////////////////////////////////////
                 CTaskState.STATE_DOWNLOAD_PAUSE -> listener.onTaskDownloadPause(appTask)
                 CTaskState.STATE_DOWNLOAD_SUCCESS -> listener.onTaskDownloadSuccess(appTask)
@@ -294,7 +317,9 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
         if (appTask.isAnyTaskSuccess()) {
             getNextTaskSet(appTask.fileExt, appTask.getCurrentTaskName() ?: return)?.taskStart(appTask)
         }
-        if (appTask.isAnyTaskCancel()) {
+        if (appTask.isAnyTaskCancel() && !appTask.isTaskCancel()) {
+            onTaskFinish(appTask, STaskFinishType.CANCEL)
+        } else if (appTask.isTaskCancel()) {
             onTaskCreate(appTask, appTask.taskStateInit == CState.STATE_TASK_UPDATE)
         }
     }

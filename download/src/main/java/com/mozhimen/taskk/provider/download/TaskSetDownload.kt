@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @Date 2024/8/20
  * @Version 1.0
  */
-@OPermission_INTERNET
+@OptIn(OPermission_INTERNET::class)
 class TaskSetDownload(override val providerDefaults: List<ATaskDownload>) : ATaskSetDownload() {
     override val providers: ConcurrentHashMap<String, ATaskDownload> by lazy {
         ConcurrentHashMap(

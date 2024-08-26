@@ -317,7 +317,7 @@ abstract class TaskDownloadOkDownload(iTaskLifecycle: ITaskLifecycle) : ATaskDow
             val appTask = AppTaskDaoManager.get_ofTaskDownloadUrlCurrent(downloadTask.url) ?: return
             val bundle = getDownloadProgressBundle(downloadTask.id, appTask)
             val progress = ((currentOffset.toFloat() / totalLength.toFloat()) * 100f).toInt().constraint(1, 100)
-            val offsetFileSizePerSeconds = abs(currentOffset - bundle.appTask.taskDownloadFileSizeTotal)
+            val offsetFileSizePerSeconds = abs(currentOffset - bundle.appTask.taskDownloadFileSizeOffset)
 
             UtilKLogWrapper.d(TAG, "progress: $progress currentOffset $currentOffset  totalLength $totalLength")
             if (bundle.appTask.isAnyTaskPause()) return

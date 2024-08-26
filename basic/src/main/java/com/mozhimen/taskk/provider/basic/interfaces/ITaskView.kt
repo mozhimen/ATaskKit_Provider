@@ -1,5 +1,7 @@
 package com.mozhimen.taskk.provider.basic.interfaces
 
+import com.mozhimen.basick.utilk.commons.IUtilK
+import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.impls.TaskException
 
@@ -59,9 +61,9 @@ interface ITaskViewUninstall<V> {
 }
 
 interface ITaskView<V> {
-    fun onTaskCreate(view: V?, appTask: AppTask, isUpdate: Boolean)
-    fun onTaskUnavailable(view: V?, appTask: AppTask){}
-    fun onTaskSuccess(view: V?, appTask: AppTask){}
+    fun onTaskCreate(view: V?, appTask: AppTask, isUpdate: Boolean){}
+    fun onTaskUnavailable(view: V?, appTask: AppTask) {}
+    fun onTaskFinish(view: V?, appTask: AppTask, finishType: STaskFinishType){}
 }
 
 interface ITaskViews<V> :
@@ -71,4 +73,4 @@ interface ITaskViews<V> :
     ITaskViewInstall<V>,
     ITaskViewOpen<V>,
     ITaskViewUninstall<V>,
-    ITaskView<V>
+    ITaskView<V>,IUtilK

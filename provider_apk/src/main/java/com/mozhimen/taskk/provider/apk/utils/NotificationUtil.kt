@@ -45,7 +45,7 @@ object NotificationUtil {
             .setSmallIcon(notifierSmallIcon)
             .setContentTitle(title)
             .setAutoCancel(
-                !appTask.isTaskProcess()
+                !appTask.isTaskProcess() || appTask.isTaskUnzipSuccess()
             ) // canceled when it is clicked by the user.
             .setOngoing(appTask.isTaskProcess())
 
@@ -56,6 +56,12 @@ object NotificationUtil {
         //状态
         when {
             appTask.isTaskSuccess() -> {
+                intent?.let {
+                    builder.setContentIntent(UtilKPendingIntentWrapper.get_ofActivity_IMMUTABLE(0, it))
+                }
+            }
+
+            appTask.isTaskUnzipSuccess()->{
                 intent?.let {
                     builder.setContentIntent(UtilKPendingIntentWrapper.get_ofActivity_IMMUTABLE(0, it))
                 }

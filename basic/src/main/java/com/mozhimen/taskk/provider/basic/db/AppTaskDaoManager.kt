@@ -56,6 +56,10 @@ object AppTaskDaoManager : IUtilK {
 
     //////////////////////////////////////////////////////////
 
+    fun get_ofTaskName(taskName: String): AppTask? {
+        return _appTasks.filter { it.value.taskName == taskName }.values.firstOrNull()
+    }
+
     fun get_ofFileName(fileName: String): AppTask? {
         return _appTasks.filter { it.value.fileName == fileName }.values.firstOrNull()
     }

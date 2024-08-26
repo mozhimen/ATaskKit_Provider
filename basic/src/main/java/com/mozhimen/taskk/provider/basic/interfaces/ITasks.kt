@@ -1,5 +1,6 @@
 package com.mozhimen.taskk.provider.basic.interfaces
 
+import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.impls.TaskException
 
@@ -59,9 +60,9 @@ interface ITaskUninstall {
 }
 
 interface ITask {
-    fun onTaskCreate(appTask: AppTask, isUpdate: Boolean){}
-    fun onTaskUnavailable(appTask: AppTask){}
-    fun onTaskSuccess(appTask: AppTask){}
+    fun onTaskCreate(appTask: AppTask, isUpdate: Boolean) {}
+    fun onTaskUnavailable(appTask: AppTask) {}
+    fun onTaskFinish(appTask: AppTask, finishType: STaskFinishType){}
 }
 
 interface ITasks : ITaskDownload, ITaskVerify, ITaskUnzip, ITaskInstall, ITaskOpen, ITaskUninstall, ITask

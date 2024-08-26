@@ -21,7 +21,6 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @Version 1.0
  */
 @OApiInit_InApplication
-@OPermission_INTERNET
 abstract class ATaskProvider(
     protected val _iTaskLifecycle: ITaskLifecycle,
     protected val _taskManager: ATaskManager
@@ -36,6 +35,7 @@ abstract class ATaskProvider(
     fun hasInit(): Boolean =
         _isInit.get()
 
+    @OptIn(OPermission_INTERNET::class)
     abstract fun getTaskDownload(): ATaskDownload
     abstract fun getTaskVerify(): ATaskVerify
     abstract fun getTaskUnzip(): ATaskUnzip
@@ -44,6 +44,7 @@ abstract class ATaskProvider(
     abstract fun getTaskUninstall(): ATaskUninstall
     abstract fun getTaskQueue(): List<String>
 
+    @OptIn(OPermission_INTERNET::class)
     fun getSupportFileExtensions(): List<String> {
         val set: Set<String> = listOf(
             getTaskDownload().getSupportFileExts(),
