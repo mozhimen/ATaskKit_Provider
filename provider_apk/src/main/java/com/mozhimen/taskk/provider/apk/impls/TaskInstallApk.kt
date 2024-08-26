@@ -52,8 +52,10 @@ class TaskInstallApk(
             _iInstallKReceiverProxy?.addPackageName(appTask.apkPackageName)
         }
         if (appTask.taskUnzipEnable) {
+            UtilKLogWrapper.d(TAG, "taskStart: appTask.taskUnzipEnable true")
             UtilKAppInstall.install_ofView(appTask.taskUnzipFilePath)
         } else {
+            UtilKLogWrapper.d(TAG, "taskStart: appTask.taskUnzipEnable false")
             UtilKAppInstall.install_ofView(appTask.filePathNameExt)
         }
 //        super.taskStart(appTask)

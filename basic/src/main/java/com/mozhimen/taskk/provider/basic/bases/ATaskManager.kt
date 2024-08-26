@@ -95,7 +95,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
     }
 
     fun getTaskSet(@ATaskName taskName: String): ATaskSet<*>? {
-        return _taskSets[taskName]
+        return _taskSets[taskName].also { UtilKLogWrapper.d(TAG, "getTaskSet: taskName $taskName taskSet $it") }
     }
 
     fun getNextTaskName(fileExt: String, @ATaskName currentTaskName: String): String? {

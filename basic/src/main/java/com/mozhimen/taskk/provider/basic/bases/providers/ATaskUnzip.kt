@@ -20,9 +20,40 @@ abstract class ATaskUnzip(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifecycl
     protected abstract var _unzipDir: File?
 
     @Volatile
-    protected var _sniffTargetFile: String = ""
+    protected open var _sniffTargetFiles: MutableList<String> = mutableListOf()
+
+    //////////////////////////////////////////////////////////////////
+
+    fun addTargetFile(targetFile: String): ATaskUnzip {
+        if (!_sniffTargetFiles.contains(targetFile) && targetFile.isNotEmpty())
+            _sniffTargetFiles.add(targetFile)
+        return this
+    }
+
+    fun addTargetFiles(targetFiles: List<String>): ATaskUnzip {
+        targetFiles.forEach { targetFile ->
+            if (!_sniffTargetFiles.contains(targetFile) && targetFile.isNotEmpty())
+                _sniffTargetFiles.add(targetFile)
+        }
+        return this
+    }
+
+    fun removeTargetFile(targetFile: String): ATaskUnzip {
+        if (_sniffTargetFiles.contains(targetFile))
+            _sniffTargetFiles.remove(targetFile)
+        return this
+    }
+
+    fun setUnzipDir(unzipDir: File): ATaskUnzip {
+        _unzipDir = unzipDir
+        return this
+    }
+
+    //////////////////////////////////////////////////////////////////
 
     abstract fun getIgnorePaths(): List<String>
+
+    //////////////////////////////////////////////////////////////////
 
     override fun getTaskName(): String {
         return ATaskName.TASK_UNZIP

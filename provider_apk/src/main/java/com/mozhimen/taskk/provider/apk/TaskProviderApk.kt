@@ -38,7 +38,7 @@ import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
  * @Version 1.0
  */
 @OApiInit_InApplication
-class TaskProviderApk(
+open class TaskProviderApk(
     iTaskLifecycle: ITaskLifecycle,
     taskManager: ATaskManager
 ) : ATaskProvider(iTaskLifecycle, taskManager) {
@@ -50,17 +50,17 @@ class TaskProviderApk(
         return this
     }
 
-    private var _iTaskInterceptor: ITaskInterceptor? = null
+    protected var _iTaskInterceptor: ITaskInterceptor? = null
 
     fun setTaskInterceptor(iTaskInterceptor: ITaskInterceptor): TaskProviderApk {
         _iTaskInterceptor = iTaskInterceptor
         return this
     }
 
-    private var _sniffTargetFile: String = ""
+    protected var _sniffTargetFiles: List<String> = listOf()
 
-    fun setTargetFile(targetFile: String): TaskProviderApk {
-        _sniffTargetFile = targetFile
+    fun setTargetFiles(targetFiles: List<String>): TaskProviderApk {
+        _sniffTargetFiles = targetFiles
         return this
     }
 
@@ -80,7 +80,7 @@ class TaskProviderApk(
     override fun getTaskUnzip(): ATaskUnzip {
         return TaskUnzipApk(_iTaskLifecycle).apply {
             _iTaskInterceptor?.let { setTaskInterceptor(it) }
-            if (_sniffTargetFile.isNotEmpty()) setTargetFile(_sniffTargetFile)
+            if (_sniffTargetFiles.isNotEmpty()) addTargetFiles(_sniffTargetFiles)
         }
     }
 

@@ -43,11 +43,11 @@ import java.util.zip.ZipFile
  * @Date 2024/8/21 21:41
  * @Version 1.0
  */
-class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifecycle) {
+open class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifecycle) {
     //    override val unzipTasks: CopyOnWriteArrayList<AppTask> = CopyOnWriteArrayList()
     override var _unzipDir: File? = UtilKFileDir.External.getFilesDownloads()
 
-    private val _context = UtilKApplicationWrapper.instance.applicationContext
+    protected val _context = UtilKApplicationWrapper.instance.applicationContext
 
     protected var _iTaskInterceptor: ITaskInterceptor? = null
 
@@ -70,19 +70,15 @@ class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifecycle)
 
     //////////////////////////////////////////////////////////////////
 
-    fun setTargetFile(targetFile: String): TaskUnzipApk {
-        _sniffTargetFile = targetFile
-        return this
-    }
-
-    fun setUnzipDir(unzipDir: File): TaskUnzipApk {
-        _unzipDir = unzipDir
-        return this
-    }
-
-    //////////////////////////////////////////////////////////////////
-
     override fun taskStart(appTask: AppTask) {
+        if (!appTask.canTaskUnzip()) {
+            UtilKLogWrapper.e(TAG, "install: the task hasn't verify success")
+            return
+        }
+        if (appTask.isTaskUnziping()) {
+            UtilKLogWrapper.e(TAG, "install: the task is already unziping")
+            return
+        }
         super.taskStart(appTask)
         if (appTask.taskUnzipEnable) {
             startUnzip(appTask)
@@ -108,7 +104,7 @@ class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifecycle)
 
     //////////////////////////////////////////////////////////////////
 
-    private fun startUnzip(appTask: AppTask) {
+    protected fun startUnzip(appTask: AppTask) {
         TaskKExecutor.execute(TAG + getTaskName()) {
             try {
                 val strApkFilePathNameUnzip = startUnzipOnBack(appTask)
@@ -135,7 +131,7 @@ class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifecycle)
     }
 
     @WorkerThread
-    private fun startUnzipOnBack(appTask: AppTask): String {
+    protected fun startUnzipOnBack(appTask: AppTask): String {
         val dir = _unzipDir ?: throw CErrorCode.CODE_TASK_UNZIP_DIR_NULL.intErrorCode2taskException()
         if (appTask.filePathNameExt.isEmpty())
             throw CErrorCode.CODE_TASK_UNZIP_DIR_NULL.intErrorCode2taskException()
@@ -151,7 +147,7 @@ class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifecycle)
      * @param strFilePathDest String ///storage/emulated/0/Android/data/com.mozhimen.basicktest/files/Download/
      */
     @WorkerThread
-    private fun startUnzipOnBack(fileSource: File, strFilePathDest: String, appTask: AppTask): String {
+    protected open fun startUnzipOnBack(fileSource: File, strFilePathDest: String, appTask: AppTask): String {
         // gameName
         val strFileNameReal = fileSource.name.getSplitLastIndexToStart(".", false)//name.subSequence(0, name.lastIndexOf("."))
         // /storage/emulated/0/Android/data/com.mozhimen.basicktest/files/Download/gameName
@@ -205,7 +201,6 @@ class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifecycle)
 
                 if (zipEntryFile.name.endsWithWithAny(getSupportFileTasks().keys)) {
                     strFilePathNameNews.add(zipEntryFile.name)
-                    UtilKLogWrapper.d(TAG, "startUnzipOnBack: strFilePathNameNews $strFilePathNameNews")
                 }
 
                 var strFilePathName = zipEntryFile.absolutePath
@@ -230,7 +225,6 @@ class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifecycle)
                                 taskDownloadFileSizeOffset = ioOffset
                                 taskDownloadProgress = ioProgress.toInt()
                             })
-//                            onUnziping(appTask, progress.toInt(), ioOffset, ioSizeTotal, offsetIndexPerSeconds)
                         }
                     }
                 })
@@ -243,14 +237,22 @@ class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifecycle)
                 UtilKLogWrapper.d(TAG, "startUnzipOnBack: 删除解压文件夹")
                 return fileSource.absolutePath
             }
+            UtilKLogWrapper.d(TAG, "startUnzipOnBack: strFilePathNameNews $strFilePathNameNews")
 
             //assets没有包含指定文件
             var strFilePathNameNew: String = strFilePathNameNews.get(0)
-            if (_sniffTargetFile.isNotEmpty()) {
-                val hasTargetFile = strFilePathNameNews.contains(_sniffTargetFile)
-                if (hasTargetFile) {
-                    strFilePathNameNew = _sniffTargetFile
-                } else {
+            if (_sniffTargetFiles.isNotEmpty()) {
+                var hasTargetFile = false
+                run loop@{
+                    _sniffTargetFiles.forEach { sniffTargetFile ->
+                        hasTargetFile = strFilePathNameNews.contains(sniffTargetFile)
+                        if (hasTargetFile) {
+                            strFilePathNameNew = sniffTargetFile
+                            return@loop
+                        }
+                    }
+                }
+                if (!hasTargetFile) {
                     strFilePathDestReal.deleteFolder()
                     UtilKLogWrapper.d(TAG, "startUnzipOnBack: 删除解压文件夹")
                     return fileSource.absolutePath

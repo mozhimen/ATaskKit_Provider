@@ -1,13 +1,10 @@
 package com.mozhimen.taskk.provider.basic.db
 
-import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.viewpager2.widget.ViewPager2.ScrollState
 import com.mozhimen.basick.BuildConfig
 import com.mozhimen.basick.utilk.android.app.UtilKApplicationWrapper
-import com.mozhimen.basick.utilk.android.content.UtilKContextWrapper
 
 /**
  * @ClassName AppDownloadDB

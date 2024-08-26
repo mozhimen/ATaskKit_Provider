@@ -149,6 +149,8 @@ data class AppTask constructor(
 
     fun toNewTaskState(taskStateNew: Int) {
         taskState = taskStateNew
+        if (isTaskCreateOrUpdate())
+            taskStateInit = taskState
         AppTaskDaoManager.addOrUpdate(this)
     }
 
@@ -300,7 +302,7 @@ data class AppTask constructor(
     ////////////////////////////////////////////////////////////
 
     override fun toString(): String {
-        return "AppTask(taskId='$taskId', taskState=$taskState, taskStateInit=$taskStateInit, taskUpdateTime=$taskUpdateTime, taskDownloadId=$taskDownloadId, taskDownloadProgress=$taskDownloadProgress, taskDownloadFileSize=$taskDownloadFileSizeOffset, taskDownloadFileSizeTotal=$taskDownloadFileSizeTotal, taskVerifyEnable=$taskVerifyEnable, taskVerifyFileMd5='$taskVerifyFileMd5', taskUnzipEnable=$taskUnzipEnable, fileIconUrl='$fileIconUrl', fileIconId=$fileIconId, fileName='$fileName', fileExt='$fileExt', fileNameExt='$fileNameExt', filePathNameExt='$filePathNameExt', apkPackageName='$apkPackageName', apkVersionCode=$apkVersionCode, apkVersionName='$apkVersionName', taskDownloadUrlCurrent='$taskDownloadUrlCurrent', taskDownloadUrlInside='$taskDownloadUrlInside', taskDownloadUrlOutside='$taskDownloadUrlOutside')"
+        return "AppTask(taskId='$taskId', taskState=$taskState, taskName=${taskName}, taskStateInit=$taskStateInit, taskUpdateTime=$taskUpdateTime, taskDownloadId=$taskDownloadId, taskDownloadProgress=$taskDownloadProgress, taskDownloadFileSize=$taskDownloadFileSizeOffset, taskDownloadFileSizeTotal=$taskDownloadFileSizeTotal, taskVerifyEnable=$taskVerifyEnable, taskVerifyFileMd5='$taskVerifyFileMd5', taskUnzipEnable=$taskUnzipEnable, fileIconUrl='$fileIconUrl', fileIconId=$fileIconId, fileName='$fileName', fileExt='$fileExt', fileNameExt='$fileNameExt', filePathNameExt='$filePathNameExt', apkPackageName='$apkPackageName', apkVersionCode=$apkVersionCode, apkVersionName='$apkVersionName', taskDownloadUrlCurrent='$taskDownloadUrlCurrent', taskDownloadUrlInside='$taskDownloadUrlInside', taskDownloadUrlOutside='$taskDownloadUrlOutside')"
     }
 
     override fun equals(other: Any?): Boolean {

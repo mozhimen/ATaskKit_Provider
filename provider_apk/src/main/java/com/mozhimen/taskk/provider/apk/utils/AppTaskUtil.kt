@@ -27,7 +27,6 @@ object AppTaskUtil : IUtilK {
         if (installedPackageBundle == null) {//未安装
             if (appTask_ofDb == null) {
                 UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask_ofDb == null")
-                appTask.toNewTaskState(appTask.taskState)
                 when {
                     appTask.isTaskCreate() -> taskManager.onTaskCreate(appTask, false)
                     appTask.isTaskUpdate() -> taskManager.onTaskCreate(appTask, true)
@@ -36,39 +35,40 @@ object AppTaskUtil : IUtilK {
                 }
                 return appTask
             } else {
-                UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask_ofDb != null")
-                if (appTask.isTaskSuccess()){
-                    appTask.toNewTaskState(appTask.taskStateInit)
+                if (appTask.isTaskSuccess()) {
+                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask_ofDb != null appTask.isTaskSuccess()")
                     when {
                         appTask.isTaskCreate() -> taskManager.onTaskCreate(appTask, false)
                         appTask.isTaskUpdate() -> taskManager.onTaskCreate(appTask, true)
                     }
+                } else {
+//                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask_ofDb != null")
                 }
                 return appTask
             }
         } else {//已安装
             if (appTask.apkVersionCode > installedPackageBundle.versionCode) {
-                UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode > installedPackageBundle.versionCode")
-                if (appTask_ofDb != null) {
-                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode > installedPackageBundle.versionCode appTask_ofDb != null")
+                if (appTask_ofDb != null && !appTask.isTaskUpdate()) {
+                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode > installedPackageBundle.versionCode appTask_ofDb != null && !appTask.isTaskCreate()")
                     taskManager.onTaskCreate(appTask, true)
-                    return appTask
-                } else {
+                } else if (appTask_ofDb == null) {
                     UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode > installedPackageBundle.versionCode appTask_ofDb == null")
                     taskManager.onTaskCreate(appTask, true)
-                    return appTask
-                }
-            } else {
-                UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode <= installedPackageBundle.versionCode")
-                if (appTask_ofDb != null) {
-                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode <= installedPackageBundle.versionCode appTask_ofDb != null")
-                    taskManager.onTaskFinish(appTask, STaskFinishType.SUCCESS)
-                    return appTask
                 } else {
+//                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode > installedPackageBundle.versionCode else")
+                }
+                return appTask
+            } else {
+                if (appTask_ofDb != null && !appTask.isTaskSuccess()) {
+                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode <= installedPackageBundle.versionCode appTask_ofDb != null && !appTask.isTaskSuccess()")
+                    taskManager.onTaskFinish(appTask, STaskFinishType.SUCCESS)
+                } else if (appTask_ofDb == null) {
                     UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode <= installedPackageBundle.versionCode appTask_ofDb == null")
                     taskManager.onTaskFinish(appTask, STaskFinishType.SUCCESS)
-                    return appTask
+                } else {
+//                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode <= installedPackageBundle.versionCode else")
                 }
+                return appTask
             }
         }
     }
