@@ -2,7 +2,6 @@ package com.mozhimen.taskk.provider.basic.bases
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import androidx.annotation.CallSuper
 import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
@@ -62,25 +61,25 @@ abstract class ATaskSet<T : ATask> : ATask(null) {
     @CallSuper
     override fun taskStart(appTask: AppTask) {
         UtilKLogWrapper.d(TAG, "taskStart: ")
-        providers[appTask.fileExt]?.taskStart(appTask) ?: run { UtilKLogWrapper.e(TAG,"taskStart no provider") }
+        getProvider(appTask.fileExt)?.taskStart(appTask) ?: run { UtilKLogWrapper.e(TAG,"taskStart no provider") }
     }
 
     @CallSuper
     override fun taskPause(appTask: AppTask) {
         UtilKLogWrapper.d(TAG, "taskPause: ")
-        providers[appTask.fileExt]?.taskPause(appTask)?: run { UtilKLogWrapper.e(TAG,"taskPause no provider") }
+        getProvider(appTask.fileExt)?.taskPause(appTask)?: run { UtilKLogWrapper.e(TAG,"taskPause no provider") }
     }
 
     @CallSuper
     override fun taskResume(appTask: AppTask) {
         UtilKLogWrapper.d(TAG, "taskResume: ")
-        providers[appTask.fileExt]?.taskResume(appTask)?: run { UtilKLogWrapper.e(TAG,"taskResume no provider") }
+        getProvider(appTask.fileExt)?.taskResume(appTask)?: run { UtilKLogWrapper.e(TAG,"taskResume no provider") }
     }
 
     @CallSuper
     override fun taskCancel(appTask: AppTask) {
         UtilKLogWrapper.d(TAG, "taskCancel: ")
-        providers[appTask.fileExt]?.taskCancel(appTask)?: run { UtilKLogWrapper.e(TAG,"taskCancel no provider") }
+        getProvider(appTask.fileExt)?.taskCancel(appTask)?: run { UtilKLogWrapper.e(TAG,"taskCancel no provider") }
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -88,18 +87,18 @@ abstract class ATaskSet<T : ATask> : ATask(null) {
     @SuppressLint("MissingSuperCall")
     @CallSuper
     override fun onTaskStarted(taskState: Int, appTask: AppTask) {
-        providers[appTask.fileExt]?.onTaskStarted(taskState, appTask)
+        getProvider(appTask.fileExt)?.onTaskStarted(taskState, appTask)
     }
 
     @SuppressLint("MissingSuperCall")
     @CallSuper
     override fun onTaskPaused(taskState: Int, appTask: AppTask) {
-        providers[appTask.fileExt]?.onTaskPaused(taskState, appTask)
+        getProvider(appTask.fileExt)?.onTaskPaused(taskState, appTask)
     }
 
     @SuppressLint("MissingSuperCall")
     @CallSuper
     override fun onTaskFinished(taskState: Int, finishType: STaskFinishType, appTask: AppTask) {
-        providers[appTask.fileExt]?.onTaskFinished(taskState, finishType, appTask)
+        getProvider(appTask.fileExt)?.onTaskFinished(taskState, finishType, appTask)
     }
 }

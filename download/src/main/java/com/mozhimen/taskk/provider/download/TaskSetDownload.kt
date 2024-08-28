@@ -28,14 +28,6 @@ class TaskSetDownload(override val providerDefaults: List<ATaskDownload>) : ATas
         )
     }
 
-    override fun taskPauseAll() {
-        providers.forEach { _ -> taskPauseAll() }
-    }
-
-    override fun taskResumeAll() {
-        providers.forEach { _ -> taskResumeAll() }
-    }
-
     override fun taskStart(appTask: AppTask) {
         try {
             if (appTask.isTaskProcess() && !appTask.isAnyTaskPause()) {

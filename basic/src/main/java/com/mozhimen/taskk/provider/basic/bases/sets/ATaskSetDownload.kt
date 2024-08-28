@@ -21,10 +21,15 @@ abstract class ATaskSetDownload : ATaskSet<ATaskDownload>() {
     fun getDownloadPaths(): List<String> =
         getDownloadDirs().map { it.absolutePath }
 
+    fun taskPauseAll(fileExt: String) {
+        getProvider(fileExt)?.taskPauseAll()
+    }
+
+    fun taskResumeAll(fileExt: String) {
+        getProvider(fileExt)?.taskResumeAll()
+    }
+
     override fun getTaskName(): String {
         return ATaskName.TASK_DOWNLOAD
     }
-
-    abstract fun taskPauseAll()
-    abstract fun taskResumeAll()
 }
