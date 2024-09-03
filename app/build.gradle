@@ -36,7 +36,8 @@ android {
 }
 
 dependencies {
-    implementation project(':SwiftKit:basick')
+    implementation project(':SwiftKit:mvvmk')
+    implementation project(':AStackKit:stackk')
     implementation project(':AManifestKit_XXPermissions:manifestk_xxpermissions')
     implementation project(':core')
     implementation project(':provider_apk')

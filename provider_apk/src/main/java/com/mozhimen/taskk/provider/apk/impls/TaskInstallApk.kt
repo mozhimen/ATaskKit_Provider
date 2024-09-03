@@ -1,17 +1,14 @@
 package com.mozhimen.taskk.provider.apk.impls
 
 import android.annotation.SuppressLint
-import com.mozhimen.basick.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
-import com.mozhimen.basick.utilk.wrapper.UtilKAppInstall
 import com.mozhimen.installk.manager.commons.IInstallKReceiverProxy
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.utilk.wrapper.UtilKAppInstall
 import com.mozhimen.taskk.provider.apk.cons.CExt
 import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
-import com.mozhimen.taskk.provider.basic.cons.CState
-import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
-import com.mozhimen.taskk.provider.basic.interfaces.ITaskInterceptor
 import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
 
 /**
@@ -34,10 +31,6 @@ class TaskInstallApk(
 
     override fun getSupportFileExts(): List<String> {
         return listOf(CExt.EXT_APK)
-    }
-
-    override fun getSupportFileTasks(): Map<String, ATask> {
-        return getSupportFileExts().associateWith { this }
     }
 
     @SuppressLint("MissingSuperCall")

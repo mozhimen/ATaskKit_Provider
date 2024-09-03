@@ -2,16 +2,16 @@ package com.mozhimen.taskk.provider.test
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import com.mozhimen.basick.elemk.androidx.appcompat.bases.viewbinding.BaseActivityVB
-import com.mozhimen.basick.elemk.commons.I_Listener
-import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
-import com.mozhimen.basick.lintk.optins.permission.OPermission_INTERNET
-import com.mozhimen.basick.lintk.optins.permission.OPermission_MANAGE_EXTERNAL_STORAGE
-import com.mozhimen.basick.lintk.optins.permission.OPermission_READ_EXTERNAL_STORAGE
-import com.mozhimen.basick.lintk.optins.permission.OPermission_WRITE_EXTERNAL_STORAGE
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.elemk.commons.I_Listener
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_MANAGE_EXTERNAL_STORAGE
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_READ_EXTERNAL_STORAGE
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_WRITE_EXTERNAL_STORAGE
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.manifestk.xxpermissions.XXPermissionsCheckUtil
 import com.mozhimen.manifestk.xxpermissions.XXPermissionsRequestUtil
+import com.mozhimen.mvvmk.bases.activity.viewbinding.BaseActivityVB
 import com.mozhimen.taskk.provider.apk.utils.AppTaskUtil
 import com.mozhimen.taskk.provider.basic.cons.CState
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
@@ -29,6 +29,7 @@ class MainActivity : BaseActivityVB<ActivityMain2Binding>(), ITasks {
     var appTask = AppTask(
         "0",
         CState.STATE_TASK_CREATE,
+        "lelejoy",
         "https://cf-lele-res.lelejoy.com/lelejoy.apk",
         true,
         "",

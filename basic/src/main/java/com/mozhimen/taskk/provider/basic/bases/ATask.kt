@@ -2,7 +2,7 @@ package com.mozhimen.taskk.provider.basic.bases
 
 import android.content.Context
 import androidx.annotation.CallSuper
-import com.mozhimen.basick.utilk.commons.IUtilK
+import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.taskk.provider.basic.interfaces.ITaskEvent
 import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
@@ -30,9 +30,14 @@ abstract class ATask(protected val _iTaskLifecycle: ITaskLifecycle?) : IUtilK, I
 
     //////////////////////////////////////////////////////
 
+    open fun getSupportFileTasks(): Map<String, ATask> {
+        return getSupportFileExts().associateWith { this }
+    }
+
+    //////////////////////////////////////////////////////
+
 
     abstract fun getTaskName(): String
-    abstract fun getSupportFileTasks(): Map<String, ATask>
     abstract fun getSupportFileExts(): List<String>
 
     //////////////////////////////////////////////////////

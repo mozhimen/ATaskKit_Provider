@@ -1,6 +1,6 @@
 package com.mozhimen.taskk.provider.install
 
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetInstall
 import java.util.concurrent.ConcurrentHashMap

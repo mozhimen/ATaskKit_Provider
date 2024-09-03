@@ -1,8 +1,8 @@
 package com.mozhimen.taskk.provider.download
 
-import com.mozhimen.basick.lintk.optins.permission.OPermission_INTERNET
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
-import com.mozhimen.basick.utilk.java.io.UtilKFileDir
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.utilk.java.io.UtilKFileDir
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetDownload
 import com.mozhimen.taskk.provider.basic.cons.CErrorCode

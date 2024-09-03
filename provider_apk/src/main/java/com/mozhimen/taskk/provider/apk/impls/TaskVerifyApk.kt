@@ -1,10 +1,10 @@
 package com.mozhimen.taskk.provider.apk.impls
 
 import android.annotation.SuppressLint
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
-import com.mozhimen.basick.utilk.java.io.file2strMd5Hex_use_ofStream
-import com.mozhimen.basick.utilk.kotlin.isFileNotExist
-import com.mozhimen.basick.utilk.kotlin.strFilePath2file
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.utilk.java.io.file2strMd5Hex_use_ofStream
+import com.mozhimen.kotlin.utilk.kotlin.isFileNotExist
+import com.mozhimen.kotlin.utilk.kotlin.strFilePath2file
 import com.mozhimen.taskk.provider.apk.cons.CExt
 import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskVerify
@@ -23,9 +23,6 @@ import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
  * @Version 1.0
  */
 class TaskVerifyApk(iTaskLifecycle: ITaskLifecycle) : ATaskVerify(iTaskLifecycle) {
-    override fun getSupportFileTasks(): Map<String, ATask> {
-        return getSupportFileExts().associateWith { this }
-    }
 
     override fun getSupportFileExts(): List<String> {
         return listOf(CExt.EXT_APK)

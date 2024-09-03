@@ -1,9 +1,9 @@
 package com.mozhimen.taskk.provider.basic.db
 
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import androidx.annotation.WorkerThread
-import com.mozhimen.basick.taskk.executor.TaskKExecutor
-import com.mozhimen.basick.utilk.commons.IUtilK
+import com.mozhimen.kotlin.utilk.commons.IUtilK
+import com.mozhimen.taskk.executor.TaskKExecutor
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.Exception
 

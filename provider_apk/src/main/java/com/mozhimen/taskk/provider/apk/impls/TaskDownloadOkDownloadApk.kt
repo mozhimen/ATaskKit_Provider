@@ -1,8 +1,8 @@
 package com.mozhimen.taskk.provider.apk.impls
 
-import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
-import com.mozhimen.basick.lintk.optins.permission.OPermission_INTERNET
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.taskk.provider.apk.cons.CExt
 import com.mozhimen.taskk.provider.basic.bases.ATask
@@ -22,9 +22,6 @@ import com.mozhimen.taskk.provider.download.okdownload.TaskDownloadOkDownload
  */
 @OPermission_INTERNET
 class TaskDownloadOkDownloadApk(iTaskLifecycle: ITaskLifecycle) : TaskDownloadOkDownload(iTaskLifecycle) {
-    override fun getSupportFileTasks(): Map<String, ATask> {
-        return getSupportFileExts().associateWith { this }
-    }
 
     override fun getSupportFileExts(): List<String> {
         return listOf(CExt.EXT_APK)

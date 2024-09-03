@@ -32,8 +32,9 @@ android {
 }
 
 dependencies {
-    implementation project(':SwiftKit:basick')
+    implementation project(':KUtilKit:utilk_android')
     implementation project(':ALibKit_Jetpack:room')
+    implementation project(':ATaskKit:taskk_executor')
 
     //kapt
     kapt 'androidx.room:room-compiler:2.6.1'

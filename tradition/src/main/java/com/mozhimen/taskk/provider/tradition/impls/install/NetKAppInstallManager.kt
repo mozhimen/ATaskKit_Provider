@@ -1,12 +1,12 @@
 package com.mozhimen.taskk.provider.tradition.impls.install
 
-import com.mozhimen.basick.lintk.optins.OApiCall_BindLifecycle
-import com.mozhimen.basick.lintk.optins.OApiInit_ByLazy
-import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
-import com.mozhimen.basick.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
-import com.mozhimen.basick.utilk.commons.IUtilK
-import com.mozhimen.basick.utilk.kotlin.collections.ifNotEmptyOr
+import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
+import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.utilk.commons.IUtilK
+import com.mozhimen.kotlin.utilk.kotlin.collections.ifNotEmptyOr
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.taskk.provider.apk.impls.TaskInstallApk
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall

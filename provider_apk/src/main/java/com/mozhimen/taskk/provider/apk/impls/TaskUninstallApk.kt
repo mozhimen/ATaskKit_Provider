@@ -17,9 +17,6 @@ import com.mozhimen.taskk.provider.basic.db.AppTask
  * @Version 1.0
  */
 class TaskUninstallApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUninstall(iTaskLifecycle) {
-    override fun getSupportFileTasks(): Map<String, ATask> {
-        return getSupportFileExts().associateWith { this }
-    }
 
     override fun getSupportFileExts(): List<String> {
         return listOf(CExt.EXT_APK)

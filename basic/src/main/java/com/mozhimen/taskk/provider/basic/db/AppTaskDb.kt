@@ -3,8 +3,8 @@ package com.mozhimen.taskk.provider.basic.db
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.mozhimen.basick.BuildConfig
-import com.mozhimen.basick.utilk.android.app.UtilKApplicationWrapper
+import com.mozhimen.kotlin.utilk.BuildConfig
+import com.mozhimen.kotlin.utilk.android.app.UtilKApplicationWrapper
 
 /**
  * @ClassName AppDownloadDB

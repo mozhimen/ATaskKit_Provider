@@ -1,10 +1,10 @@
 package com.mozhimen.taskk.provider.apk.utils
 
 import android.util.Log
-import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
-import com.mozhimen.basick.lintk.optins.permission.OPermission_INTERNET
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
-import com.mozhimen.basick.utilk.commons.IUtilK
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.taskk.provider.apk.TaskProviderApk
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager

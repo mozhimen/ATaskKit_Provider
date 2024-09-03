@@ -2,11 +2,11 @@ package com.mozhimen.taskk.provider.apk
 
 import android.content.Context
 import com.liulishuo.okdownload.core.breakpoint.IBreakpointCompare
-import com.mozhimen.basick.lintk.optins.OApiCall_BindLifecycle
-import com.mozhimen.basick.lintk.optins.OApiInit_ByLazy
-import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
-import com.mozhimen.basick.lintk.optins.permission.OPermission_INTERNET
-import com.mozhimen.basick.utilk.android.content.UtilKPackage
+import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
+import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.kotlin.utilk.android.content.UtilKPackage
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.installk.manager.commons.IPackagesChangeListener
 import com.mozhimen.taskk.provider.apk.impls.TaskDownloadOkDownloadApk

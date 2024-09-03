@@ -2,10 +2,10 @@ package com.mozhimen.taskk.provider.basic.bases
 
 import android.content.Context
 import androidx.annotation.CallSuper
-import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
-import com.mozhimen.basick.lintk.optins.permission.OPermission_INTERNET
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
-import com.mozhimen.basick.utilk.bases.BaseUtilK
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.utilk.bases.BaseUtilK
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetDownload
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetInstall
@@ -72,11 +72,16 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
 
     @CallSuper
     open fun init(context: Context) {
+        if (hasInit()) return
         _isInit.compareAndSet(false, true)
         AppTaskDaoManager.init()
         getTaskSets().forEach {
             it.init(context)
         }
+        getTaskProviders().forEach {
+            it.init(context)
+        }
+        UtilKLogWrapper.d(TAG, "init: ")
     }
 
     fun hasInit(): Boolean =
@@ -122,7 +127,13 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
 
     /////////////////////////////////////////////////////////////////
 
-    @OptIn(OPermission_INTERNET::class)
+    abstract fun getTaskQueues(): Map<String, List<@ATaskName String>>
+    abstract fun getTaskSets(): List<ATaskSet<*>>
+    abstract fun getTaskProviders(): List<ATaskProvider>
+
+    /////////////////////////////////////////////////////////////////
+
+    @OPermission_INTERNET
     fun getTaskSetDownload(): ATaskSetDownload? {
         return getTaskSet(ATaskName.TASK_DOWNLOAD) as? ATaskSetDownload
     }
@@ -146,11 +157,6 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
     fun getTaskSetUninstall(): ATaskSetUninstall? {
         return getTaskSet(ATaskName.TASK_UNINSTALL) as? ATaskSetUninstall
     }
-
-    /////////////////////////////////////////////////////////////////
-
-    abstract fun getTaskQueues(): Map<String, List<@ATaskName String>>
-    abstract fun getTaskSets(): List<ATaskSet<*>>
 
     /////////////////////////////////////////////////////////////////
 
@@ -193,7 +199,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
 
     override fun taskResume(appTask: AppTask) {
         if (!appTask.isTaskProcess()) {
-            UtilKLogWrapper.d(TAG, "downloadResume: task is not process")
+            UtilKLogWrapper.d(TAG, "taskResume: task is not process")
             return
         }
         if (!appTask.isAnyTaskPause()) {

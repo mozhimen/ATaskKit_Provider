@@ -2,7 +2,7 @@ package com.mozhimen.taskk.provider.tradition.impls
 
 import com.mozhimen.cachek.datastore.CacheKDS
 import com.mozhimen.cachek.datastore.temps.CacheKDSVarPropertyBoolean
-import com.mozhimen.basick.utilk.commons.IUtilK
+import com.mozhimen.kotlin.utilk.commons.IUtilK
 
 /**
  * @ClassName NetKAppTaskManager

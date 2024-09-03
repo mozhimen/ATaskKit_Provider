@@ -1,6 +1,6 @@
 package com.mozhimen.taskk.provider.basic.bases.sets
 
-import com.mozhimen.basick.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.bases.ATaskSet
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload

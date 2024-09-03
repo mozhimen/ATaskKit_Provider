@@ -2,8 +2,8 @@ package com.mozhimen.taskk.provider.tradition.utils
 
 import android.content.Context
 import android.view.View
-import com.mozhimen.basick.elemk.commons.IAB_Listener
-import com.mozhimen.basick.elemk.commons.I_AListener
+import com.mozhimen.kotlin.elemk.commons.IAB_Listener
+import com.mozhimen.kotlin.elemk.commons.I_AListener
 import com.mozhimen.taskk.provider.basic.cons.CState
 import com.mozhimen.taskk.provider.basic.cons.CTaskState
 import com.mozhimen.taskk.provider.basic.db.AppTask

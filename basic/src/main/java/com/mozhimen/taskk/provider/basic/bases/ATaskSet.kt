@@ -3,7 +3,7 @@ package com.mozhimen.taskk.provider.basic.bases
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.annotation.CallSuper
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import java.util.concurrent.ConcurrentHashMap

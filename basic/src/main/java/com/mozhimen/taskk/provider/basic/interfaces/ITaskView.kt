@@ -1,6 +1,6 @@
 package com.mozhimen.taskk.provider.basic.interfaces
 
-import com.mozhimen.basick.utilk.commons.IUtilK
+import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.impls.TaskException

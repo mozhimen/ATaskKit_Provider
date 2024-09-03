@@ -4,25 +4,24 @@ import android.annotation.SuppressLint
 import android.os.Environment
 import android.util.Log
 import androidx.annotation.WorkerThread
-import com.mozhimen.basick.taskk.executor.TaskKExecutor
-import com.mozhimen.basick.taskk.handler.TaskKHandler
-import com.mozhimen.basick.utilk.android.app.UtilKApplicationWrapper
-import com.mozhimen.basick.utilk.android.content.UtilKContextDir
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
-import com.mozhimen.basick.utilk.java.io.UtilKFileDir
-import com.mozhimen.basick.utilk.java.io.createFolder
-import com.mozhimen.basick.utilk.java.io.deleteFile
-import com.mozhimen.basick.utilk.java.io.inputStream2file_use_ofBufferedOutStream
-import com.mozhimen.basick.utilk.kotlin.containsAny
-import com.mozhimen.basick.utilk.kotlin.createFolder
-import com.mozhimen.basick.utilk.kotlin.deleteFolder
-import com.mozhimen.basick.utilk.kotlin.endsWithWithAny
-import com.mozhimen.basick.utilk.kotlin.getSplitLastIndexToStart
-import com.mozhimen.basick.utilk.kotlin.getStrFolderPath
-import com.mozhimen.basick.utilk.kotlin.ranges.constraint
-import com.mozhimen.basick.utilk.kotlin.strFilePath2file
+import com.mozhimen.kotlin.utilk.android.app.UtilKApplicationWrapper
+import com.mozhimen.kotlin.utilk.android.content.UtilKContextDir
+import com.mozhimen.kotlin.utilk.android.os.UtilKHandlerWrapper
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.utilk.java.io.UtilKFileDir
+import com.mozhimen.kotlin.utilk.java.io.createFolder
+import com.mozhimen.kotlin.utilk.java.io.deleteFile
+import com.mozhimen.kotlin.utilk.java.io.inputStream2file_use_ofBufferedOutStream
+import com.mozhimen.kotlin.utilk.kotlin.containsAny
+import com.mozhimen.kotlin.utilk.kotlin.createFolder
+import com.mozhimen.kotlin.utilk.kotlin.deleteFolder
+import com.mozhimen.kotlin.utilk.kotlin.endsWithWithAny
+import com.mozhimen.kotlin.utilk.kotlin.getSplitLastIndexToStart
+import com.mozhimen.kotlin.utilk.kotlin.getStrFolderPath
+import com.mozhimen.kotlin.utilk.kotlin.ranges.constraint
+import com.mozhimen.kotlin.utilk.kotlin.strFilePath2file
+import com.mozhimen.taskk.executor.TaskKExecutor
 import com.mozhimen.taskk.provider.apk.cons.CExt
-import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUnzip
 import com.mozhimen.taskk.provider.basic.cons.CErrorCode
 import com.mozhimen.taskk.provider.basic.cons.CTaskState
@@ -58,10 +57,6 @@ open class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifec
 
     override fun getIgnorePaths(): List<String> {
         return listOf("__MACOSX/")
-    }
-
-    override fun getSupportFileTasks(): Map<String, ATask> {
-        return getSupportFileExts().associateWith { this }
     }
 
     override fun getSupportFileExts(): List<String> {
@@ -117,13 +112,13 @@ open class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifec
 
                 /////////////////////////////////////////////////////////
 
-                TaskKHandler.post {
+                UtilKHandlerWrapper.post {
                     onTaskFinished(CTaskState.STATE_UNZIP_SUCCESS, STaskFinishType.SUCCESS, appTask.apply {
                         taskUnzipFilePath = strApkFilePathNameUnzip
                     })
                 }
             } catch (e: TaskException) {
-                TaskKHandler.post {
+                UtilKHandlerWrapper.post {
                     onTaskFinished(CTaskState.STATE_UNZIP_FAIL, STaskFinishType.FAIL(e), appTask)
                 }
             }
@@ -219,7 +214,7 @@ open class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifec
                         ioSpeedPerSeconds = ioOffset - lastIoOffset
                         ioProgress = (ioOffset.toFloat() / ioSizeTotal.toFloat()).constraint(0f, 1f) * 100f
                         lastIoOffset = ioOffset
-                        TaskKHandler.post {
+                        UtilKHandlerWrapper.post {
                             onTaskStarted(CTaskState.STATE_UNZIPING, appTask.apply {
                                 taskDownloadFileSpeed = ioSpeedPerSeconds
                                 taskDownloadFileSizeOffset = ioOffset

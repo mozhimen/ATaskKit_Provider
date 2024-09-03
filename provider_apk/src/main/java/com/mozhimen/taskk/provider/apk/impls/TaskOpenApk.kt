@@ -2,10 +2,10 @@ package com.mozhimen.taskk.provider.apk.impls
 
 import android.annotation.SuppressLint
 import android.util.Log
-import com.mozhimen.basick.lintk.optins.permission.OPermission_QUERY_ALL_PACKAGES
-import com.mozhimen.basick.utilk.android.app.UtilKApplicationWrapper
-import com.mozhimen.basick.utilk.android.content.UtilKContextStart
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_QUERY_ALL_PACKAGES
+import com.mozhimen.kotlin.utilk.android.app.UtilKApplicationWrapper
+import com.mozhimen.kotlin.utilk.android.content.UtilKContextStart
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.taskk.provider.apk.cons.CExt
 import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskOpen
@@ -25,9 +25,6 @@ import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
  * @Version 1.0
  */
 class TaskOpenApk(iTaskLifecycle: ITaskLifecycle) : ATaskOpen(iTaskLifecycle) {
-    override fun getSupportFileTasks(): Map<String, ATask> {
-        return getSupportFileExts().associateWith { this }
-    }
 
     override fun getSupportFileExts(): List<String> {
         return listOf(CExt.EXT_APK)

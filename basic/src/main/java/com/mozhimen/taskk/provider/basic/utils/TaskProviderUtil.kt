@@ -1,6 +1,6 @@
 package com.mozhimen.taskk.provider.basic.utils
 
-import com.mozhimen.basick.utilk.commons.IUtilK
+import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.taskk.provider.basic.cons.CState
 import com.mozhimen.taskk.provider.basic.cons.CTaskState
 

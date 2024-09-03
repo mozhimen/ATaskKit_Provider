@@ -36,6 +36,7 @@ include ':verify'
 include ':SwiftKit'
 project(':SwiftKit').projectDir = new File("D:\\WorkSpace\\GitHub\\SwiftKit")
 include ':SwiftKit:basick'
+include ':SwiftKit:mvvmk'
 //ANetKit_okdownload
 include(':ANetKit_okdownload')
 project(':ANetKit_okdownload').projectDir = new File("D:\\WorkSpace\\GitHub\\ANetKit_okdownload")
@@ -79,4 +80,18 @@ include(':AManifestKit_XXPermissions:manifestk_xxpermissions')
 include(':APostKit')
 project(':APostKit').projectDir = new File("D:\\WorkSpace\\GitHub\\APostKit")
 include(':APostKit:postk_livedata')
-
+//APostKit
+include(':KUtilKit')
+project(':KUtilKit').projectDir = new File("D:\\WorkSpace\\GitHub\\KUtilKit")
+include(':KUtilKit:utilk_android')
+include(':KUtilKit:utilk_kotlin')
+//AStackKit
+include(':AStackKit')
+project(':AStackKit').projectDir = new File("D:\\WorkSpace\\GitHub\\AStackKit")
+include(':AStackKit:stackk')
+include(':AStackKit:stackk_callback')
+include(':AStackKit:basic')
+//ATaskKit
+include(':ATaskKit')
+project(':ATaskKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ATaskKit")
+include(':ATaskKit:taskk_executor')

@@ -1,24 +1,19 @@
 package com.mozhimen.taskk.provider.install.splits.ackpine
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import com.mozhimen.basick.elemk.commons.IABC_Listener
-import com.mozhimen.basick.elemk.commons.IAB_Listener
-import com.mozhimen.basick.elemk.commons.IA_Listener
-import com.mozhimen.basick.lintk.optins.permission.OPermission_INSTALL_PACKAGES
-import com.mozhimen.basick.lintk.optins.permission.OPermission_POST_NOTIFICATIONS
-import com.mozhimen.basick.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
-import com.mozhimen.basick.utilk.java.io.file2uri
-import com.mozhimen.basick.utilk.kotlin.strFilePath2file
-import com.mozhimen.basick.utilk.wrapper.UtilKPermission
+import com.mozhimen.kotlin.elemk.commons.IABC_Listener
+import com.mozhimen.kotlin.elemk.commons.IA_Listener
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_POST_NOTIFICATIONS
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.utilk.java.io.file2uri
+import com.mozhimen.kotlin.utilk.kotlin.strFilePath2file
+import com.mozhimen.kotlin.utilk.wrapper.UtilKPermission
 import com.mozhimen.installk.splits.ackpine.InstallKSplitsAckpine
 import com.mozhimen.installk.splits.ackpine.cons.SInstallState
 import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
-import com.mozhimen.taskk.provider.basic.cons.CState
-import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
 import java.io.File
@@ -40,10 +35,6 @@ class TaskInstallSplitsAckpine constructor(
 
     override fun getSupportFileExts(): List<String> {
         return listOf("zip", "apks", "xapk", "apkm", "apk")
-    }
-
-    override fun getSupportFileTasks(): Map<String, ATask> {
-        return getSupportFileExts().associateWith { this }
     }
 
     override fun taskStart(appTask: AppTask) {

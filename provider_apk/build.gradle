@@ -35,6 +35,7 @@ dependencies {
     implementation project(project.path.replace(project.name, '') + ':download_okdownload')
     implementation project(':SwiftKit:basick')
     implementation project(':ACacheKit:cachek_datastore')
+    implementation project(':ATaskKit:taskk_executor')
 
     api project(':AInstallKit:installk_manager')
 

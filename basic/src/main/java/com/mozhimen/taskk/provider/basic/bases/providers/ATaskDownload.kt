@@ -1,7 +1,7 @@
 package com.mozhimen.taskk.provider.basic.bases.providers
 
 import androidx.annotation.CallSuper
-import com.mozhimen.basick.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.cons.CTaskState

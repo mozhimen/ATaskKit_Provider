@@ -1,11 +1,11 @@
 package com.mozhimen.taskk.provider.tradition.impls.verify
 
 import android.text.TextUtils
-import com.mozhimen.basick.lintk.optins.OApiInit_InApplication
-import com.mozhimen.basick.utilk.android.util.UtilKLogWrapper
-import com.mozhimen.basick.utilk.commons.IUtilK
-import com.mozhimen.basick.utilk.java.io.file2strFilePath
-import com.mozhimen.basick.utilk.java.io.file2strMd5Hex_use_ofStream
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.kotlin.utilk.commons.IUtilK
+import com.mozhimen.kotlin.utilk.java.io.file2strFilePath
+import com.mozhimen.kotlin.utilk.java.io.file2strMd5Hex_use_ofStream
 import com.mozhimen.taskk.provider.basic.cons.CErrorCode
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.impls.intErrorCode2taskException
