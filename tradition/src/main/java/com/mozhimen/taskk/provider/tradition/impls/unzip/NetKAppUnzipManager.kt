@@ -3,8 +3,8 @@ package com.mozhimen.taskk.provider.tradition.impls.unzip
 import android.os.Environment
 import androidx.annotation.WorkerThread
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.basick.taskk.executor.TaskKExecutor
-import com.mozhimen.basick.taskk.handler.TaskKHandler
+import com.mozhimen.taskk.executor.TaskKExecutor
+import com.mozhimen.kotlin.utilk.android.os.UtilKHandlerWrapper
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.kotlin.utilk.java.io.createFolder
@@ -99,11 +99,11 @@ internal object NetKAppUnzipManager : IUtilK {
 
                 /////////////////////////////////////////////////////////
 
-//                TaskKHandler.post {
+//                UtilKHandlerWrapper.post {
 //                    onUnzipSuccess(appTask.apply { apkPathName = strPathNameUnzip })
 //                }
             } catch (e: TaskException) {
-                TaskKHandler.post {
+                UtilKHandlerWrapper.post {
                     /**
                      * [CNetKAppState.STATE_UNZIP_FAIL]
                      */
@@ -274,7 +274,7 @@ internal object NetKAppUnzipManager : IUtilK {
 //                        val offsetIndexPerSeconds = totalOffset - lastOffset
 //                        lastOffset = totalOffset
 //                        val progress = (totalOffset.toFloat() / totalSize.toFloat()).constraint(0f, 1f) * 100f
-//                        TaskKHandler.post {
+//                        UtilKHandlerWrapper.post {
 //                            onUnziping(appTask, progress.toInt(), totalOffset, totalSize, offsetIndexPerSeconds)
 //                        }
 //                    }

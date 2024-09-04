@@ -7,18 +7,13 @@ import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_POST_NOTIFICATIONS
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
-import com.mozhimen.stackk.callback.StackKCb
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.manifestk.xxpermissions.XXPermissionsCheckUtil
 import com.mozhimen.manifestk.xxpermissions.XXPermissionsRequestUtil
+import com.mozhimen.stackk.callback.StackKCb
 import com.mozhimen.taskk.provider.apk.TaskProviderApk
 import com.mozhimen.taskk.provider.basic.bases.ATaskProvider
-import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
-import com.mozhimen.taskk.provider.basic.bases.providers.ATaskOpen
-import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUninstall
-import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUnzip
-import com.mozhimen.taskk.provider.basic.bases.providers.ATaskVerify
 import com.mozhimen.taskk.provider.core.TaskManager
 import com.mozhimen.taskk.provider.install.splits.ackpine.TaskInstallSplitsAckpine
 
@@ -32,8 +27,10 @@ import com.mozhimen.taskk.provider.install.splits.ackpine.TaskInstallSplitsAckpi
 @OptIn(OApiInit_InApplication::class, OPermission_INTERNET::class)
 object MainTaskManager : TaskManager() {
 
+    val taskProviderApk by lazy { TaskProviderApk(_iTaskLifecycle, this) }
+
     override fun getTaskProviders(): List<ATaskProvider> {
-        return listOf(TaskProviderApk(_iTaskLifecycle, this))
+        return listOf(taskProviderApk)
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -41,7 +38,7 @@ object MainTaskManager : TaskManager() {
     @SuppressLint("MissingPermission")
     @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class, OPermission_POST_NOTIFICATIONS::class)
     override fun getTaskInstalls(): List<ATaskInstall> {
-        return super.getTaskInstalls().toMutableList() + TaskInstallSplitsAckpine(_iTaskLifecycle, _applyPermissionListener = { _, taskInstallSplitsAckpine, appTask ->
+        return mutableListOf(TaskInstallSplitsAckpine(_iTaskLifecycle, _applyPermissionListener = { _, taskInstallSplitsAckpine, appTask ->
             UtilKLogWrapper.d(TAG, "getTaskInstalls: permissions")
             StackKCb.instance.getStackTopActivity()?.let {
                 requestPermissionInstall(it) {
@@ -50,7 +47,7 @@ object MainTaskManager : TaskManager() {
                     }
                 }
             }
-        })
+        })) + super.getTaskInstalls()
     }
 
     @SuppressLint("MissingPermission")

@@ -18,7 +18,6 @@ object AppTaskMigrations {
     internal val MIGRATION_1_2 = object : Migration(1, 2) {
         override fun migrate(db: SupportSQLiteDatabase) {
             db.execSQL("ALTER TABLE netk_app_task ADD COLUMN task_state_init INTEGER NOT NULL DEFAULT ${CState.STATE_TASK_CREATE}")
-//            database.execSQL("ALTER TABLE app_file_params ADD COLUMN need_checking INTEGER NOT NULL DEFAULT 0")
         }
     }
 

@@ -35,12 +35,14 @@ object AppTaskUtil : IUtilK {
                 }
                 return appTask
             } else {
-                if (appTask.isTaskSuccess()) {
-                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask_ofDb != null appTask.isTaskSuccess()")
+                if (appTask_ofDb.isTaskSuccess()) {
+                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask_ofDb != null appTask_ofDb.isTaskSuccess()")
                     when {
                         appTask.isTaskCreate() -> taskManager.onTaskCreate(appTask, false)
                         appTask.isTaskUpdate() -> taskManager.onTaskCreate(appTask, true)
                     }
+                } else if (appTask_ofDb.isTaskProcess()) {
+                    return appTask_ofDb
                 } else {
 //                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask_ofDb != null")
                 }

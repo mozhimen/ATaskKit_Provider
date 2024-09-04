@@ -36,7 +36,7 @@ dependencies {
     implementation project(':SwiftKit:basick')
     implementation project(':ACacheKit:cachek_datastore')
     implementation project(':ATaskKit:taskk_executor')
-
+    implementation project(':AStackKit:stackk_callback')
     api project(':AInstallKit:installk_manager')
 
     testImplementation 'junit:junit:4.13.2'

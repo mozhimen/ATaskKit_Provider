@@ -36,7 +36,7 @@ class TaskSetDownload(override val providerDefaults: List<ATaskDownload>) : ATas
             }
 
             if (appTask.taskDownloadFileSizeTotal != 0L) {
-                val availMemory = UtilKFileDir.External.getFilesRootFreeSpace()//当前剩余的空间
+                val availMemory = UtilKFileDir.External.getFiles_freeSpace()//当前剩余的空间
                 val needMinMemory: Long = (appTask.taskDownloadFileSizeTotal * 1.2).toLong()//需要的最小空间
                 if (availMemory < needMinMemory) {//如果当前需要的空间大于剩余空间，提醒清理空间
                     throw CErrorCode.CODE_TASK_NEED_MEMORY.intErrorCode2taskException()

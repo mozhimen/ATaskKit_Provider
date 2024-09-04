@@ -16,7 +16,7 @@ import com.liulishuo.okdownload.core.listener.DownloadListener1
 import com.liulishuo.okdownload.core.listener.assist.Listener1Assist
 import com.mozhimen.kotlin.elemk.javax.net.bases.BaseX509TrustManager
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.basick.taskk.handler.TaskKHandler
+import com.mozhimen.kotlin.utilk.android.os.UtilKHandlerWrapper
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.kotlin.utilk.javax.net.UtilKSSLSocketFactory
@@ -264,7 +264,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
 
     @JvmStatic
     fun downloadResumeAllDelay(delayMills: Long) {
-        TaskKHandler.postDelayed(delayMills) {
+        UtilKHandlerWrapper.postDelayed(delayMills) {
             _downloadingTasks.forEach { _, value ->
                 UtilKLogWrapper.d(TAG, "downloadResumeAll: appTask ${value.appTask}")
                 if (value.appTask.isTaskPause()) {
@@ -314,7 +314,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     @JvmStatic
     fun downloadWaitCancel(appTask: AppTask/*, onDeleteBlock: IAB_Listener<Boolean, Int>?*/) {
         val downloadTask = getDownloadTask(appTask) ?: run {
-//            TaskKHandler.post {
+//            UtilKHandlerWrapper.post {
 //                onDeleteBlock?.invoke(false, CNetKAppErrorCode.CODE_DOWNLOAD_CANT_FIND_TASK)
 //            }
             UtilKLogWrapper.d(TAG, "downloadWaitCancel: get download task fail")
@@ -334,7 +334,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     @JvmStatic
     fun downloadRetry(appTask: AppTask) {
         val downloadTask = getDownloadTask(appTask) ?: run {
-//            TaskKHandler.post {
+//            UtilKHandlerWrapper.post {
 //                onDeleteBlock?.invoke(false, CNetKAppErrorCode.CODE_DOWNLOAD_CANT_FIND_TASK)
 //            }
             UtilKLogWrapper.d(TAG, "downloadRetry: get download task fail")
@@ -351,7 +351,7 @@ internal object NetKAppDownloadManager : DownloadListener1(), IUtilK {
     @JvmStatic
     fun downloadCancel(appTask: AppTask/*, onDeleteBlock: IAB_Listener<Boolean, Int>?*/) {
         val downloadTask = getDownloadTask(appTask) ?: run {
-//            TaskKHandler.post {
+//            UtilKHandlerWrapper.post {
 //                onDeleteBlock?.invoke(false, CNetKAppErrorCode.CODE_DOWNLOAD_CANT_FIND_TASK)
 //            }
             UtilKLogWrapper.d(TAG, "downloadCancel: get download task fail")

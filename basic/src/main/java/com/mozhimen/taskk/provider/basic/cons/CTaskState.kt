@@ -146,7 +146,7 @@ object CTaskState {
 
     @JvmStatic
     fun canTaskUninstall(state: Int): Boolean =
-        state in STATE_INSTALL_SUCCESS..STATE_UNINSTALL_PAUSE|| state in CState.STATE_TASK_CREATE..CState.STATE_TASK_UPDATE
+        state in STATE_INSTALL_SUCCESS..STATE_UNINSTALL_PAUSE|| state in CState.STATE_TASK_CREATE..CState.STATE_TASK_UPDATE || state in CState.STATE_TASK_CANCEL..CState.STATE_TASK_FAIL
 
     @JvmStatic
     fun atTaskUninstall(state: Int): Boolean =
