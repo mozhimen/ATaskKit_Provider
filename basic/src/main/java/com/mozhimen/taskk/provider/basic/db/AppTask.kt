@@ -1,6 +1,5 @@
 package com.mozhimen.taskk.provider.basic.db
 
-import android.util.Log
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
