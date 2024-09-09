@@ -34,4 +34,20 @@ abstract class ATaskVerify(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifecyc
 
     override fun taskCancel(appTask: AppTask) {
     }
+
+    override fun canTaskStart(appTask: AppTask): Boolean {
+        return true
+    }
+
+    override fun canTaskResume(appTask: AppTask): Boolean {
+        return false
+    }
+
+    override fun canTaskPause(appTask: AppTask): Boolean {
+        return false
+    }
+
+    override fun canTaskCancel(appTask: AppTask): Boolean {
+        return false
+    }
 }

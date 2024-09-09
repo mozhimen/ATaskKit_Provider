@@ -1,13 +1,16 @@
 package com.mozhimen.taskk.provider.basic.db
 
+import android.util.Log
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.kotlin.utilk.kotlin.getSplitFirstIndexToEnd
 import com.mozhimen.kotlin.utilk.kotlin.getSplitFirstIndexToStart
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.cons.CState
 import com.mozhimen.taskk.provider.basic.cons.CTaskState
 import com.mozhimen.taskk.provider.basic.utils.TaskProviderUtil
@@ -96,7 +99,7 @@ data class AppTask constructor(
     constructor(
         taskId: String,//主键
         taskState: Int,//下载状态
-        taskName:String,
+        taskName: String,
         taskDownloadUrlCurrent: String,//当前使用的下载地址
         taskVerifyEnable: Boolean,//是否需要检测0,不需要,1需要
         taskVerifyFileMd5: String,//文件的MD5值
@@ -161,7 +164,11 @@ data class AppTask constructor(
             return null
         }
         return when (task) {
-            CState.STATE_TASK_CREATE -> firstTaskName.ifEmpty { null }
+            CState.STATE_TASK_CREATE -> firstTaskName.ifEmpty {
+                Log.e(TAG, "getCurrentTaskName: firstTaskName ifEmpty")
+                null
+            }
+
             CTaskState.STATE_DOWNLOAD_CREATE / 10 -> ATaskName.TASK_DOWNLOAD//1
             CTaskState.STATE_VERIFY_CREATE / 10 -> ATaskName.TASK_VERIFY
             CTaskState.STATE_UNZIP_CREATE / 10 -> ATaskName.TASK_UNZIP
@@ -170,6 +177,28 @@ data class AppTask constructor(
             CTaskState.STATE_UNINSTALL_CREATE / 10 -> ATaskName.TASK_UNINSTALL
             else -> null
         }.also { UtilKLogWrapper.d(TAG, "getCurrentTaskName: task $task state $state taskName $it") }
+    }
+
+    ////////////////////////////////////////////////////////////////
+
+    @OptIn(OApiInit_InApplication::class)
+    fun canTaskStart(taskManager: ATaskManager): Boolean {
+        return taskManager.canTaskStart(this)
+    }
+
+    @OptIn(OApiInit_InApplication::class)
+    fun canTaskResume(taskManager: ATaskManager): Boolean {
+        return taskManager.canTaskResume(this)
+    }
+
+    @OptIn(OApiInit_InApplication::class)
+    fun canTaskPause(taskManager: ATaskManager): Boolean {
+        return taskManager.canTaskPause(this)
+    }
+
+    @OptIn(OApiInit_InApplication::class)
+    fun canTaskCancel(taskManager: ATaskManager): Boolean {
+        return taskManager.canTaskCancel(this)
     }
 
     ////////////////////////////////////////////////////////////

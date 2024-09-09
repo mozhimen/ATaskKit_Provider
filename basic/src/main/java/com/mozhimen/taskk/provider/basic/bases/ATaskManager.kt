@@ -161,11 +161,9 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
     /////////////////////////////////////////////////////////////////
 
     override fun taskStart(appTask: AppTask) {
-        UtilKLogWrapper.d(TAG, "taskStart: appTask $appTask")
-        if (appTask.isTaskProcess() && !appTask.isAnyTaskPause() && !appTask.isAnyTaskSuccess()) {
-            UtilKLogWrapper.d(TAG, "taskStart: task is process")
+        if (!canTaskStart(appTask))
             return
-        }
+        UtilKLogWrapper.d(TAG, "taskStart: appTask $appTask")
         val currentTaskName = appTask.getCurrentTaskName(getTaskQueue(appTask.fileExt)?.getOrNull(0) ?: return) ?: return
         if (appTask.isAnyTaskSuccess()) {
             UtilKLogWrapper.d(TAG, "taskStart: getNextTaskSet")
@@ -176,37 +174,75 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
         }
     }
 
-    override fun taskCancel(appTask: AppTask/*, onCancelBlock: IAB_Listener<Boolean, Int>? = null*/) {
-        UtilKLogWrapper.d(TAG, "taskCancel: appTask $appTask")
-        if (!appTask.isTaskProcess()) {
-            UtilKLogWrapper.d(TAG, "taskCancel: task is not process")
+    override fun taskResume(appTask: AppTask) {
+        if (!canTaskResume(appTask))
             return
-        }
-        getTaskSet(appTask.getCurrentTaskName() ?: return)?.taskCancel(appTask)
+        UtilKLogWrapper.d(TAG, "taskResume: appTask $appTask")
+        getTaskSet(appTask.getCurrentTaskName() ?: return)?.taskResume(appTask)
     }
 
     override fun taskPause(appTask: AppTask) {
-        if (!appTask.isTaskProcess()) {
-            UtilKLogWrapper.d(TAG, "taskPause: task is not process")
+        if (!canTaskPause(appTask))
             return
-        }
-        if (appTask.isAnyTaskPause()) {
-            UtilKLogWrapper.d(TAG, "taskPause: already pause")
-            return
-        }
+        UtilKLogWrapper.d(TAG, "taskPause: appTask $appTask")
         getTaskSet(appTask.getCurrentTaskName() ?: return)?.taskPause(appTask)
     }
 
-    override fun taskResume(appTask: AppTask) {
+    override fun taskCancel(appTask: AppTask/*, onCancelBlock: IAB_Listener<Boolean, Int>? = null*/) {
+        if (!canTaskCancel(appTask))
+            return
+        UtilKLogWrapper.d(TAG, "taskCancel: appTask $appTask")
+        getTaskSet(appTask.getCurrentTaskName() ?: return)?.taskCancel(appTask)
+    }
+
+    /////////////////////////////////////////////////////////////////
+
+    override fun canTaskStart(appTask: AppTask): Boolean {
+        if (appTask.isTaskProcess() && !appTask.isAnyTaskPause() && !appTask.isAnyTaskSuccess()) {
+            UtilKLogWrapper.d(TAG, "canTaskStart: task is process")
+            return false
+        }
+        if (appTask.isTaskSuccess()){
+            UtilKLogWrapper.d(TAG, "canTaskStart: task is success")
+            return false
+        }
+        return getTaskSet(getTaskQueue(appTask.fileExt)?.getOrNull(0) ?: return false)?.canTaskStart(appTask) ?: false
+    }
+
+    override fun canTaskResume(appTask: AppTask): Boolean {
         if (!appTask.isTaskProcess()) {
             UtilKLogWrapper.d(TAG, "taskResume: task is not process")
-            return
+            return false
         }
         if (!appTask.isAnyTaskPause()) {
             UtilKLogWrapper.d(TAG, "taskResume: task is not pause")
-            return
+            return false
         }
-        getTaskSet(appTask.getCurrentTaskName() ?: return)?.taskResume(appTask)
+        return getTaskSet(appTask.getCurrentTaskName() ?: return false)?.canTaskResume(appTask) ?: false
+    }
+
+    override fun canTaskPause(appTask: AppTask): Boolean {
+        if (!appTask.isTaskProcess()) {
+            UtilKLogWrapper.d(TAG, "taskPause: task is not process")
+            return false
+        }
+        if (appTask.isAnyTaskPause()) {
+            UtilKLogWrapper.d(TAG, "taskPause: already pause")
+            return false
+        }
+        return getTaskSet(appTask.getCurrentTaskName() ?: return false)?.canTaskPause(appTask) ?: false
+    }
+
+    override fun canTaskCancel(appTask: AppTask): Boolean {
+        if (appTask.isTaskSuccess()){
+            UtilKLogWrapper.d(TAG, "canTaskStart: task is success")
+            return false
+        }
+        if (!appTask.isTaskProcess()) {
+            UtilKLogWrapper.d(TAG, "canTaskCancel: task is not process")
+            return false
+        }
+        return getTaskSet(appTask.getCurrentTaskName() ?: return false)?.canTaskCancel(appTask) ?: false
     }
 
     /////////////////////////////////////////////////////////////////

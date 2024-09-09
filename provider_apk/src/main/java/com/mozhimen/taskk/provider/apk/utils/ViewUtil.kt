@@ -4,6 +4,8 @@ import android.content.Context
 import android.view.View
 import com.mozhimen.kotlin.elemk.commons.IAB_Listener
 import com.mozhimen.kotlin.elemk.commons.I_AListener
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.db.AppTask
 
 /**
@@ -14,24 +16,28 @@ import com.mozhimen.taskk.provider.basic.db.AppTask
  * @Version 1.0
  */
 object ViewUtil {
+    @OptIn(OApiInit_InApplication::class)
     @JvmStatic
     fun generateViewLongClickOfAppTask(
         view: View,
+        taskManager: ATaskManager,
         onGetAppTask: I_AListener<AppTask>,
         onTaskCancel: IAB_Listener<Context, AppTask>
     ) {
         view.setOnLongClickListener {
             val appTask = onGetAppTask.invoke()
-            if (appTask.isTaskProcess() && appTask.atTaskDownload()) {
+            if (appTask.canTaskCancel(taskManager)) {
                 onTaskCancel.invoke(it.context, appTask)
             }
             true
         }
     }
 
+    @OptIn(OApiInit_InApplication::class)
     @JvmStatic
     fun generateViewClickOfAppTask(
         view: View,
+        taskManager: ATaskManager,
         onGetAppTask: I_AListener<AppTask>,
         onTaskStart: IAB_Listener<Context, AppTask>,
         onTaskOpen: IAB_Listener<Context, AppTask>,
@@ -67,6 +73,6 @@ object ViewUtil {
                 }
             }
         }
-        generateViewLongClickOfAppTask(view, onGetAppTask, onTaskCancel)
+        generateViewLongClickOfAppTask(view, taskManager, onGetAppTask, onTaskCancel)
     }
 }

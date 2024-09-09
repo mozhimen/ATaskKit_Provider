@@ -42,6 +42,22 @@ abstract class ATaskInstall(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifecy
     override fun taskCancel(appTask: AppTask) {
     }
 
+    override fun canTaskStart(appTask: AppTask): Boolean {
+        return true
+    }
+
+    override fun canTaskResume(appTask: AppTask): Boolean {
+        return false
+    }
+
+    override fun canTaskPause(appTask: AppTask): Boolean {
+        return false
+    }
+
+    override fun canTaskCancel(appTask: AppTask): Boolean {
+        return false
+    }
+
     @SuppressLint("MissingSuperCall")
     override fun onTaskFinished(taskState: Int, finishType: STaskFinishType, appTask: AppTask) {
         if (finishType is STaskFinishType.SUCCESS){

@@ -89,14 +89,6 @@ open class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifec
         }
     }
 
-    @SuppressLint("MissingSuperCall")
-    override fun taskPause(appTask: AppTask) {
-    }
-
-    @SuppressLint("MissingSuperCall")
-    override fun taskResume(appTask: AppTask) {
-    }
-
     //////////////////////////////////////////////////////////////////
 
     protected fun startUnzip(appTask: AppTask) {

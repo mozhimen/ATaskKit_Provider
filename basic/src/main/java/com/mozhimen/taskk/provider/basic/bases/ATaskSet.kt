@@ -61,25 +61,41 @@ abstract class ATaskSet<T : ATask> : ATask(null) {
     @CallSuper
     override fun taskStart(appTask: AppTask) {
         UtilKLogWrapper.d(TAG, "taskStart: ")
-        getProvider(appTask.fileExt)?.taskStart(appTask) ?: run { UtilKLogWrapper.e(TAG,"taskStart no provider") }
+        getProvider(appTask.fileExt)?.taskStart(appTask) ?: run { UtilKLogWrapper.e(TAG, "taskStart no provider") }
     }
 
     @CallSuper
     override fun taskPause(appTask: AppTask) {
         UtilKLogWrapper.d(TAG, "taskPause: ")
-        getProvider(appTask.fileExt)?.taskPause(appTask)?: run { UtilKLogWrapper.e(TAG,"taskPause no provider") }
+        getProvider(appTask.fileExt)?.taskPause(appTask) ?: run { UtilKLogWrapper.e(TAG, "taskPause no provider") }
     }
 
     @CallSuper
     override fun taskResume(appTask: AppTask) {
         UtilKLogWrapper.d(TAG, "taskResume: ")
-        getProvider(appTask.fileExt)?.taskResume(appTask)?: run { UtilKLogWrapper.e(TAG,"taskResume no provider") }
+        getProvider(appTask.fileExt)?.taskResume(appTask) ?: run { UtilKLogWrapper.e(TAG, "taskResume no provider") }
     }
 
     @CallSuper
     override fun taskCancel(appTask: AppTask) {
         UtilKLogWrapper.d(TAG, "taskCancel: ")
-        getProvider(appTask.fileExt)?.taskCancel(appTask)?: run { UtilKLogWrapper.e(TAG,"taskCancel no provider") }
+        getProvider(appTask.fileExt)?.taskCancel(appTask) ?: run { UtilKLogWrapper.e(TAG, "taskCancel no provider") }
+    }
+
+    override fun canTaskStart(appTask: AppTask): Boolean {
+        return getProvider(appTask.fileExt)?.canTaskStart(appTask) ?: false
+    }
+
+    override fun canTaskResume(appTask: AppTask): Boolean {
+        return getProvider(appTask.fileExt)?.canTaskResume(appTask) ?: false
+    }
+
+    override fun canTaskPause(appTask: AppTask): Boolean {
+        return getProvider(appTask.fileExt)?.canTaskPause(appTask) ?: false
+    }
+
+    override fun canTaskCancel(appTask: AppTask): Boolean {
+        return getProvider(appTask.fileExt)?.canTaskCancel(appTask) ?: false
     }
 
     ////////////////////////////////////////////////////////////////////

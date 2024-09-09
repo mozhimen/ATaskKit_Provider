@@ -51,6 +51,22 @@ abstract class ATaskDownload(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifec
         onTaskFinished(CTaskState.STATE_DOWNLOAD_CANCEL, STaskFinishType.CANCEL, appTask)
     }
 
+    override fun canTaskStart(appTask: AppTask): Boolean {
+        return true
+    }
+
+    override fun canTaskResume(appTask: AppTask): Boolean {
+        return true
+    }
+
+    override fun canTaskPause(appTask: AppTask): Boolean {
+        return true
+    }
+
+    override fun canTaskCancel(appTask: AppTask): Boolean {
+        return true
+    }
+
     @CallSuper
     override fun onTaskFinished(taskState: Int, finishType: STaskFinishType, appTask: AppTask) {
         appTask.taskDownloadReset()

@@ -11,7 +11,12 @@ import com.mozhimen.taskk.provider.basic.db.AppTask
  */
 interface ITaskEvent {
     fun taskStart(appTask: AppTask)
-    fun taskPause(appTask: AppTask)
     fun taskResume(appTask: AppTask)
+    fun taskPause(appTask: AppTask)
     fun taskCancel(appTask: AppTask)
+
+    fun canTaskStart(appTask: AppTask): Boolean
+    fun canTaskResume(appTask: AppTask): Boolean
+    fun canTaskPause(appTask: AppTask): Boolean
+    fun canTaskCancel(appTask: AppTask): Boolean
 }

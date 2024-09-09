@@ -64,18 +64,30 @@ abstract class ATaskUnzip(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifecycl
         onTaskStarted(CTaskState.STATE_UNZIPING, appTask)
     }
 
-    @CallSuper
     override fun taskResume(appTask: AppTask) {
-        onTaskStarted(CTaskState.STATE_UNZIPING, appTask)
     }
 
-    @CallSuper
     override fun taskPause(appTask: AppTask) {
-        onTaskPaused(CTaskState.STATE_UNZIP_PAUSE, appTask)
     }
 
     @CallSuper
     override fun taskCancel(appTask: AppTask) {
         onTaskFinished(CTaskState.STATE_UNZIP_CANCEL, STaskFinishType.CANCEL, appTask)
+    }
+
+    override fun canTaskStart(appTask: AppTask): Boolean {
+        return true
+    }
+
+    override fun canTaskResume(appTask: AppTask): Boolean {
+        return false
+    }
+
+    override fun canTaskPause(appTask: AppTask): Boolean {
+        return false
+    }
+
+    override fun canTaskCancel(appTask: AppTask): Boolean {
+        return true
     }
 }

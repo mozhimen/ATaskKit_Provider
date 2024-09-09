@@ -44,7 +44,6 @@ import kotlin.math.abs
  * @Version 1.0
  */
 @OPermission_INTERNET
-
 abstract class TaskDownloadOkDownload(iTaskLifecycle: ITaskLifecycle) : ATaskDownload(iTaskLifecycle) {
 
     companion object {

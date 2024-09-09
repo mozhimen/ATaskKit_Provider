@@ -46,16 +46,4 @@ class TaskOpenApk(iTaskLifecycle: ITaskLifecycle) : ATaskOpen(iTaskLifecycle) {
             onTaskFinished(CTaskState.STATE_OPEN_FAIL, STaskFinishType.FAIL(e.exception2taskException()), appTask)
         }
     }
-
-    @SuppressLint("MissingSuperCall")
-    override fun taskCancel(appTask: AppTask) {
-    }
-
-    @SuppressLint("MissingSuperCall")
-    override fun taskPause(appTask: AppTask) {
-    }
-
-    @SuppressLint("MissingSuperCall")
-    override fun taskResume(appTask: AppTask) {
-    }
 }
