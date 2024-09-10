@@ -96,6 +96,7 @@ data class AppTask constructor(
     @ColumnInfo(name = "apk_is_installed")
     var apkIsInstalled: Boolean,//是否安装0未,1安装*/
 ) : IUtilK {
+    //for apk
     constructor(
         taskId: String,//主键
         taskState: Int,//下载状态
@@ -137,6 +138,45 @@ data class AppTask constructor(
         apkPackageName,
         apkVersionCode,
         apkVersionName
+    )
+    //for zip
+    constructor(
+        taskId: String,//主键
+        taskState: Int,//下载状态
+        taskName: String,
+        taskDownloadUrlCurrent: String,//当前使用的下载地址
+        taskVerifyEnable: Boolean,//是否需要检测0,不需要,1需要
+        taskVerifyFileMd5: String,//文件的MD5值
+        taskUnzipEnable: Boolean,
+        fileNameExt: String,//和apkName的区别是有后缀
+        apkPackageName: String,//包名
+    ): this(
+        taskId,
+        taskState,
+        taskState,
+        taskName,
+        System.currentTimeMillis(),
+        0,
+        taskDownloadUrlCurrent,
+        taskDownloadUrlCurrent,
+        taskDownloadUrlCurrent,
+        0,
+        0,
+        0,
+        0,
+        taskVerifyEnable,
+        taskVerifyFileMd5,
+        taskUnzipEnable,
+        "",
+        "",
+        0,
+        fileNameExt,
+        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitFirstIndexToStart(".") else "",
+        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitFirstIndexToEnd(".") else "",
+        "",
+        apkPackageName,
+        0,
+        ""
     )
 
     fun taskDownloadReset() {
