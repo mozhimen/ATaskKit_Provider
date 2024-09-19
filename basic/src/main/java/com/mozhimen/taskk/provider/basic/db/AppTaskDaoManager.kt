@@ -21,7 +21,7 @@ object AppTaskDaoManager : IUtilK {
 
     fun init() {
         TaskKExecutor.execute(TAG + "init") {
-            _appTasks.putAll(AppTaskDb.getAppTaskDao().get_ofAll().associateBy { it.taskId })
+            _appTasks.putAll(AppTaskDb.getAppTaskDao().gets_ofAll().associateBy { it.taskId })
             UtilKLogWrapper.d(TAG, "init: _appTasks $_appTasks")
         }
     }
