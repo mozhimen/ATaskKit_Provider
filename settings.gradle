@@ -95,3 +95,4 @@ include(':AStackKit:basic')
 include(':ATaskKit')
 project(':ATaskKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ATaskKit")
 include(':ATaskKit:taskk_executor')
+include ':support_compose'
