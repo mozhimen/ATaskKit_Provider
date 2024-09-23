@@ -4,11 +4,11 @@ import androidx.annotation.CallSuper
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATask
-import com.mozhimen.taskk.provider.basic.cons.CTaskState
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
-import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
+import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 import java.io.File
 
 /**
@@ -21,9 +21,10 @@ import java.io.File
 @OPermission_INTERNET
 abstract class ATaskDownload(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifecycle) {
     protected abstract var _downloadDir: File?
+    protected abstract var _taskQueueName_ofDownload: String?
 
-    abstract fun taskResumeAll()
-    abstract fun taskPauseAll()
+    abstract fun taskResumeAll(@ATaskQueueName taskQueueName: String)
+    abstract fun taskPauseAll(@ATaskQueueName taskQueueName: String)
 
     fun getDownloadDir(): File? =
         _downloadDir
@@ -34,22 +35,22 @@ abstract class ATaskDownload(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifec
 
     @CallSuper
     override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        onTaskStarted(CTaskState.STATE_DOWNLOADING, appTask)
+        onTaskStarted(ATaskState.STATE_DOWNLOADING, appTask, taskQueueName)
     }
 
     @CallSuper
     override fun taskResume(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        onTaskStarted(CTaskState.STATE_DOWNLOADING, appTask)
+        onTaskStarted(ATaskState.STATE_DOWNLOADING, appTask, taskQueueName)
     }
 
     @CallSuper
     override fun taskPause(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        onTaskPaused(CTaskState.STATE_DOWNLOAD_PAUSE, appTask)
+        onTaskPaused(ATaskState.STATE_DOWNLOAD_PAUSE, appTask, taskQueueName)
     }
 
     @CallSuper
     override fun taskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        onTaskFinished(CTaskState.STATE_DOWNLOAD_CANCEL, STaskFinishType.CANCEL, appTask)
+        onTaskFinished(ATaskState.STATE_DOWNLOAD_CANCEL, appTask, taskQueueName, STaskFinishType.CANCEL)
     }
 
     override fun canTaskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean {
@@ -69,8 +70,8 @@ abstract class ATaskDownload(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifec
     }
 
     @CallSuper
-    override fun onTaskFinished(taskState: Int, finishType: STaskFinishType, appTask: AppTask) {
+    override fun onTaskFinished(taskState: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String, finishType: STaskFinishType) {
         appTask.taskDownloadReset()
-        super.onTaskFinished(taskState, finishType, appTask)
+        super.onTaskFinished(taskState, appTask, taskQueueName, finishType)
     }
 }

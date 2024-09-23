@@ -1,4 +1,4 @@
-package com.mozhimen.taskk.provider.basic.interfaces
+package com.mozhimen.taskk.provider.basic.commons
 
 import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
@@ -52,6 +52,14 @@ interface ITaskViewOpen<V> {
     fun onTaskOpenCancel(view: V?, appTask: AppTask) {}
 }
 
+interface ITaskViewClose<V> {
+    fun onTaskClosing(view: V?, appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {}
+    fun onTaskClosePause(view: V?, appTask: AppTask) {}
+    fun onTaskCloseSuccess(view: V?, appTask: AppTask) {}
+    fun onTaskCloseFail(view: V?, appTask: AppTask, exception: TaskException) {}
+    fun onTaskCloseCancel(view: V?, appTask: AppTask) {}
+}
+
 interface ITaskViewUninstall<V> {
     fun onTaskUninstalling(view: V?, appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {}
     fun onTaskUninstallPause(view: V?, appTask: AppTask) {}
@@ -82,4 +90,5 @@ interface ITaskViews<V> :
     ITaskViewOpen<V>,
     ITaskViewUninstall<V>,
     ITaskViewDelete<V>,
+    ITaskViewClose<V>,
     ITaskView<V>,IUtilK

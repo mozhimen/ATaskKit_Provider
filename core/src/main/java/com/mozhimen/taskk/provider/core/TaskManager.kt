@@ -6,6 +6,7 @@ import com.mozhimen.kotlin.utilk.kotlin.collections.joinT2list
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.ATaskSet
+import com.mozhimen.taskk.provider.basic.bases.providers.ATaskClose
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDelete
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
@@ -19,6 +20,7 @@ import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetOpen
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetUninstall
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetUnzip
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetVerify
+import com.mozhimen.taskk.provider.close.TaskSetClose
 import com.mozhimen.taskk.provider.delete.TaskSetDelete
 import com.mozhimen.taskk.provider.download.TaskSetDownload
 import com.mozhimen.taskk.provider.install.TaskSetInstall
@@ -52,6 +54,9 @@ abstract class TaskManager : ATaskManager() {
     open fun getTaskOpens(): List<ATaskOpen> =
         getTaskProviders().joinT2list { it.getTaskOpen() }.filterNotNull()
 
+    open fun getTaskCloses(): List<ATaskClose> =
+        getTaskProviders().joinT2list { it.getTaskClose() }.filterNotNull()
+
     open fun getTaskUninstalls(): List<ATaskUninstall> =
         getTaskProviders().joinT2list { it.getTaskUninstall() }.filterNotNull()
 
@@ -66,13 +71,14 @@ abstract class TaskManager : ATaskManager() {
 
     override fun getTaskSets(): List<ATaskSet<*>> {
         return listOf(
-            TaskSetDownload(getTaskDownloads()),
-            TaskSetVerify(getTaskVerifys()),
-            TaskSetUnzip(getTaskUnzips()),
-            TaskSetInstall(getTaskInstalls()),
-            TaskSetOpen(getTaskOpens()),
-            TaskSetUninstall(getTaskUninstalls()),
-            TaskSetDelete(getTaskDeletes())
+            TaskSetDownload(this,getTaskDownloads()),
+            TaskSetVerify(this,getTaskVerifys()),
+            TaskSetUnzip(this,getTaskUnzips()),
+            TaskSetInstall(this,getTaskInstalls()),
+            TaskSetOpen(this,getTaskOpens()),
+            TaskSetClose(this,getTaskCloses()),
+            TaskSetUninstall(this,getTaskUninstalls()),
+            TaskSetDelete(this,getTaskDeletes())
         )
     }
 }

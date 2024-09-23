@@ -15,9 +15,15 @@ import androidx.annotation.StringDef
     ATaskName.TASK_UNZIP,
     ATaskName.TASK_INSTALL,
     ATaskName.TASK_OPEN,
+    ATaskName.TASK_CLOSE,
     ATaskName.TASK_UNINSTALL,
     ATaskName.TASK_DELETE,
+    ATaskQueueName.TASK_RESTART
 )
 @Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.TYPE,AnnotationTarget.VALUE_PARAMETER)
-annotation class ATaskQueueName
+@Target(AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION)
+annotation class ATaskQueueName{
+    companion object{
+        const val TASK_RESTART = "TASK_RESTART"
+    }
+}

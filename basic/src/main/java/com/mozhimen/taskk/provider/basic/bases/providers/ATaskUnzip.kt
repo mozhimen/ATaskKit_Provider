@@ -3,11 +3,10 @@ package com.mozhimen.taskk.provider.basic.bases.providers
 import androidx.annotation.CallSuper
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATask
-import com.mozhimen.taskk.provider.basic.cons.CTaskState
-import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
-import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
+import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 import java.io.File
 
 /**
@@ -62,7 +61,7 @@ abstract class ATaskUnzip(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifecycl
 
     @CallSuper
     override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        onTaskStarted(CTaskState.STATE_UNZIPING, appTask)
+        onTaskStarted(ATaskState.STATE_UNZIPING, appTask, taskQueueName)
     }
 
     override fun taskResume(appTask: AppTask, @ATaskQueueName taskQueueName: String) {

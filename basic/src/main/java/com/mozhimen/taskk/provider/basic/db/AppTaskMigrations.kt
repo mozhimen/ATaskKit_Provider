@@ -2,7 +2,7 @@ package com.mozhimen.taskk.provider.basic.db
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.mozhimen.taskk.provider.basic.cons.CState
+import com.mozhimen.taskk.provider.basic.annors.AState
 
 /**
  * @ClassName AppTaskMigrations
@@ -17,7 +17,7 @@ object AppTaskMigrations {
      */
     internal val MIGRATION_1_2 = object : Migration(1, 2) {
         override fun migrate(db: SupportSQLiteDatabase) {
-            db.execSQL("ALTER TABLE netk_app_task ADD COLUMN task_state_init INTEGER NOT NULL DEFAULT ${CState.STATE_TASK_CREATE}")
+            db.execSQL("ALTER TABLE netk_app_task ADD COLUMN task_state_init INTEGER NOT NULL DEFAULT ${AState.STATE_TASK_CREATE}")
         }
     }
 

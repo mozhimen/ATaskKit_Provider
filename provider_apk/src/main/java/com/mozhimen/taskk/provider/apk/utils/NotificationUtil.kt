@@ -7,12 +7,15 @@ import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import com.mozhimen.kotlin.elemk.android.app.cons.CNotificationManager
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.app.UtilKNotificationManager
 import com.mozhimen.kotlin.utilk.android.app.UtilKPendingIntentWrapper
 import com.mozhimen.kotlin.utilk.android.content.UtilKApplicationInfo
 import com.mozhimen.kotlin.utilk.android.os.UtilKBuildVersion
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.apk.R
+import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 
 /**
  *
@@ -22,6 +25,7 @@ object NotificationUtil {
     const val NETK_APP_NOTIFICATION_CHANNEL_ID = "NETK_APP_NOTIFICATION_CHANNEL_ID"
     const val NETK_APP_NOTIFICATION_GROUP_ID = "NETK_APP_NOTIFICATION_GROUP_ID"
 
+    @OptIn(OApiInit_InApplication::class)
     @JvmStatic
     @SuppressLint("SwitchIntDef")
     fun showNotification(
@@ -30,6 +34,8 @@ object NotificationUtil {
         channelName: CharSequence,
         title: CharSequence,
         appTask: AppTask,
+        taskManager: ATaskManager,
+        @ATaskQueueName taskQueueName: String,
         intent: Intent? = null,
         @DrawableRes notifierSmallIcon: Int = UtilKApplicationInfo.getIcon(context)
     ) {
@@ -45,9 +51,9 @@ object NotificationUtil {
             .setSmallIcon(notifierSmallIcon)
             .setContentTitle(title)
             .setAutoCancel(
-                !appTask.isTaskProcess() || appTask.isTaskUnzipSuccess()
+                !appTask.isTaskProcess(taskManager, taskQueueName) || appTask.isTaskUnzipSuccess()
             ) // canceled when it is clicked by the user.
-            .setOngoing(appTask.isTaskProcess())
+            .setOngoing(appTask.isTaskProcess(taskManager, taskQueueName))
 
         if (appTask.taskDownloadProgress >= 0) {// don't use setContentInfo(deprecated in API level 24)
             builder.setSubText(context.getString(R.string.netk_app_notifier_subtext_placeholder, appTask.taskDownloadProgress))
@@ -55,7 +61,7 @@ object NotificationUtil {
 
         //状态
         when {
-            appTask.isTaskSuccess() -> {
+            appTask.isTaskSuccess(taskManager, taskQueueName) -> {
                 intent?.let {
                     builder.setContentIntent(UtilKPendingIntentWrapper.get_ofActivity_IMMUTABLE(0, it))
                 }

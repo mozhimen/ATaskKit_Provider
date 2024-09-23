@@ -1,13 +1,15 @@
 package com.mozhimen.taskk.provider.download
 
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.java.io.UtilKFileDir
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskState
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetDownload
 import com.mozhimen.taskk.provider.basic.cons.CErrorCode
-import com.mozhimen.taskk.provider.basic.cons.CTaskState
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.impls.TaskException
@@ -21,17 +23,18 @@ import java.util.concurrent.ConcurrentHashMap
  * @Date 2024/8/20
  * @Version 1.0
  */
-@OptIn(OPermission_INTERNET::class)
-class TaskSetDownload(override val providerDefaults: List<ATaskDownload>) : ATaskSetDownload() {
+@OptIn(OPermission_INTERNET::class, OApiInit_InApplication::class)
+class TaskSetDownload constructor(override val taskManager: ATaskManager, override val providerDefaults: List<ATaskDownload>) : ATaskSetDownload() {
     override val providers: ConcurrentHashMap<String, ATaskDownload> by lazy {
         ConcurrentHashMap(
             providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskDownload>)?.toMutableMap() }.fold(emptyMap()) { acc, nex -> acc + nex }
         )
     }
 
+    @OptIn(OApiInit_InApplication::class)
     override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
         try {
-            if (appTask.isTaskProcess() && !appTask.isAnyTaskPause()) {
+            if (appTask.isTaskProcess(taskManager, taskQueueName) && !appTask.isAnyTaskPause()) {
                 UtilKLogWrapper.d(TAG, "taskStart: the task already start")
                 return
             }
@@ -51,11 +54,11 @@ class TaskSetDownload(override val providerDefaults: List<ATaskDownload>) : ATas
                 }
             }
 
-            super.taskStart(appTask,taskQueueName)
+            super.taskStart(appTask, taskQueueName)
         } catch (e: TaskException) {
-            onTaskFinished(CTaskState.STATE_DOWNLOAD_FAIL, STaskFinishType.FAIL(e), appTask)//onDownloadFail(appTask, exception)
+            onTaskFinished(ATaskState.STATE_DOWNLOAD_FAIL, appTask, taskQueueName, STaskFinishType.FAIL(e))//onDownloadFail(appTask, exception)
         } catch (e: Exception) {
-            onTaskFinished(CTaskState.STATE_DOWNLOAD_FAIL, STaskFinishType.FAIL(TaskException(e)), appTask)
+            onTaskFinished(ATaskState.STATE_DOWNLOAD_FAIL, appTask, taskQueueName, STaskFinishType.FAIL(TaskException(e)))
         }
     }
 }

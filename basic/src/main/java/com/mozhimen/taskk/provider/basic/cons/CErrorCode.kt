@@ -1,5 +1,7 @@
 package com.mozhimen.taskk.provider.basic.cons
 
+import com.mozhimen.taskk.provider.basic.annors.ATaskState
+
 /**
  * @ClassName CAppDownloadErrorCode
  * @Description TODO
@@ -14,27 +16,27 @@ object CErrorCode {
     const val CODE_TASK_FAIL = 0
     const val CODE_TASK_NEED_MEMORY = 1//"存储空间不足，请清理内存后再试"
 
-    const val CODE_TASK_DOWNLOAD_FAIL = CTaskState.STATE_DOWNLOAD_CREATE + 0//
-    const val CODE_TASK_DOWNLOAD_PATH_NOT_EXIST = CTaskState.STATE_DOWNLOAD_CREATE + 1//"下载路径不存在"
-    const val CODE_TASK_DOWNLOAD_CANT_FIND_TASK = CTaskState.STATE_DOWNLOAD_CREATE + 2//"未找到下载任务！"
-    const val CODE_TASK_DOWNLOAD_SERVER_CANCELED = CTaskState.STATE_DOWNLOAD_CREATE + 3//
-    const val CODE_TASK_DOWNLOAD_ENOUGH = CTaskState.STATE_DOWNLOAD_CREATE + 4//
+    const val CODE_TASK_DOWNLOAD_FAIL = ATaskState.STATE_DOWNLOAD_CREATE + 0//
+    const val CODE_TASK_DOWNLOAD_PATH_NOT_EXIST = ATaskState.STATE_DOWNLOAD_CREATE + 1//"下载路径不存在"
+    const val CODE_TASK_DOWNLOAD_CANT_FIND_TASK = ATaskState.STATE_DOWNLOAD_CREATE + 2//"未找到下载任务！"
+    const val CODE_TASK_DOWNLOAD_SERVER_CANCELED = ATaskState.STATE_DOWNLOAD_CREATE + 3//
+    const val CODE_TASK_DOWNLOAD_ENOUGH = ATaskState.STATE_DOWNLOAD_CREATE + 4//
 
-    const val CODE_TASK_VERIFY_FAIL = CTaskState.STATE_VERIFY_CREATE + 0
-    const val CODE_TASK_VERIFY_DIR_NULL = CTaskState.STATE_VERIFY_CREATE + 1
-    const val CODE_TASK_VERIFY_FILE_NOT_EXIST = CTaskState.STATE_VERIFY_CREATE + 2
-    const val CODE_TASK_VERIFY_MD5_FAIL = CTaskState.STATE_VERIFY_CREATE + 3
-    const val CODE_TASK_VERIFY_FORMAT_INVALID = CTaskState.STATE_VERIFY_CREATE + 4
+    const val CODE_TASK_VERIFY_FAIL = ATaskState.STATE_VERIFY_CREATE + 0
+    const val CODE_TASK_VERIFY_DIR_NULL = ATaskState.STATE_VERIFY_CREATE + 1
+    const val CODE_TASK_VERIFY_FILE_NOT_EXIST = ATaskState.STATE_VERIFY_CREATE + 2
+    const val CODE_TASK_VERIFY_MD5_FAIL = ATaskState.STATE_VERIFY_CREATE + 3
+    const val CODE_TASK_VERIFY_FORMAT_INVALID = ATaskState.STATE_VERIFY_CREATE + 4
 
-    const val CODE_TASK_UNZIP_FAIL = CTaskState.STATE_UNZIP_CREATE + 0
-    const val CODE_TASK_UNZIP_DIR_NULL = CTaskState.STATE_UNZIP_CREATE + 1
-    const val CODE_TASK_UNZIP_CANCEL_FAIL = CTaskState.STATE_UNZIP_CREATE + 2//正在解压, 无法删除
+    const val CODE_TASK_UNZIP_FAIL = ATaskState.STATE_UNZIP_CREATE + 0
+    const val CODE_TASK_UNZIP_DIR_NULL = ATaskState.STATE_UNZIP_CREATE + 1
+    const val CODE_TASK_UNZIP_CANCEL_FAIL = ATaskState.STATE_UNZIP_CREATE + 2//正在解压, 无法删除
 
-    const val CODE_TASK_INSTALL_FAIL = CTaskState.STATE_INSTALL_CREATE + 0
-    const val CODE_TASK_INSTALL_HAST_VERIFY_OR_UNZIP = CTaskState.STATE_INSTALL_CREATE + 1
-    const val CODE_TASK_INSTALL_HAS_INSTALLED = CTaskState.STATE_INSTALL_CREATE + 2//已经安装
+    const val CODE_TASK_INSTALL_FAIL = ATaskState.STATE_INSTALL_CREATE + 0
+    const val CODE_TASK_INSTALL_HAST_VERIFY_OR_UNZIP = ATaskState.STATE_INSTALL_CREATE + 1
+    const val CODE_TASK_INSTALL_HAS_INSTALLED = ATaskState.STATE_INSTALL_CREATE + 2//已经安装
 
-    const val CODE_TASK_OPEN_FAIL = CTaskState.STATE_OPEN_CREATE + 0
+    const val CODE_TASK_OPEN_FAIL = ATaskState.STATE_OPEN_CREATE + 0
 
     /////////////////////////////////////////////////////////////////
 

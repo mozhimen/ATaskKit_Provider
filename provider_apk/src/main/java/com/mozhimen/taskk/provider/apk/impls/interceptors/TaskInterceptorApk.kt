@@ -1,4 +1,4 @@
-package com.mozhimen.taskk.provider.apk.impls
+package com.mozhimen.taskk.provider.apk.impls.interceptors
 
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.java.io.deleteFolder
@@ -7,8 +7,8 @@ import com.mozhimen.kotlin.utilk.kotlin.isFileExist
 import com.mozhimen.kotlin.utilk.kotlin.strFilePath2file
 import com.mozhimen.cachek.datastore.CacheKDS
 import com.mozhimen.cachek.datastore.temps.CacheKDSVarPropertyBoolean
+import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.taskk.provider.basic.db.AppTask
-import com.mozhimen.taskk.provider.basic.interfaces.ITaskInterceptor
 
 /**
  * @ClassName TaskProviderInterceptorApk
@@ -17,15 +17,15 @@ import com.mozhimen.taskk.provider.basic.interfaces.ITaskInterceptor
  * @Date 2024/8/22
  * @Version 1.0
  */
-object TaskInterceptorApk : ITaskInterceptor {
+object TaskInterceptorApk : IUtilK {
     private val _cacheKDSProvider by lazy { CacheKDS.instance.with(NAME) }
     var is_delete_apk_file by CacheKDSVarPropertyBoolean(_cacheKDSProvider, "is_delete_apk_file", true)
 
-    override fun isAutoDeleteOrgFiles(): Boolean {
+    fun isAutoDeleteOrgFiles(): Boolean {
         return is_delete_apk_file
     }
 
-    override fun deleteOrgFiles(appTask: AppTask) {
+    fun deleteOrgFiles(appTask: AppTask) {
         try {
             //删除文件
             if (appTask.filePathNameExt.isNotEmpty() && appTask.filePathNameExt.isFileExist()) {

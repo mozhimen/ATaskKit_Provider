@@ -13,12 +13,14 @@ import com.mozhimen.manifestk.xxpermissions.XXPermissionsCheckUtil
 import com.mozhimen.manifestk.xxpermissions.XXPermissionsRequestUtil
 import com.mozhimen.mvvmk.bases.activity.viewbinding.BaseActivityVB
 import com.mozhimen.taskk.provider.apk.utils.AppTaskUtil
-import com.mozhimen.taskk.provider.basic.cons.CState
+import com.mozhimen.taskk.provider.basic.annors.AState
+import com.mozhimen.taskk.provider.basic.annors.ATaskName
+import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.db.AppTaskDaoManager
 import com.mozhimen.taskk.provider.basic.impls.TaskException
-import com.mozhimen.taskk.provider.basic.interfaces.ITasks
+import com.mozhimen.taskk.provider.basic.commons.ITasks
 import com.mozhimen.taskk.provider.test.databinding.ActivityMain2Binding
 
 /**
@@ -28,7 +30,7 @@ import com.mozhimen.taskk.provider.test.databinding.ActivityMain2Binding
 class MainActivity : BaseActivityVB<ActivityMain2Binding>(), ITasks {
     var appTask = AppTask(
         "0",
-        CState.STATE_TASK_CREATE,
+        AState.STATE_TASK_CREATE,
         "lelejoy",
         "https://cf-lele-res.lelejoy.com/lelejoy.apk",
         true,
@@ -42,29 +44,34 @@ class MainActivity : BaseActivityVB<ActivityMain2Binding>(), ITasks {
         "1.8.8"
     )
 
-    @OptIn(OPermission_INTERNET::class, OApiInit_InApplication::class)
+    @OptIn(OApiInit_InApplication::class)
     override fun initView(savedInstanceState: Bundle?) {
-        appTask = AppTaskUtil.generateAppTask_ofDb_installed_version(MainTaskManager, appTask)
+        appTask = AppTaskUtil.generateAppTask_ofDb_installed_version(MainTaskManager, appTask, ATaskName.TASK_INSTALL)
         UtilKLogWrapper.d(TAG, "initView: get_ofTaskId ${AppTaskDaoManager.get_ofTaskId(appTask.taskId)}")
         UtilKLogWrapper.d(TAG, "initView: get_ofApkPackageName_ApkVersionCode ${AppTaskDaoManager.get_ofApkPackageName_ApkVersionCode(appTask.apkPackageName, appTask.apkVersionCode)}")
-        UtilKLogWrapper.d(TAG, "initView: get_ofTaskId_ApkPackageName_ApkVersionCode ${AppTaskDaoManager.get_ofTaskId_ApkPackageName_ApkVersionCode(appTask.taskId, appTask.apkPackageName, appTask.apkVersionCode)}")
+        UtilKLogWrapper.d(
+            TAG,
+            "initView: get_ofTaskId_ApkPackageName_ApkVersionCode ${AppTaskDaoManager.get_ofTaskId_ApkPackageName_ApkVersionCode(appTask.taskId, appTask.apkPackageName, appTask.apkVersionCode)}"
+        )
         UtilKLogWrapper.d(TAG, "initView: gets_ofApkPackageName ${AppTaskDaoManager.gets_ofApkPackageName(appTask.apkPackageName)}")
         UtilKLogWrapper.d(TAG, "initView: gets_ofApkPackageName_satisfyApkVersionCode ${AppTaskDaoManager.gets_ofApkPackageName_satisfyApkVersionCode(appTask.apkPackageName, appTask.apkVersionCode)}")
 
-        vb.mainTxt.text = appTask.getStrTaskState()
+        vb.mainTxt.text = appTask.getTaskStateStr()
 
         vb.mainBtn.setOnClickListener {
             requestPermissionStorage {
-                if (appTask.isTaskProcess() && appTask.isAnyTasking()) {
-                    MainTaskManager.taskPause(appTask)
-                } else if (!appTask.isTaskProcess() || appTask.isAnyTaskPause() || appTask.isAnyTaskSuccess()) {
-                    MainTaskManager.taskStart(appTask)
+                if (appTask.isTaskProcess(MainTaskManager, ATaskName.TASK_INSTALL) && appTask.isAnyTasking()) {
+                    MainTaskManager.taskPause(appTask, ATaskName.TASK_INSTALL)
+                } else if (!appTask.isTaskProcess(MainTaskManager, ATaskName.TASK_INSTALL) || appTask.isAnyTaskPause() || appTask.isAnyTaskSuccess()) {
+                    MainTaskManager.taskStart(appTask, ATaskName.TASK_INSTALL)
+                } else if (appTask.isTaskSuccess(MainTaskManager, ATaskName.TASK_INSTALL)) {
+                    MainTaskManager.taskStart(appTask, ATaskName.TASK_OPEN)
                 }
             }
         }
         vb.mainBtn.setOnLongClickListener {
             requestPermissionStorage {
-                MainTaskManager.taskCancel(appTask)
+                MainTaskManager.taskCancel(appTask, ATaskName.TASK_INSTALL)
             }
             true
         }
@@ -91,199 +98,181 @@ class MainActivity : BaseActivityVB<ActivityMain2Binding>(), ITasks {
         super.onDestroy()
     }
 
+    override fun onTaskCreate(appTask: AppTask, @ATaskQueueName taskQueueName: String, isUpdate: Boolean) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
+        this.appTask = appTask
+    }
+
+    override fun onTaskUnavailable(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
+        this.appTask = appTask
+    }
+
+    override fun onTaskFinish(appTask: AppTask, @ATaskQueueName taskQueueName: String, finishType: STaskFinishType) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
+        this.appTask = appTask
+    }
+
+    //////////////////////////////////////////////////////////////////////
+
     override fun onTaskDownloading(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
-    }
-
-    override fun onTaskFinish(appTask: AppTask, finishType: STaskFinishType) {
-        vb.mainTxt.text = appTask.getStrTaskState()
-        this.appTask = appTask
-    }
-
-    override fun onTaskUnavailable(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
-        this.appTask = appTask
-
-    }
-
-    override fun onTaskInstallSuccess(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
-        this.appTask = appTask
-
-    }
-
-    override fun onTaskDownloadCancel(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
-        this.appTask = appTask
-
     }
 
     override fun onTaskDownloadPause(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+        vb.mainTxt.text = appTask.getTaskStateStr()
+        this.appTask = appTask
+    }
 
+    override fun onTaskDownloadCancel(appTask: AppTask) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
     }
 
     override fun onTaskDownloadSuccess(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
-
     }
 
-    override fun onTaskInstallCancel(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+    override fun onTaskDownloadFail(appTask: AppTask, exception: TaskException) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
-
     }
 
-    override fun onTaskInstallPause(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
-        this.appTask = appTask
+    //////////////////////////////////////////////////////////////////////
 
+    override fun onTaskVerifying(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
+        this.appTask = appTask
     }
 
-    override fun onTaskOpenCancel(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+    override fun onTaskVerifyPause(appTask: AppTask) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
-
     }
 
-    override fun onTaskOpenPause(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+    override fun onTaskVerifyCancel(appTask: AppTask) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
-
     }
 
-    override fun onTaskOpenSuccess(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+    override fun onTaskVerifySuccess(appTask: AppTask) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
-
     }
 
-    override fun onTaskUninstallCancel(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+    override fun onTaskVerifyFail(appTask: AppTask, exception: TaskException) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
-
     }
 
-    override fun onTaskUninstallPause(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
-        this.appTask = appTask
+    //////////////////////////////////////////////////////////////////////
 
-    }
-
-    override fun onTaskUninstallSuccess(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
-        this.appTask = appTask
-
-    }
-
-    override fun onTaskUnzipCancel(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
-
+    override fun onTaskUnziping(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
     }
 
     override fun onTaskUnzipPause(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
+    }
 
+    override fun onTaskUnzipCancel(appTask: AppTask) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
+        this.appTask = appTask
     }
 
     override fun onTaskUnzipSuccess(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
-
     }
 
-    override fun onTaskVerifyCancel(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+    override fun onTaskUnzipFail(appTask: AppTask, exception: TaskException) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
-
     }
 
-    override fun onTaskVerifyPause(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
-        this.appTask = appTask
+    //////////////////////////////////////////////////////////////////////
 
+    override fun onTaskInstalling(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
+        this.appTask = appTask
     }
 
-    override fun onTaskVerifySuccess(appTask: AppTask) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+    override fun onTaskInstallPause(appTask: AppTask) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
-
     }
 
-    override fun onTaskDownloadFail(appTask: AppTask, exception: TaskException) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+    override fun onTaskInstallCancel(appTask: AppTask) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
-
     }
 
-    override fun onTaskCreate(appTask: AppTask, isUpdate: Boolean) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+    override fun onTaskInstallSuccess(appTask: AppTask) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
     }
 
     override fun onTaskInstallFail(appTask: AppTask, exception: TaskException) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
+    }
 
+    //////////////////////////////////////////////////////////////////////
+
+    override fun onTaskOpening(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
+        this.appTask = appTask
+    }
+
+    override fun onTaskOpenPause(appTask: AppTask) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
+        this.appTask = appTask
+    }
+
+    override fun onTaskOpenCancel(appTask: AppTask) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
+        this.appTask = appTask
+    }
+
+    override fun onTaskOpenSuccess(appTask: AppTask) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
+        this.appTask = appTask
     }
 
     override fun onTaskOpenFail(appTask: AppTask, exception: TaskException) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
+    }
 
+    //////////////////////////////////////////////////////////////////////
+
+    override fun onTaskUninstalling(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
+        this.appTask = appTask
+    }
+
+    override fun onTaskUninstallPause(appTask: AppTask) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
+        this.appTask = appTask
+    }
+
+    override fun onTaskUninstallCancel(appTask: AppTask) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
+        this.appTask = appTask
+    }
+
+    override fun onTaskUninstallSuccess(appTask: AppTask) {
+        vb.mainTxt.text = appTask.getTaskStateStr()
+        this.appTask = appTask
     }
 
     override fun onTaskUninstallFail(appTask: AppTask, exception: TaskException) {
-        vb.mainTxt.text = appTask.getStrTaskState()
+        vb.mainTxt.text = appTask.getTaskStateStr()
         this.appTask = appTask
-
-    }
-
-    override fun onTaskUnzipFail(appTask: AppTask, exception: TaskException) {
-        vb.mainTxt.text = appTask.getStrTaskState()
-        this.appTask = appTask
-
-    }
-
-    override fun onTaskVerifyFail(appTask: AppTask, exception: TaskException) {
-        vb.mainTxt.text = appTask.getStrTaskState()
-        this.appTask = appTask
-
-    }
-
-    override fun onTaskInstalling(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
-        vb.mainTxt.text = appTask.getStrTaskState()
-        this.appTask = appTask
-
-    }
-
-    override fun onTaskOpening(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
-        vb.mainTxt.text = appTask.getStrTaskState()
-        this.appTask = appTask
-
-    }
-
-    override fun onTaskUninstalling(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
-        vb.mainTxt.text = appTask.getStrTaskState()
-        this.appTask = appTask
-
-    }
-
-    override fun onTaskUnziping(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
-        vb.mainTxt.text = appTask.getStrTaskState()
-        this.appTask = appTask
-
-    }
-
-    override fun onTaskVerifying(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
-        vb.mainTxt.text = appTask.getStrTaskState()
-        this.appTask = appTask
-
     }
 
 //    private lateinit var binding: ActivityMainBinding

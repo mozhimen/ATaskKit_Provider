@@ -1,16 +1,18 @@
 package com.mozhimen.taskk.provider.apk.impls
 
 import android.annotation.SuppressLint
+import android.util.Log
 import com.mozhimen.installk.manager.commons.IInstallKReceiverProxy
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.wrapper.UtilKAppInstall
 import com.mozhimen.taskk.provider.apk.cons.CExt
+import com.mozhimen.taskk.provider.apk.impls.interceptors.TaskInterceptorApk
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
-import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
 import com.mozhimen.taskk.provider.basic.db.AppTask
-import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
+import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
+import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 
 /**
  * @ClassName NetKAppInstallProviderDefault
@@ -53,5 +55,15 @@ class TaskInstallApk(
             UtilKAppInstall.install_ofView(appTask.filePathNameExt)
         }
 //        super.taskStart(appTask)
+    }
+
+    override fun onTaskFinished(taskState: Int, appTask: AppTask, taskQueueName: String, finishType: STaskFinishType) {
+        Log.d(TAG, "onTaskFinished: taskState $taskState taskQueueName $taskQueueName appTask $appTask ")
+        if (finishType is STaskFinishType.SUCCESS) {
+            if (TaskInterceptorApk.isAutoDeleteOrgFiles()) {
+                TaskInterceptorApk.deleteOrgFiles(appTask)
+            }
+        }
+        super.onTaskFinished(taskState, appTask, taskQueueName, finishType)
     }
 }

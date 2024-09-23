@@ -12,10 +12,10 @@ import com.mozhimen.kotlin.utilk.kotlin.strFilePath2file
 import com.mozhimen.kotlin.utilk.wrapper.UtilKPermission
 import com.mozhimen.installk.splits.ackpine.InstallKSplitsAckpine
 import com.mozhimen.installk.splits.ackpine.cons.SInstallState
-import com.mozhimen.taskk.provider.basic.bases.ATask
+import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
 import com.mozhimen.taskk.provider.basic.db.AppTask
-import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
+import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 import java.io.File
 
 /**
@@ -37,7 +37,7 @@ class TaskInstallSplitsAckpine constructor(
         return listOf("zip", "apks", "xapk", "apkm", "apk")
     }
 
-    override fun taskStart(appTask: AppTask) {
+    override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
         val file = if (appTask.taskUnzipEnable) {
             appTask.taskUnzipFilePath.strFilePath2file()
         } else {

@@ -9,11 +9,11 @@ import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.kotlin.utilk.kotlin.getSplitFirstIndexToEnd
 import com.mozhimen.kotlin.utilk.kotlin.getSplitFirstIndexToStart
+import com.mozhimen.taskk.provider.basic.annors.AState
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
+import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
-import com.mozhimen.taskk.provider.basic.cons.CState
-import com.mozhimen.taskk.provider.basic.cons.CTaskState
-import com.mozhimen.taskk.provider.basic.utils.TaskProviderUtil
 
 /**
  * @ClassName AppFileParam
@@ -189,199 +189,225 @@ data class AppTask constructor(
         taskDownloadFileSpeed = 0
     }
 
-    fun getStrTaskState(): String =
-        TaskProviderUtil.intTaskState2strTaskState(taskState)
-
-    fun toNewTaskState(taskStateNew: Int) {
+    fun toTaskStateNew(taskStateNew: Int) {
         taskState = taskStateNew
         if (isTaskCreateOrUpdate())
             taskStateInit = taskState
         AppTaskDaoManager.addOrUpdate(this)
     }
 
-    fun getCurrentTaskName(@ATaskName firstTaskName: String = ""): String? {
-        val task: Int = taskState / 10//->哪个环节
-        val state: Int = taskState % 10
-        if (taskState == CState.STATE_TASK_SUCCESS) {
-            UtilKLogWrapper.d(TAG, "getCurrentTaskName: task $task state $state taskName null STATE_TASK_SUCCESS")
+    ////////////////////////////////////////////////////////////////
+
+    fun getTaskStateStr(): String =
+        ATaskState.intTaskState2strTaskState(taskState)
+
+    @OptIn(OApiInit_InApplication::class)
+    fun getCurrentTaskName(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String, @ATaskName firstTaskName_ofTaskQueue: String = ""): @ATaskName String? {
+        val taskCode: Int = getTaskCode()//->哪个环节
+        val stateCode: Int = getStateCode()//->哪个状态
+        if (isTaskSuccess(taskManager, taskQueueName)) {
+            UtilKLogWrapper.d(TAG, "getCurrentTaskName: task $taskCode state $stateCode taskName null STATE_TASK_SUCCESS")
             return null
         }
-        return when (task) {
-            CState.STATE_TASK_CREATE -> firstTaskName.ifEmpty {
+        return when (taskCode) {
+            AState.STATE_TASK_CREATE -> firstTaskName_ofTaskQueue.ifEmpty {
                 Log.e(TAG, "getCurrentTaskName: firstTaskName ifEmpty")
                 null
             }
 
-            CTaskState.STATE_DOWNLOAD_CREATE / 10 -> ATaskName.TASK_DOWNLOAD//1
-            CTaskState.STATE_VERIFY_CREATE / 10 -> ATaskName.TASK_VERIFY
-            CTaskState.STATE_UNZIP_CREATE / 10 -> ATaskName.TASK_UNZIP
-            CTaskState.STATE_INSTALL_CREATE / 10 -> ATaskName.TASK_INSTALL
-            CTaskState.STATE_OPEN_CREATE / 10 -> ATaskName.TASK_OPEN
-            CTaskState.STATE_UNINSTALL_CREATE / 10 -> ATaskName.TASK_UNINSTALL
-            CTaskState.STATE_DELETE_CREATE / 10 -> ATaskName.TASK_DELETE
+            ATaskState.STATE_DOWNLOAD_CREATE / 10 -> ATaskName.TASK_DOWNLOAD//1
+            ATaskState.STATE_VERIFY_CREATE / 10 -> ATaskName.TASK_VERIFY
+            ATaskState.STATE_UNZIP_CREATE / 10 -> ATaskName.TASK_UNZIP
+            ATaskState.STATE_INSTALL_CREATE / 10 -> ATaskName.TASK_INSTALL
+            ATaskState.STATE_OPEN_CREATE / 10 -> ATaskName.TASK_OPEN
+            ATaskState.STATE_CLOSE_CREATE / 10 -> ATaskName.TASK_CLOSE
+            ATaskState.STATE_UNINSTALL_CREATE / 10 -> ATaskName.TASK_UNINSTALL
+            ATaskState.STATE_DELETE_CREATE / 10 -> ATaskName.TASK_DELETE
             else -> null
-        }.also { UtilKLogWrapper.d(TAG, "getCurrentTaskName: task $task state $state taskName $it") }
+        }.also { UtilKLogWrapper.d(TAG, "getCurrentTaskName: task $taskCode state $stateCode taskName $it") }
     }
 
     ////////////////////////////////////////////////////////////////
 
+    fun getTaskCode(): @ATaskState Int =
+        ATaskState.getTaskCode(taskState)
+
+    fun getStateCode(): @AState Int =
+        AState.getStateCode(taskState)
+
+    ////////////////////////////////////////////////////////////////
+
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskStart(taskManager: ATaskManager, taskName: String): Boolean {
-        return taskManager.canTaskStart(this, taskName)
+    fun canTaskStart(taskManager: ATaskManager,@ATaskQueueName taskQueueName: String): Boolean {
+        return taskManager.canTaskStart(this, taskQueueName)
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskResume(taskManager: ATaskManager, taskName: String): Boolean {
-        return taskManager.canTaskResume(this, taskName)
+    fun canTaskResume(taskManager: ATaskManager,@ATaskQueueName taskQueueName: String): Boolean {
+        return taskManager.canTaskResume(this, taskQueueName)
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskPause(taskManager: ATaskManager, taskName: String): Boolean {
-        return taskManager.canTaskPause(this, taskName)
+    fun canTaskPause(taskManager: ATaskManager,@ATaskQueueName taskQueueName: String): Boolean {
+        return taskManager.canTaskPause(this, taskQueueName)
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskCancel(taskManager: ATaskManager, taskName: String): Boolean {
-        return taskManager.canTaskCancel(this, taskName)
+    fun canTaskCancel(taskManager: ATaskManager,@ATaskQueueName taskQueueName: String): Boolean {
+        return taskManager.canTaskCancel(this, taskQueueName)
     }
 
     ////////////////////////////////////////////////////////////
 
-    fun isTaskProcess(): Boolean =
-        CState.isTaskProcess(taskState)
+    @OptIn(OApiInit_InApplication::class)
+    fun isTaskProcess(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
+        AState.isTaskProcess(taskState, taskManager, fileExt, taskQueueName)
 
     fun isTaskCreate(): Boolean =
-        CState.isTaskCreate(taskState)
+        AState.isTaskCreate(taskState)
 
     fun isTaskUpdate(): Boolean =
-        CState.isTaskUpdate(taskState)
+        AState.isTaskUpdate(taskState)
 
     fun isTaskCreateOrUpdate(): Boolean =
-        CState.isTaskCreateOrUpdate(taskState)
+        AState.isTaskCreateOrUpdate(taskState)
 
     fun isTaskUnAvailable(): Boolean =
-        CState.isTaskUnAvailable(taskState)
+        AState.isTaskUnAvailable(taskState)
 
     fun isTaskCancel(): Boolean =
-        CState.isTaskCancel(taskState)
+        AState.isTaskCancel(taskState)
 
-    fun isTaskSuccess(): Boolean =
-        CState.isTaskSuccess(taskState)
+    @OptIn(OApiInit_InApplication::class)
+    fun isTaskSuccess(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
+        AState.isTaskSuccess(taskState, taskManager, fileExt, taskQueueName)
 
     fun isTaskFail(): Boolean =
-        CState.isTaskFail(taskState)
+        AState.isTaskFail(taskState)
 
     ////////////////////////////////////////////////////////////
 
     fun isAnyTasking(): Boolean =
-        CState.isAnyTasking(taskState)
+        AState.isAnyTasking(taskState)
 
     fun isAnyTaskPause(): Boolean =
-        CState.isAnyTaskPause(taskState)
+        AState.isAnyTaskPause(taskState)
 
     fun isAnyTaskSuccess(): Boolean =
-        CState.isAnyTaskSuccess(taskState)
+        AState.isAnyTaskSuccess(taskState)
 
     fun isAnyTaskCancel(): Boolean =
-        CState.isAnyTaskCancel(taskState)
+        AState.isAnyTaskCancel(taskState)
 
     fun isAnyTaskFail(): Boolean =
-        CState.isAnyTaskFail(taskState)
+        AState.isAnyTaskFail(taskState)
 
     fun isAnyTaskResult(): Boolean =
-        CState.isAnyTaskResult(taskState)
+        AState.isAnyTaskResult(taskState)
 
     ////////////////////////////////////////////////////////////
 
     fun canTaskDownload(): Boolean =
-        CTaskState.canTaskDownload(taskState)
+        ATaskState.canTaskDownload(taskState)
 
     fun canTaskVerify(): Boolean =
-        CTaskState.canTaskVerify(taskState)
+        ATaskState.canTaskVerify(taskState)
 
     fun canTaskUnzip(): Boolean =
-        CTaskState.canTaskUnzip(taskState)
+        ATaskState.canTaskUnzip(taskState)
 
     fun canTaskInstall(): Boolean =
-        CTaskState.canTaskInstall(taskState)
+        ATaskState.canTaskInstall(taskState)
 
     fun canTaskOpen(): Boolean =
-        CTaskState.canTaskOpen(taskState)
+        ATaskState.canTaskOpen(taskState)
+
+    fun canTaskClose(): Boolean =
+        ATaskState.canTaskClose(taskState)
 
     fun canTaskUninstall(): Boolean =
-        CTaskState.canTaskUninstall(taskState)
+        ATaskState.canTaskUninstall(taskState)
 
     fun canTaskDelete(): Boolean =
-        CTaskState.canTaskDelete(taskState)
+        ATaskState.canTaskDelete(taskState)
 
     ////////////////////////////////////////////////////////////
 
     fun atTaskDownload(): Boolean =
-        CTaskState.atTaskDownload(taskState)
+        ATaskState.atTaskDownload(taskState)
 
     fun atTaskVerify(): Boolean =
-        CTaskState.atTaskVerify(taskState)
+        ATaskState.atTaskVerify(taskState)
 
     fun atTaskUnzip(): Boolean =
-        CTaskState.atTaskUnzip(taskState)
+        ATaskState.atTaskUnzip(taskState)
 
     fun atTaskInstall(): Boolean =
-        CTaskState.atTaskInstall(taskState)
+        ATaskState.atTaskInstall(taskState)
 
     fun atTaskOpen(): Boolean =
-        CTaskState.atTaskOpen(taskState)
+        ATaskState.atTaskOpen(taskState)
+
+    fun atTaskClose(): Boolean =
+        ATaskState.atTaskClose(taskState)
 
     fun atTaskUninstall(): Boolean =
-        CTaskState.atTaskUninstall(taskState)
+        ATaskState.atTaskUninstall(taskState)
 
     fun atTaskDelete(): Boolean =
-        CTaskState.atTaskDelete(taskState)
+        ATaskState.atTaskDelete(taskState)
 
     ////////////////////////////////////////////////////////////
 
     fun isTaskDownloading(): Boolean =
-        CTaskState.isTaskDownloading(taskState)
+        ATaskState.isTaskDownloading(taskState)
 
     fun isTaskVerifying(): Boolean =
-        CTaskState.isTaskVerifying(taskState)
+        ATaskState.isTaskVerifying(taskState)
 
     fun isTaskUnziping(): Boolean =
-        CTaskState.isTaskUnziping(taskState)
+        ATaskState.isTaskUnziping(taskState)
 
     fun isTaskInstalling(): Boolean =
-        CTaskState.isTaskInstalling(taskState)
+        ATaskState.isTaskInstalling(taskState)
 
     fun isTaskOpening(): Boolean =
-        CTaskState.isTaskOpening(taskState)
+        ATaskState.isTaskOpening(taskState)
+
+    fun isTaskClosing(): Boolean =
+        ATaskState.isTaskClosing(taskState)
 
     fun isTaskUninstalling(): Boolean =
-        CTaskState.isTaskUninstalling(taskState)
+        ATaskState.isTaskUninstalling(taskState)
 
     fun isTaskDeleting(): Boolean =
-        CTaskState.isTaskDeleting(taskState)
+        ATaskState.isTaskDeleting(taskState)
 
     ////////////////////////////////////////////////////////////
 
     fun isTaskDownloadSuccess(): Boolean =
-        CTaskState.isTaskDownloadSuccess(taskState)
+        ATaskState.isTaskDownloadSuccess(taskState)
 
     fun isTaskVerifySuccess(): Boolean =
-        CTaskState.isTaskVerifySuccess(taskState)
+        ATaskState.isTaskVerifySuccess(taskState)
 
     fun isTaskUnzipSuccess(): Boolean =
-        CTaskState.isTaskUnzipSuccess(taskState)
+        ATaskState.isTaskUnzipSuccess(taskState)
 
     fun isTaskInstallSuccess(): Boolean =
-        CTaskState.isTaskInstallSuccess(taskState)
+        ATaskState.isTaskInstallSuccess(taskState)
 
     fun isTaskOpenSuccess(): Boolean =
-        CTaskState.isTaskOpenSuccess(taskState)
+        ATaskState.isTaskOpenSuccess(taskState)
+
+    fun isTaskCloseSuccess(): Boolean =
+        ATaskState.isTaskCloseSuccess(taskState)
 
     fun isTaskUninstallSuccess(): Boolean =
-        CTaskState.isTaskUninstallSuccess(taskState)
+        ATaskState.isTaskUninstallSuccess(taskState)
 
     fun isTaskDeleteSuccess(): Boolean =
-        CTaskState.isTaskDeleteSuccess(taskState)
+        ATaskState.isTaskDeleteSuccess(taskState)
 
     ////////////////////////////////////////////////////////////
 

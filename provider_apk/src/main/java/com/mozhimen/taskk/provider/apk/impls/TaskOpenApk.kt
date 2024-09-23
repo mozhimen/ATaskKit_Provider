@@ -1,22 +1,15 @@
 package com.mozhimen.taskk.provider.apk.impls
 
 import android.annotation.SuppressLint
-import android.util.Log
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_QUERY_ALL_PACKAGES
 import com.mozhimen.kotlin.utilk.android.app.UtilKApplicationWrapper
 import com.mozhimen.kotlin.utilk.android.content.UtilKContextStart
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.taskk.provider.apk.cons.CExt
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
-import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskOpen
-import com.mozhimen.taskk.provider.basic.cons.CErrorCode
-import com.mozhimen.taskk.provider.basic.cons.CTaskState
-import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
-import com.mozhimen.taskk.provider.basic.impls.exception2taskException
-import com.mozhimen.taskk.provider.basic.impls.intErrorCode2taskException
-import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
+import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 
 /**
  * @ClassName TaskProviderOpenApk

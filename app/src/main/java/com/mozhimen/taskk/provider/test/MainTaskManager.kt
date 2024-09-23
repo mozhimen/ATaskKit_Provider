@@ -12,6 +12,7 @@ import com.mozhimen.manifestk.xxpermissions.XXPermissionsCheckUtil
 import com.mozhimen.manifestk.xxpermissions.XXPermissionsRequestUtil
 import com.mozhimen.stackk.callback.StackKCb
 import com.mozhimen.taskk.provider.apk.TaskProviderApk
+import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.bases.ATaskProvider
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
 import com.mozhimen.taskk.provider.core.TaskManager
@@ -43,7 +44,7 @@ object MainTaskManager : TaskManager() {
             StackKCb.instance.getStackTopActivity()?.let {
                 requestPermissionInstall(it) {
                     requestPermissionNotification(it) {
-                        taskInstallSplitsAckpine.taskStart(appTask)
+                        taskInstallSplitsAckpine.taskStart(appTask, ATaskName.TASK_INSTALL)
                     }
                 }
             }

@@ -2,6 +2,7 @@ package com.mozhimen.taskk.provider.basic.bases.sets
 
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
+import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.bases.ATaskSet
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
 import java.io.File
@@ -21,12 +22,12 @@ abstract class ATaskSetDownload : ATaskSet<ATaskDownload>() {
     fun getDownloadPaths(): List<String> =
         getDownloadDirs().map { it.absolutePath }
 
-    fun taskPauseAll(fileExt: String) {
-        getProvider(fileExt)?.taskPauseAll()
+    fun taskPauseAll(fileExt: String, @ATaskQueueName taskQueueName: String) {
+        getProvider(fileExt)?.taskPauseAll(taskQueueName)
     }
 
-    fun taskResumeAll(fileExt: String) {
-        getProvider(fileExt)?.taskResumeAll()
+    fun taskResumeAll(fileExt: String, @ATaskQueueName taskQueueName: String) {
+        getProvider(fileExt)?.taskResumeAll(taskQueueName)
     }
 
     override fun getTaskName(): String {

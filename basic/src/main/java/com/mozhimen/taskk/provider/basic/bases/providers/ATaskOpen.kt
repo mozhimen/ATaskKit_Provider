@@ -3,11 +3,10 @@ package com.mozhimen.taskk.provider.basic.bases.providers
 import androidx.annotation.CallSuper
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATask
-import com.mozhimen.taskk.provider.basic.cons.CTaskState
-import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
-import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
+import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 
 /**
  * @ClassName ITaskProviderOpen
@@ -16,14 +15,14 @@ import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
  * @Date 2024/8/20
  * @Version 1.0
  */
-abstract class ATaskOpen(iTaskLifecycle: ITaskLifecycle?): ATask(iTaskLifecycle) {
+abstract class ATaskOpen(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifecycle) {
     override fun getTaskName(): String {
         return ATaskName.TASK_OPEN
     }
 
     @CallSuper
     override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        onTaskStarted(CTaskState.STATE_OPENING, appTask)
+        onTaskStarted(ATaskState.STATE_OPENING, appTask, taskQueueName)
     }
 
     override fun taskResume(appTask: AppTask, @ATaskQueueName taskQueueName: String) {

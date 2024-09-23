@@ -13,6 +13,6 @@ object CTaskEvent {
     const val CANCEL = "CANCEL"
     const val FAIL = "FAIL"
 
-    const val EVENT_TASK_CANCEL = EVENT_ + TASK_ + CANCEL
-    const val EVENT_TASK_FAIL = EVENT_ + TASK_ + FAIL
+//    const val EVENT_TASK_CANCEL = EVENT_ + TASK_ + CANCEL
+//    const val EVENT_TASK_FAIL = EVENT_ + TASK_ + FAIL
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.CallSuper
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.taskk.provider.basic.bases.providers.ATaskClose
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDelete
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
@@ -11,7 +12,7 @@ import com.mozhimen.taskk.provider.basic.bases.providers.ATaskOpen
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUninstall
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUnzip
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskVerify
-import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
+import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -42,6 +43,7 @@ abstract class ATaskProvider(
     abstract fun getTaskUnzip(): ATaskUnzip?
     abstract fun getTaskInstall(): ATaskInstall?
     abstract fun getTaskOpen(): ATaskOpen?
+    abstract fun getTaskClose(): ATaskClose?
     abstract fun getTaskUninstall(): ATaskUninstall?
     abstract fun getTaskDelete(): ATaskDelete?
 

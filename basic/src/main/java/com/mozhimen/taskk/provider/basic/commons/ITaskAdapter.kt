@@ -1,4 +1,4 @@
-package com.mozhimen.taskk.provider.basic.interfaces
+package com.mozhimen.taskk.provider.basic.commons
 
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -53,6 +53,14 @@ interface ITaskAdapterOpen<A : Adapter<ViewHolder>> {
     fun onTaskOpenCancel(adapter: A?, position: Int, appTask: AppTask) {}
 }
 
+interface ITaskAdapterClose<A : Adapter<ViewHolder>> {
+    fun onTaskClosing(adapter: A?, position: Int, appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {}//安装中
+    fun onTaskClosePause(adapter: A?, position: Int, appTask: AppTask) {}
+    fun onTaskCloseSuccess(adapter: A?, position: Int, appTask: AppTask) {}
+    fun onTaskCloseFail(adapter: A?, position: Int, appTask: AppTask, exception: TaskException) {}
+    fun onTaskCloseCancel(adapter: A?, position: Int, appTask: AppTask) {}
+}
+
 interface ITaskAdapterUninstall<A : Adapter<ViewHolder>> {
     fun onTaskUninstalling(adapter: A?, position: Int, appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {}//安装中
     fun onTaskUninstallPause(adapter: A?, position: Int, appTask: AppTask) {}
@@ -70,12 +78,12 @@ interface ITaskAdapterDelete<A : Adapter<ViewHolder>> {
 }
 
 interface ITaskAdapter<A : Adapter<ViewHolder>> {
-    fun onTaskCreate(adapter: A?, position: Int, appTask: AppTask, isUpdate: Boolean){}
-    fun onTaskUnavailable(adapter: A?, position: Int,appTask: AppTask) {}
-    fun onTaskFinish(adapter: A?, position: Int,appTask: AppTask, finishType: STaskFinishType) {}
+    fun onTaskCreate(adapter: A?, position: Int, appTask: AppTask, isUpdate: Boolean) {}
+    fun onTaskUnavailable(adapter: A?, position: Int, appTask: AppTask) {}
+    fun onTaskFinish(adapter: A?, position: Int, appTask: AppTask, finishType: STaskFinishType) {}
 
     //    fun onTaskWait(adapter: V?, appTask: AppTask) //任务等待的回调
 }
 
-interface ITaskAdapters<A : Adapter<ViewHolder>> : ITaskAdapterDownload<A>, ITaskAdapterVerify<A>, ITaskAdapterUnzip<A>, ITaskAdapterInstall<A>, ITaskAdapterOpen<A>, ITaskAdapterUninstall<A>,ITaskAdapterDelete<A>,
-    ITaskAdapter<A>
+interface ITaskAdapters<A : Adapter<ViewHolder>> : ITaskAdapterDownload<A>, ITaskAdapterVerify<A>, ITaskAdapterUnzip<A>, ITaskAdapterInstall<A>, ITaskAdapterOpen<A>, ITaskAdapterClose<A>,
+    ITaskAdapterUninstall<A>, ITaskAdapterDelete<A>, ITaskAdapter<A>

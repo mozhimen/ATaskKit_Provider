@@ -1,6 +1,8 @@
 package com.mozhimen.taskk.provider.delete
 
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDelete
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetDelete
@@ -14,7 +16,8 @@ import java.util.concurrent.ConcurrentHashMap
  * @Date 2024/8/21
  * @Version 1.0
  */
-open class TaskSetDelete(override val providerDefaults: List<ATaskDelete>) : ATaskSetDelete() {
+@OptIn(OApiInit_InApplication::class)
+open class TaskSetDelete constructor(override val taskManager: ATaskManager, override val providerDefaults: List<ATaskDelete>) : ATaskSetDelete() {
     override val providers: ConcurrentHashMap<String, ATaskDelete> by lazy {
         ConcurrentHashMap<String, ATaskDelete>(
             providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskDelete>)?.toMutableMap() }.fold(emptyMap()) { a, n -> a + n })

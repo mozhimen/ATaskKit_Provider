@@ -45,6 +45,7 @@ dependencies {
     api project(project.path.replace(project.name, '') + ':open')
     api project(project.path.replace(project.name, '') + ':uninstall')
     api project(project.path.replace(project.name, '') + ':delete')
+    api project(project.path.replace(project.name, '') + ':close')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

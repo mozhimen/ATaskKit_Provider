@@ -1,9 +1,13 @@
 package com.mozhimen.taskk.provider.basic.db
 
+import android.util.Log
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import androidx.annotation.WorkerThread
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.taskk.executor.TaskKExecutor
+import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.Exception
 
@@ -20,6 +24,7 @@ object AppTaskDaoManager : IUtilK {
     //////////////////////////////////////////////////////////
 
     fun init() {
+        Log.d(TAG, "init: ")
         TaskKExecutor.execute(TAG + "init") {
             _appTasks.putAll(AppTaskDb.getAppTaskDao().gets_ofAll().associateBy { it.taskId })
             UtilKLogWrapper.d(TAG, "init: _appTasks $_appTasks")
@@ -77,15 +82,16 @@ object AppTaskDaoManager : IUtilK {
 
     @JvmStatic
     fun gets_ofApkPackageName_satisfyApkVersionCode(packageName: String, apkVersionCode: Int): List<AppTask> {
-        return _appTasks.filter { it.value.apkPackageName == packageName && it.value.apkVersionCode >= apkVersionCode }.values.toList()
+        return _appTasks.filter { it.value.apkPackageName == packageName && it.value.apkVersionCode <= apkVersionCode }.values.toList()
             .also { UtilKLogWrapper.d(TAG, "gets_ofApkPackageName_satisfyApkVersionCode: $it") }
     }
 
     //////////////////////////////////////////////////////////
 
+    @OptIn(OApiInit_InApplication::class)
     @JvmStatic
-    fun gets_ofIsTaskProcess(): List<AppTask> {
-        return _appTasks.filter { it.value.isTaskProcess() }.values.toList()
+    fun gets_ofIsTaskProcess(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskProcess(taskManager, taskQueueName) }.values.toList()
     }
 
     @JvmStatic
@@ -113,9 +119,10 @@ object AppTaskDaoManager : IUtilK {
         return _appTasks.filter { it.value.isTaskCancel() }.values.toList()
     }
 
+    @OptIn(OApiInit_InApplication::class)
     @JvmStatic
-    fun gets_ofIsTaskSuccess(): List<AppTask> {
-        return _appTasks.filter { it.value.isTaskSuccess() }.values.toList()
+    fun gets_ofIsTaskSuccess(taskManager: ATaskManager,@ATaskQueueName taskQueueName: String): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskSuccess(taskManager, taskQueueName) }.values.toList()
     }
 
     @JvmStatic
@@ -183,12 +190,17 @@ object AppTaskDaoManager : IUtilK {
     }
 
     @JvmStatic
+    fun gets_ofAtTaskClose(): List<AppTask> {
+        return _appTasks.filter { it.value.atTaskClose() }.values.toList()
+    }
+
+    @JvmStatic
     fun gets_ofAtTaskUninstall(): List<AppTask> {
         return _appTasks.filter { it.value.atTaskUninstall() }.values.toList()
     }
 
     @JvmStatic
-    fun gets_ofAtTaskDelete():List<AppTask>{
+    fun gets_ofAtTaskDelete(): List<AppTask> {
         return _appTasks.filter { it.value.atTaskDelete() }.values.toList()
     }
 
@@ -220,12 +232,17 @@ object AppTaskDaoManager : IUtilK {
     }
 
     @JvmStatic
+    fun gets_ofIsTaskClosing(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskClosing() }.values.toList()
+    }
+
+    @JvmStatic
     fun gets_ofIsTaskUninstalling(): List<AppTask> {
         return _appTasks.filter { it.value.isTaskUninstalling() }.values.toList()
     }
 
     @JvmStatic
-    fun gets_ofIsTaskDeleting():List<AppTask>{
+    fun gets_ofIsTaskDeleting(): List<AppTask> {
         return _appTasks.filter { it.value.isTaskDeleting() }.values.toList()
     }
 
@@ -257,12 +274,17 @@ object AppTaskDaoManager : IUtilK {
     }
 
     @JvmStatic
+    fun gets_ofIsTaskCloseSuccess(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskOpenSuccess() }.values.toList()
+    }
+
+    @JvmStatic
     fun gets_ofIsTaskUninstallSuccess(): List<AppTask> {
         return _appTasks.filter { it.value.isTaskUninstallSuccess() }.values.toList()
     }
 
     @JvmStatic
-    fun gets_ofIsTaskDeleteSuccess():List<AppTask>{
+    fun gets_ofIsTaskDeleteSuccess(): List<AppTask> {
         return _appTasks.filter { it.value.isTaskDeleteSuccess() }.values.toList()
     }
 
@@ -288,11 +310,15 @@ object AppTaskDaoManager : IUtilK {
         return gets_ofAtTaskOpen().isNotEmpty()
     }
 
+    fun has_ofAtTaskClose(): Boolean {
+        return gets_ofAtTaskOpen().isNotEmpty()
+    }
+
     fun has_ofAtTaskUninstall(): Boolean {
         return gets_ofAtTaskUninstall().isNotEmpty()
     }
 
-    fun has_ofAtTaskDelete():Boolean {
+    fun has_ofAtTaskDelete(): Boolean {
         return gets_ofAtTaskDelete().isNotEmpty()
     }
 
@@ -346,11 +372,11 @@ object AppTaskDaoManager : IUtilK {
             appTasks.forEach { appTask ->
                 if (has_ofTaskId(appTask.taskId)) {
                     _appTasks[appTask.taskId] = appTask
-                    UtilKLogWrapper.d(TAG, "addOrUpdateOnBack: update")
+                    UtilKLogWrapper.v(TAG, "addOrUpdateOnBack: update")
                     AppTaskDb.getAppTaskDao().update(appTask)//将本条数据插入到数据库
                 } else {
                     _appTasks[appTask.taskId] = appTask
-                    UtilKLogWrapper.d(TAG, "addOrUpdateOnBack: addAll")
+                    UtilKLogWrapper.v(TAG, "addOrUpdateOnBack: addAll")
                     AppTaskDb.getAppTaskDao().addAll(appTask)
                 }
             }

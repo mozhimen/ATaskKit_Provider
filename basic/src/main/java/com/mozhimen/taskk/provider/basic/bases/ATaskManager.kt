@@ -6,8 +6,12 @@ import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.bases.BaseUtilK
+import com.mozhimen.taskk.provider.basic.annors.AFileExt
+import com.mozhimen.taskk.provider.basic.annors.AState
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskState
+import com.mozhimen.taskk.provider.basic.annors.taskName2taskState
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetDelete
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetDownload
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetInstall
@@ -15,16 +19,14 @@ import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetOpen
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetUninstall
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetUnzip
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetVerify
-import com.mozhimen.taskk.provider.basic.cons.CState
-import com.mozhimen.taskk.provider.basic.cons.CTaskState
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.db.AppTaskDaoManager
 import com.mozhimen.taskk.provider.basic.impls.TaskException
-import com.mozhimen.taskk.provider.basic.interfaces.ITask
-import com.mozhimen.taskk.provider.basic.interfaces.ITaskEvent
-import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
-import com.mozhimen.taskk.provider.basic.interfaces.ITasks
+import com.mozhimen.taskk.provider.basic.commons.ITask
+import com.mozhimen.taskk.provider.basic.commons.ITaskEvent
+import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
+import com.mozhimen.taskk.provider.basic.commons.ITasks
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -44,28 +46,30 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             getTaskSets().associateBy { it.getTaskName() }
         )
     }
+
+    //一个文件后缀的作用的任务链
     protected val _taskQuenes by lazy {
-        ConcurrentHashMap<String, Map<String, List<@ATaskName String>>>(getTaskQueues())
+        ConcurrentHashMap<@AFileExt String, Map<@ATaskQueueName String, List<@ATaskName String>>>(getTaskQueues())
     }
 
     protected val _iTaskLifecycle: ITaskLifecycle = object : ITaskLifecycle {
-        override fun onTaskStarted(taskState: Int, appTask: AppTask) {
+        override fun onTaskStarted(taskState: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String) {
             if (appTask.isAnyTasking()) {
                 onTask_ofIng(appTask, appTask.taskDownloadProgress, appTask.taskDownloadFileSizeOffset, appTask.taskDownloadFileSizeTotal, appTask.taskDownloadFileSpeed)
             } else {
-                onTask_ofOther(appTask)
+                onTask_ofOther(appTask, taskQueueName)
             }
         }
 
-        override fun onTaskPaused(taskState: Int, appTask: AppTask) {
-            onTask_ofOther(appTask)
+        override fun onTaskPaused(taskState: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+            onTask_ofOther(appTask, taskQueueName)
         }
 
-        override fun onTaskFinished(taskState: Int, finishType: STaskFinishType, appTask: AppTask) {
+        override fun onTaskFinished(taskState: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String, finishType: STaskFinishType) {
             when (finishType) {
-                STaskFinishType.SUCCESS -> onTask_ofOther(appTask)
-                STaskFinishType.CANCEL -> onTask_ofOther(appTask)
-                is STaskFinishType.FAIL -> onTask_ofFail(appTask, finishType.exception)
+                STaskFinishType.SUCCESS -> onTask_ofOther(appTask, taskQueueName)
+                STaskFinishType.CANCEL -> onTask_ofOther(appTask, taskQueueName)
+                is STaskFinishType.FAIL -> onTask_ofFail(appTask, taskQueueName, finishType.exception)
             }
         }
     }
@@ -101,13 +105,32 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             _taskListeners.removeAt(indexOf)
     }
 
+    fun getAppTaskDaoManager(): AppTaskDaoManager =
+        AppTaskDaoManager
+
+    /////////////////////////////////////////////////////////////////
+
     fun getTaskSet(@ATaskName taskName: String): ATaskSet<*>? {
         return _taskSets[taskName].also { UtilKLogWrapper.d(TAG, "getTaskSet: taskName $taskName taskSet $it") }
     }
 
-    fun getNextTaskName(fileExt: String, @ATaskQueueName taskQueueName: String, @ATaskName currentTaskName: String): String? {
+//    fun getNextTaskSet(fileExt: String, @ATaskQueueName taskQueueName: String, @ATaskName taskName: String): ATaskSet<*>? {
+//        return getNextTaskName(fileExt, taskQueueName, taskName)?.let { getTaskSet(it) }
+//    }
+
+    /////////////////////////////////////////////////////////////////
+
+    fun getTaskQueue(@AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): List<@ATaskName String>? {
+        return _taskQuenes.get(fileExt)?.get(taskQueueName)
+    }
+
+    fun getCurrTaskName_ofTaskQueue(appTask: AppTask, @ATaskQueueName taskQueueName: String, @ATaskName firstTaskName_ofTaskQueue: String = ""): @ATaskName String? {
+        return appTask.getCurrentTaskName(this, taskQueueName, firstTaskName_ofTaskQueue)
+    }
+
+    fun getNextTaskName_ofTaskQueue(@AFileExt fileExt: String, @ATaskQueueName taskQueueName: String, @ATaskName currTaskName: String): @ATaskName String? {
         val taskQueue = getTaskQueue(fileExt, taskQueueName) ?: return null
-        val currentIndex = taskQueue.indexOf(currentTaskName)
+        val currentIndex = taskQueue.indexOf(currTaskName)
         if (currentIndex < 0) return null
         val nextIndex = currentIndex + 1
         return (if (nextIndex in taskQueue.indices) {
@@ -116,16 +139,18 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             null).also { UtilKLogWrapper.d(TAG, "getNextTaskName: $it") }
     }
 
-    fun getNextTaskSet(fileExt: String, @ATaskQueueName taskQueueName: String, @ATaskName taskName: String): ATaskSet<*>? {
-        return getNextTaskName(fileExt, taskQueueName, taskName)?.let { getTaskSet(it) }
+    fun getLastTaskName_ofTaskQueue(@AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): @ATaskName String? {
+        return getTaskQueue(fileExt, taskQueueName)?.lastOrNull()
     }
 
-    fun getTaskQueue(fileExt: String, fileTaskName: String): List<@ATaskName String>? {
-        return _taskQuenes.get(fileExt)?.get(fileTaskName)
+    fun getFirstTaskName_ofTaskQueue(@AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): @ATaskName String? {
+        return getTaskQueue(fileExt, taskQueueName)?.firstOrNull()
     }
 
-    fun getAppTaskDaoManager(): AppTaskDaoManager =
-        AppTaskDaoManager
+    fun getTaskQueueName_ofTaskName(@AFileExt fileExt: String, @ATaskName taskName: String): @ATaskQueueName String? {
+        val taskQueues = _taskQuenes.get(fileExt) ?: return null
+        return taskQueues.filter { it.value.contains(taskName) }.keys.firstOrNull()
+    }
 
     /////////////////////////////////////////////////////////////////
 
@@ -170,13 +195,19 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
         if (!canTaskStart(appTask, taskQueueName))
             return
         UtilKLogWrapper.d(TAG, "taskStart: appTask $appTask")
-        val currentTaskName = appTask.getCurrentTaskName(getTaskQueue(appTask.fileExt, taskQueueName)?.getOrNull(0) ?: return) ?: return
+        val currTaskName = getCurrTaskName_ofTaskQueue(appTask, taskQueueName, getFirstTaskName_ofTaskQueue(appTask.fileExt, taskQueueName) ?: return) ?: return
+        val nextTaskName = getNextTaskName_ofTaskQueue(appTask.fileExt, taskQueueName, currTaskName) ?: return
         if (appTask.isAnyTaskSuccess()) {
             UtilKLogWrapper.d(TAG, "taskStart: getNextTaskSet")
-            getNextTaskSet(appTask.fileExt, taskQueueName, currentTaskName)?.taskStart(appTask,taskQueueName)
+            if (nextTaskName != ATaskQueueName.TASK_RESTART) {
+//                getNextTaskSet(appTask.fileExt, taskQueueName, currTaskName)?.taskStart(appTask, taskQueueName)
+                getTaskSet(nextTaskName)?.taskStart(appTask, taskQueueName)
+            } else {
+                UtilKLogWrapper.d(TAG, "taskStart: getNextTaskSet nextTaskName==ATaskName.TASK_END")
+            }
         } else {
             UtilKLogWrapper.d(TAG, "taskStart: getTaskSet")
-            getTaskSet(currentTaskName)?.taskStart(appTask,taskQueueName)
+            getTaskSet(currTaskName)?.taskStart(appTask, taskQueueName)
         }
     }
 
@@ -184,39 +215,39 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
         if (!canTaskResume(appTask, taskQueueName))
             return
         UtilKLogWrapper.d(TAG, "taskResume: appTask $appTask")
-        getTaskSet(appTask.getCurrentTaskName() ?: return)?.taskResume(appTask,taskQueueName)
+        getTaskSet(getCurrTaskName_ofTaskQueue(appTask, taskQueueName) ?: return)?.taskResume(appTask, taskQueueName)
     }
 
     override fun taskPause(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
         if (!canTaskPause(appTask, taskQueueName))
             return
         UtilKLogWrapper.d(TAG, "taskPause: appTask $appTask")
-        getTaskSet(appTask.getCurrentTaskName() ?: return)?.taskPause(appTask,taskQueueName)
+        getTaskSet(getCurrTaskName_ofTaskQueue(appTask, taskQueueName) ?: return)?.taskPause(appTask, taskQueueName)
     }
 
     override fun taskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
         if (!canTaskCancel(appTask, taskQueueName))
             return
         UtilKLogWrapper.d(TAG, "taskCancel: appTask $appTask")
-        getTaskSet(appTask.getCurrentTaskName() ?: return)?.taskCancel(appTask,taskQueueName)
+        getTaskSet(getCurrTaskName_ofTaskQueue(appTask, taskQueueName) ?: return)?.taskCancel(appTask, taskQueueName)
     }
 
     /////////////////////////////////////////////////////////////////
 
-    override fun canTaskStart(appTask: AppTask, @ATaskQueueName  taskQueueName: String): Boolean {
-        if (appTask.isTaskProcess() && !appTask.isAnyTaskPause() && !appTask.isAnyTaskSuccess()) {
+    override fun canTaskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean {
+        if (appTask.isTaskProcess(this, taskQueueName) && !appTask.isAnyTaskPause() && !appTask.isAnyTaskSuccess()) {
             UtilKLogWrapper.d(TAG, "canTaskStart: task is process")
             return false
         }
-        if (appTask.isTaskSuccess()) {
+        if (appTask.isTaskSuccess(this, taskQueueName)) {
             UtilKLogWrapper.d(TAG, "canTaskStart: task is success")
             return false
         }
-        return getTaskSet(getTaskQueue(appTask.fileExt, taskQueueName)?.getOrNull(0) ?: return false)?.canTaskStart(appTask,taskQueueName) ?: false
+        return getTaskSet(getFirstTaskName_ofTaskQueue(appTask.fileExt, taskQueueName) ?: return false)?.canTaskStart(appTask, taskQueueName) ?: false
     }
 
-    override fun canTaskResume(appTask: AppTask, @ATaskQueueName  taskQueueName: String): Boolean {
-        if (!appTask.isTaskProcess()) {
+    override fun canTaskResume(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean {
+        if (!appTask.isTaskProcess(this, taskQueueName)) {
             UtilKLogWrapper.d(TAG, "taskResume: task is not process")
             return false
         }
@@ -224,11 +255,11 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             UtilKLogWrapper.d(TAG, "taskResume: task is not pause")
             return false
         }
-        return getTaskSet(appTask.getCurrentTaskName() ?: return false)?.canTaskResume(appTask,taskQueueName) ?: false
+        return getTaskSet(getCurrTaskName_ofTaskQueue(appTask, taskQueueName) ?: return false)?.canTaskResume(appTask, taskQueueName) ?: false
     }
 
-    override fun canTaskPause(appTask: AppTask,  @ATaskQueueName taskQueueName: String): Boolean {
-        if (!appTask.isTaskProcess()) {
+    override fun canTaskPause(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean {
+        if (!appTask.isTaskProcess(this, taskQueueName)) {
             UtilKLogWrapper.d(TAG, "taskPause: task is not process")
             return false
         }
@@ -236,154 +267,151 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             UtilKLogWrapper.d(TAG, "taskPause: already pause")
             return false
         }
-        return getTaskSet(appTask.getCurrentTaskName() ?: return false)?.canTaskPause(appTask,taskQueueName) ?: false
+        return getTaskSet(getCurrTaskName_ofTaskQueue(appTask, taskQueueName) ?: return false)?.canTaskPause(appTask, taskQueueName) ?: false
     }
 
-    override fun canTaskCancel(appTask: AppTask, @ATaskQueueName  taskQueueName: String): Boolean {
-        if (appTask.isTaskSuccess()) {
+    override fun canTaskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean {
+        if (appTask.isTaskSuccess(this, taskQueueName)) {
             UtilKLogWrapper.d(TAG, "canTaskStart: task is success")
             return false
         }
-        if (!appTask.isTaskProcess()) {
+        if (!appTask.isTaskProcess(this, taskQueueName)) {
             UtilKLogWrapper.d(TAG, "canTaskCancel: task is not process")
             return false
         }
-        return getTaskSet(appTask.getCurrentTaskName() ?: return false)?.canTaskCancel(appTask,taskQueueName) ?: false
+        return getTaskSet(getCurrTaskName_ofTaskQueue(appTask, taskQueueName) ?: return false)?.canTaskCancel(appTask, taskQueueName) ?: false
     }
 
     /////////////////////////////////////////////////////////////////
 
-    override fun onTaskCreate(appTask: AppTask, isUpdate: Boolean) {
-        appTask.toNewTaskState(if (isUpdate) CState.STATE_TASK_UPDATE else CState.STATE_TASK_CREATE)
-        _iTaskLifecycle.onTaskStarted(appTask.taskState, appTask)
+    override fun onTaskCreate(appTask: AppTask, @ATaskQueueName taskQueueName: String, isUpdate: Boolean) {
+        appTask.toTaskStateNew(if (isUpdate) AState.STATE_TASK_UPDATE else AState.STATE_TASK_CREATE)
+        _iTaskLifecycle.onTaskStarted(appTask.taskState, appTask, taskQueueName)
     }
 
-    override fun onTaskUnavailable(appTask: AppTask) {
-        appTask.toNewTaskState(CState.STATE_TASK_UNAVAILABLE)
-        _iTaskLifecycle.onTaskStarted(appTask.taskState, appTask)
+    override fun onTaskUnavailable(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+        appTask.toTaskStateNew(AState.STATE_TASK_UNAVAILABLE)
+        _iTaskLifecycle.onTaskStarted(appTask.taskState, appTask, taskQueueName)
     }
 
-    fun onTaskSuccess(appTask: AppTask) {
-        onTaskFinish(appTask, STaskFinishType.SUCCESS)
-    }
+//    fun onTaskSuccess(appTask: AppTask) {
+//        onTaskFinish(appTask, STaskFinishType.SUCCESS)
+//    }
+//
+//    fun onTaskCancel(appTask: AppTask) {
+//        onTaskFinish(appTask, STaskFinishType.CANCEL)
+//    }
+//
+//    fun onTaskFail(appTask: AppTask, exception: TaskException) {
+//        onTaskFinish(appTask, STaskFinishType.FAIL(exception))
+//    }
 
-    fun onTaskCancel(appTask: AppTask) {
-        onTaskFinish(appTask, STaskFinishType.CANCEL)
-    }
-
-    fun onTaskFail(appTask: AppTask, exception: TaskException) {
-        onTaskFinish(appTask, STaskFinishType.FAIL(exception))
-    }
-
-    override fun onTaskFinish(appTask: AppTask, finishType: STaskFinishType) {
-        appTask.toNewTaskState(
+    override fun onTaskFinish(appTask: AppTask, @ATaskQueueName taskQueueName: String, finishType: STaskFinishType) {
+        appTask.toTaskStateNew(
             when (finishType) {
-                STaskFinishType.SUCCESS -> CState.STATE_TASK_SUCCESS
-                STaskFinishType.CANCEL -> CState.STATE_TASK_CANCEL
-                is STaskFinishType.FAIL -> CState.STATE_TASK_FAIL
+                STaskFinishType.SUCCESS -> getLastTaskName_ofTaskQueue(appTask.fileExt, taskQueueName)?.taskName2taskState()?.plus(AState.STATE_TASK_SUCCESS) ?: AState.STATE_TASK_SUCCESS
+                STaskFinishType.CANCEL -> AState.STATE_TASK_CANCEL
+                is STaskFinishType.FAIL -> AState.STATE_TASK_FAIL
             }
         )
-        _iTaskLifecycle.onTaskFinished(appTask.taskState, finishType, appTask)
+        _iTaskLifecycle.onTaskFinished(appTask.taskState, appTask, taskQueueName, finishType)
     }
 
     /////////////////////////////////////////////////////////////////
 
-    fun onTask_ofFail(appTask: AppTask, exception: TaskException) {
-        UtilKLogWrapper.d(TAG, "postState_ofFail: id ${appTask.taskId} state ${appTask.getStrTaskState()} exception ${exception.msg} appTask $appTask")
+    fun onTask_ofFail(appTask: AppTask, @ATaskQueueName taskQueueName: String, exception: TaskException) {
+        UtilKLogWrapper.d(TAG, "onTask: id ${appTask.taskId} state ${appTask.getTaskStateStr()} exception ${exception.msg} appTask $appTask")
         for (listener in _taskListeners) {
             when (appTask.taskState) {
-                CState.STATE_TASK_FAIL -> listener.onTaskFinish(appTask, STaskFinishType.FAIL(exception))
-                CTaskState.STATE_DOWNLOAD_FAIL -> listener.onTaskDownloadFail(appTask, exception)
-                CTaskState.STATE_VERIFY_FAIL -> listener.onTaskVerifyFail(appTask, exception)
-                CTaskState.STATE_UNZIP_FAIL -> listener.onTaskUnzipFail(appTask, exception)
-                CTaskState.STATE_INSTALL_FAIL -> listener.onTaskInstallFail(appTask, exception)
-                CTaskState.STATE_OPEN_FAIL -> listener.onTaskOpenFail(appTask, exception)
-                CTaskState.STATE_UNINSTALL_FAIL -> listener.onTaskUninstallFail(appTask, exception)
-                CTaskState.STATE_DELETE_FAIL -> listener.onTaskDeleteFail(appTask, exception)
+                AState.STATE_TASK_FAIL -> listener.onTaskFinish(appTask, taskQueueName, STaskFinishType.FAIL(exception))
+                ATaskState.STATE_DOWNLOAD_FAIL -> listener.onTaskDownloadFail(appTask, exception)
+                ATaskState.STATE_VERIFY_FAIL -> listener.onTaskVerifyFail(appTask, exception)
+                ATaskState.STATE_UNZIP_FAIL -> listener.onTaskUnzipFail(appTask, exception)
+                ATaskState.STATE_INSTALL_FAIL -> listener.onTaskInstallFail(appTask, exception)
+                ATaskState.STATE_OPEN_FAIL -> listener.onTaskOpenFail(appTask, exception)
+                ATaskState.STATE_UNINSTALL_FAIL -> listener.onTaskUninstallFail(appTask, exception)
+                ATaskState.STATE_DELETE_FAIL -> listener.onTaskDeleteFail(appTask, exception)
             }
         }
         //
         if (appTask.isTaskFail())
-            onTaskCreate(appTask, appTask.taskStateInit == CState.STATE_TASK_UPDATE)
+            onTaskCreate(appTask, taskQueueName, appTask.taskStateInit == AState.STATE_TASK_UPDATE)
         else if (appTask.isAnyTaskFail())
-            onTaskFinish(appTask, STaskFinishType.FAIL(exception))
-
+            onTaskFinish(appTask, taskQueueName, STaskFinishType.FAIL(exception))
     }
 
     fun onTask_ofIng(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
         UtilKLogWrapper.d(
             TAG,
-            "postState_ofIng: id ${appTask.taskId} state ${appTask.getStrTaskState()} progress $progress currentIndex $currentIndex totalIndex $totalIndex offsetIndexPerSeconds $offsetIndexPerSeconds appTask $appTask"
+            "onTask: id ${appTask.taskId} state ${appTask.getTaskStateStr()} progress $progress currentIndex $currentIndex totalIndex $totalIndex offsetIndexPerSeconds $offsetIndexPerSeconds appTask $appTask"
         )
         for (listener in _taskListeners) {
             when (appTask.taskState) {
-                CTaskState.STATE_DOWNLOADING -> listener.onTaskDownloading(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
-                CTaskState.STATE_VERIFYING -> listener.onTaskVerifying(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
-                CTaskState.STATE_UNZIPING -> listener.onTaskUnziping(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
-                CTaskState.STATE_INSTALLING -> listener.onTaskInstalling(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
-                CTaskState.STATE_OPENING -> listener.onTaskOpening(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
-                CTaskState.STATE_UNINSTALLING -> listener.onTaskUninstalling(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
-                CTaskState.STATE_DELETING -> listener.onTaskDeleting(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
+                ATaskState.STATE_DOWNLOADING -> listener.onTaskDownloading(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
+                ATaskState.STATE_VERIFYING -> listener.onTaskVerifying(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
+                ATaskState.STATE_UNZIPING -> listener.onTaskUnziping(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
+                ATaskState.STATE_INSTALLING -> listener.onTaskInstalling(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
+                ATaskState.STATE_OPENING -> listener.onTaskOpening(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
+                ATaskState.STATE_UNINSTALLING -> listener.onTaskUninstalling(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
+                ATaskState.STATE_DELETING -> listener.onTaskDeleting(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
             }
         }
     }
 
-    fun onTask_ofOther(appTask: AppTask) {
-        UtilKLogWrapper.d(TAG, "postState_ofOther: id ${appTask.taskId} state ${appTask.getStrTaskState()} appTask $appTask")
+    fun onTask_ofOther(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+        UtilKLogWrapper.d(TAG, "onTask: id ${appTask.taskId} state ${appTask.getTaskStateStr()} appTask $appTask")
         for (listener in _taskListeners) {
             when (appTask.taskState) {
-                CState.STATE_TASK_CREATE -> listener.onTaskCreate(appTask, false)
-                CState.STATE_TASK_UPDATE -> listener.onTaskCreate(appTask, true)
-                CState.STATE_TASK_UNAVAILABLE -> listener.onTaskUnavailable(appTask)
-                CState.STATE_TASK_SUCCESS -> listener.onTaskFinish(appTask, STaskFinishType.SUCCESS)
-                CState.STATE_TASK_CANCEL -> listener.onTaskFinish(appTask, STaskFinishType.CANCEL)
+                AState.STATE_TASK_CREATE -> listener.onTaskCreate(appTask, taskQueueName, false)
+                AState.STATE_TASK_UPDATE -> listener.onTaskCreate(appTask, taskQueueName, true)
+                AState.STATE_TASK_UNAVAILABLE -> listener.onTaskUnavailable(appTask, taskQueueName)
+                AState.STATE_TASK_SUCCESS -> listener.onTaskFinish(appTask, taskQueueName, STaskFinishType.SUCCESS)
+                AState.STATE_TASK_CANCEL -> listener.onTaskFinish(appTask, taskQueueName, STaskFinishType.CANCEL)
                 ///////////////////////////////////////////////////////////////////////////////
-                CTaskState.STATE_DOWNLOAD_PAUSE -> listener.onTaskDownloadPause(appTask)
-                CTaskState.STATE_DOWNLOAD_SUCCESS -> listener.onTaskDownloadSuccess(appTask)
-                CTaskState.STATE_DOWNLOAD_CANCEL -> listener.onTaskDownloadCancel(appTask)
+                ATaskState.STATE_DOWNLOAD_PAUSE -> listener.onTaskDownloadPause(appTask)
+                ATaskState.STATE_DOWNLOAD_SUCCESS -> listener.onTaskDownloadSuccess(appTask)
+                ATaskState.STATE_DOWNLOAD_CANCEL -> listener.onTaskDownloadCancel(appTask)
                 ///////////////////////////////////////////////////////////////////////////////
-                CTaskState.STATE_VERIFY_PAUSE -> listener.onTaskVerifyPause(appTask)
-                CTaskState.STATE_VERIFY_SUCCESS -> listener.onTaskVerifySuccess(appTask)
-                CTaskState.STATE_VERIFY_CANCEL -> listener.onTaskVerifyCancel(appTask)
+                ATaskState.STATE_VERIFY_PAUSE -> listener.onTaskVerifyPause(appTask)
+                ATaskState.STATE_VERIFY_SUCCESS -> listener.onTaskVerifySuccess(appTask)
+                ATaskState.STATE_VERIFY_CANCEL -> listener.onTaskVerifyCancel(appTask)
                 ///////////////////////////////////////////////////////////////////////////////
-                CTaskState.STATE_UNZIP_PAUSE -> listener.onTaskUnzipPause(appTask)
-                CTaskState.STATE_UNZIP_SUCCESS -> listener.onTaskUnzipSuccess(appTask)
-                CTaskState.STATE_UNZIP_CANCEL -> listener.onTaskUnzipCancel(appTask)
+                ATaskState.STATE_UNZIP_PAUSE -> listener.onTaskUnzipPause(appTask)
+                ATaskState.STATE_UNZIP_SUCCESS -> listener.onTaskUnzipSuccess(appTask)
+                ATaskState.STATE_UNZIP_CANCEL -> listener.onTaskUnzipCancel(appTask)
                 ///////////////////////////////////////////////////////////////////////////////
-                CTaskState.STATE_INSTALL_PAUSE -> listener.onTaskInstallPause(appTask)
-                CTaskState.STATE_INSTALL_SUCCESS -> listener.onTaskInstallSuccess(appTask)
-                CTaskState.STATE_INSTALL_CANCEL -> listener.onTaskInstallCancel(appTask)
+                ATaskState.STATE_INSTALL_PAUSE -> listener.onTaskInstallPause(appTask)
+                ATaskState.STATE_INSTALL_SUCCESS -> listener.onTaskInstallSuccess(appTask)
+                ATaskState.STATE_INSTALL_CANCEL -> listener.onTaskInstallCancel(appTask)
                 ///////////////////////////////////////////////////////////////////////////////
-                CTaskState.STATE_OPEN_PAUSE -> listener.onTaskInstallPause(appTask)
-                CTaskState.STATE_OPEN_SUCCESS -> listener.onTaskInstallSuccess(appTask)
-                CTaskState.STATE_OPEN_CANCEL -> listener.onTaskInstallCancel(appTask)
+                ATaskState.STATE_OPEN_PAUSE -> listener.onTaskInstallPause(appTask)
+                ATaskState.STATE_OPEN_SUCCESS -> listener.onTaskInstallSuccess(appTask)
+                ATaskState.STATE_OPEN_CANCEL -> listener.onTaskInstallCancel(appTask)
                 ///////////////////////////////////////////////////////////////////////////////
-                CTaskState.STATE_UNINSTALL_PAUSE -> listener.onTaskUninstallPause(appTask)
-                CTaskState.STATE_UNINSTALL_SUCCESS -> listener.onTaskUninstallSuccess(appTask)
-                CTaskState.STATE_UNINSTALL_CANCEL -> listener.onTaskUninstallCancel(appTask)
+                ATaskState.STATE_UNINSTALL_PAUSE -> listener.onTaskUninstallPause(appTask)
+                ATaskState.STATE_UNINSTALL_SUCCESS -> listener.onTaskUninstallSuccess(appTask)
+                ATaskState.STATE_UNINSTALL_CANCEL -> listener.onTaskUninstallCancel(appTask)
                 ///////////////////////////////////////////////////////////////////////////////
-                CTaskState.STATE_DELETE_PAUSE -> listener.onTaskDeletePause(appTask)
-                CTaskState.STATE_DELETE_SUCCESS -> listener.onTaskDeleteSuccess(appTask)
-                CTaskState.STATE_DELETE_CANCEL -> listener.onTaskDeleteCancel(appTask)
+                ATaskState.STATE_DELETE_PAUSE -> listener.onTaskDeletePause(appTask)
+                ATaskState.STATE_DELETE_SUCCESS -> listener.onTaskDeleteSuccess(appTask)
+                ATaskState.STATE_DELETE_CANCEL -> listener.onTaskDeleteCancel(appTask)
             }
         }
-        //
+
+        //next
         if (appTask.isAnyTaskSuccess()) {
-            val currentTaskName = appTask.getCurrentTaskName() ?: return
-            val taskQueueName = getTaskQueueName(appTask.fileExt, currentTaskName) ?: return
-            getNextTaskSet(appTask.fileExt,taskQueueName , currentTaskName)?.taskStart(appTask,taskQueueName)
+            val currTaskName = getCurrTaskName_ofTaskQueue(appTask, taskQueueName) ?: return
+            val nextTaskName = getNextTaskName_ofTaskQueue(appTask.fileExt, taskQueueName, currTaskName)
+            if (nextTaskName != null && nextTaskName != ATaskQueueName.TASK_RESTART) {
+                getTaskSet(nextTaskName)?.taskStart(appTask, taskQueueName)
+            } else if (nextTaskName == ATaskQueueName.TASK_RESTART) {
+                onTaskCreate(appTask, taskQueueName, appTask.taskStateInit == AState.STATE_TASK_UPDATE)
+            }
         }
         if (appTask.isAnyTaskCancel() && !appTask.isTaskCancel()) {
-            onTaskFinish(appTask, STaskFinishType.CANCEL)
+            onTaskFinish(appTask, taskQueueName, STaskFinishType.CANCEL)
         } else if (appTask.isTaskCancel()) {
-            onTaskCreate(appTask, appTask.taskStateInit == CState.STATE_TASK_UPDATE)
+            onTaskCreate(appTask, taskQueueName, appTask.taskStateInit == AState.STATE_TASK_UPDATE)
         }
-    }
-
-    /////////////////////////////////////////////////////////////////
-
-    fun getTaskQueueName(fileExt: String, taskName: String): String? {
-        val taskQueues = _taskQuenes.get(fileExt) ?: return null
-        return taskQueues.filter { it.value.contains(taskName) }.keys.firstOrNull()
     }
 }

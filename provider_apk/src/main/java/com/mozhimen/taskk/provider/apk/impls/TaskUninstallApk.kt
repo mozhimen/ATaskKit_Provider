@@ -2,7 +2,7 @@ package com.mozhimen.taskk.provider.apk.impls
 
 import com.mozhimen.taskk.provider.apk.cons.CExt
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUninstall
-import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
+import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 
 /**
  * @ClassName TaskProviderUninstallDefault

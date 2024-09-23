@@ -1,4 +1,4 @@
-package com.mozhimen.taskk.provider.basic.interfaces
+package com.mozhimen.taskk.provider.basic.commons
 
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.db.AppTask

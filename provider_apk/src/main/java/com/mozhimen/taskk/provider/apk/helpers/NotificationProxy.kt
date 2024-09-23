@@ -15,12 +15,15 @@ import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
 import com.mozhimen.kotlin.elemk.android.app.cons.CNotificationManager
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.app.UtilKNotificationManager
 import com.mozhimen.kotlin.utilk.android.app.UtilKPendingIntentWrapper
 import com.mozhimen.kotlin.utilk.android.content.UtilKApplicationInfo
 import com.mozhimen.taskk.provider.apk.utils.NotificationUtil
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.apk.R
+import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 
 /**
  * @ClassName NetKAppNotificationProxy
@@ -41,10 +44,13 @@ class NotificationProxy : BaseWakeBefDestroyLifecycleObserver() {
         UtilKNotificationManager.createNotificationChannel(_notificationManager, NotificationUtil.NETK_APP_NOTIFICATION_CHANNEL_ID, channelName, CNotificationManager.IMPORTANCE_LOW)
     }
 
+    @OptIn(OApiInit_InApplication::class)
     fun showNotification(
         id: Int,
         title: String,
         appTask: AppTask,
+        taskManager: ATaskManager,
+        @ATaskQueueName taskQueueName: String,
         intent: Intent? = null,
         @DrawableRes notifierSmallIcon: Int = UtilKApplicationInfo.getIcon(_context)
     ) {
@@ -57,9 +63,9 @@ class NotificationProxy : BaseWakeBefDestroyLifecycleObserver() {
         builder.apply {
             setContentTitle(title)
             setAutoCancel(
-                !appTask.isTaskProcess() || appTask.isTaskUnzipSuccess()
+                !appTask.isTaskProcess(taskManager, taskQueueName) || appTask.isTaskUnzipSuccess()
             ) // canceled when it is clicked by the user.
-            setOngoing(appTask.isTaskProcess())
+            setOngoing(appTask.isTaskProcess(taskManager, taskQueueName))
         }
         //子标题
         if (appTask.taskDownloadProgress in 1..99) {// don't use setContentInfo(deprecated in API level 24)
@@ -68,7 +74,7 @@ class NotificationProxy : BaseWakeBefDestroyLifecycleObserver() {
             builder.setSubText("")
         }
         when {
-            appTask.isTaskSuccess() -> {
+            appTask.isTaskSuccess(taskManager, taskQueueName) -> {
                 intent?.let {
                     builder.setContentIntent(UtilKPendingIntentWrapper.get_ofActivity_IMMUTABLE(0, it))
                 }

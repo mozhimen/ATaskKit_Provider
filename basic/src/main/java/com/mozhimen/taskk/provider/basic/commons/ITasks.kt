@@ -1,5 +1,6 @@
-package com.mozhimen.taskk.provider.basic.interfaces
+package com.mozhimen.taskk.provider.basic.commons
 
+import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.impls.TaskException
@@ -51,6 +52,14 @@ interface ITaskOpen {
     fun onTaskOpenCancel(appTask: AppTask) {}
 }
 
+interface ITaskClose {
+    fun onTaskClosing(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {}
+    fun onTaskClosePause(appTask: AppTask) {}
+    fun onTaskCloseSuccess(appTask: AppTask) {}//应用卸载的监听
+    fun onTaskCloseFail(appTask: AppTask, exception: TaskException) {}
+    fun onTaskCloseCancel(appTask: AppTask) {}
+}
+
 interface ITaskUninstall {
     fun onTaskUninstalling(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {}
     fun onTaskUninstallPause(appTask: AppTask) {}
@@ -68,12 +77,12 @@ interface ITaskDelete {
 }
 
 interface ITask {
-    fun onTaskCreate(appTask: AppTask, isUpdate: Boolean) {}
-    fun onTaskUnavailable(appTask: AppTask) {}
-    fun onTaskFinish(appTask: AppTask, finishType: STaskFinishType) {}
+    fun onTaskCreate(appTask: AppTask, @ATaskQueueName taskQueueName: String, isUpdate: Boolean) {}
+    fun onTaskUnavailable(appTask: AppTask, @ATaskQueueName taskQueueName: String) {}
+    fun onTaskFinish(appTask: AppTask, @ATaskQueueName taskQueueName: String, finishType: STaskFinishType) {}
 }
 
-interface ITasks : ITaskDownload, ITaskVerify, ITaskUnzip, ITaskInstall, ITaskOpen, ITaskUninstall, ITaskDelete, ITask
+interface ITasks : ITaskDownload, ITaskVerify, ITaskUnzip, ITaskInstall, ITaskOpen, ITaskClose, ITaskUninstall, ITaskDelete, ITask
 //    /**
 //     * 任务等待取消的回调
 //     */

@@ -1,6 +1,5 @@
 package com.mozhimen.taskk.provider.apk.impls
 
-import android.annotation.SuppressLint
 import android.os.Environment
 import android.util.Log
 import androidx.annotation.WorkerThread
@@ -22,16 +21,16 @@ import com.mozhimen.kotlin.utilk.kotlin.ranges.constraint
 import com.mozhimen.kotlin.utilk.kotlin.strFilePath2file
 import com.mozhimen.taskk.executor.TaskKExecutor
 import com.mozhimen.taskk.provider.apk.cons.CExt
+import com.mozhimen.taskk.provider.apk.impls.interceptors.TaskInterceptorApk
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUnzip
 import com.mozhimen.taskk.provider.basic.cons.CErrorCode
-import com.mozhimen.taskk.provider.basic.cons.CTaskState
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.impls.TaskException
 import com.mozhimen.taskk.provider.basic.impls.intErrorCode2taskException
-import com.mozhimen.taskk.provider.basic.interfaces.ITaskInterceptor
-import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
+import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -48,13 +47,6 @@ open class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifec
     override var _unzipDir: File? = UtilKFileDir.External.getFilesDownloads()
 
     protected val _context = UtilKApplicationWrapper.instance.applicationContext
-
-    protected var _iTaskInterceptor: ITaskInterceptor? = null
-
-    fun setTaskInterceptor(iTaskInterceptor: ITaskInterceptor): TaskUnzipApk {
-        _iTaskInterceptor = iTaskInterceptor
-        return this
-    }
 
     override fun getIgnorePaths(): List<String> {
         return listOf("__MACOSX/")
@@ -77,25 +69,29 @@ open class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifec
         }
         super.taskStart(appTask, taskQueueName)
         if (appTask.taskUnzipEnable) {
-            startUnzip(appTask)
+            startUnzip(appTask, taskQueueName)
         } else {
-            onTaskFinished(CTaskState.STATE_UNZIP_SUCCESS, STaskFinishType.SUCCESS, appTask)
+            onTaskFinished(ATaskState.STATE_UNZIP_SUCCESS, appTask, taskQueueName, STaskFinishType.SUCCESS)
         }
     }
 
     override fun taskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
         if (appTask.isTaskUnzipSuccess()) {
-            _iTaskInterceptor?.deleteOrgFiles(appTask)
-            super.taskCancel(appTask, taskQueueName)
+            TaskInterceptorApk.deleteOrgFiles(appTask)
+            onTaskFinished(ATaskState.STATE_UNZIP_CANCEL, appTask, taskQueueName, STaskFinishType.CANCEL)
         }
+    }
+
+    override fun canTaskCancel(appTask: AppTask, taskQueueName: String): Boolean {
+        return true
     }
 
     //////////////////////////////////////////////////////////////////
 
-    protected fun startUnzip(appTask: AppTask) {
+    protected fun startUnzip(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
         TaskKExecutor.execute(TAG + getTaskName()) {
             try {
-                val strApkFilePathNameUnzip = startUnzipOnBack(appTask)
+                val strApkFilePathNameUnzip = startUnzipOnBack(appTask, taskQueueName)
                 UtilKLogWrapper.d(TAG, "unzip: strFilePathUnzip $strApkFilePathNameUnzip")
 
                 if (strApkFilePathNameUnzip.isEmpty())
@@ -106,25 +102,30 @@ open class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifec
                 /////////////////////////////////////////////////////////
 
                 UtilKHandlerWrapper.post {
-                    onTaskFinished(CTaskState.STATE_UNZIP_SUCCESS, STaskFinishType.SUCCESS, appTask.apply {
-                        taskUnzipFilePath = strApkFilePathNameUnzip
-                    })
+                    onTaskFinished(
+                        ATaskState.STATE_UNZIP_SUCCESS,
+                        appTask.apply {
+                            taskUnzipFilePath = strApkFilePathNameUnzip
+                        },
+                        taskQueueName,
+                        STaskFinishType.SUCCESS
+                    )
                 }
             } catch (e: TaskException) {
                 UtilKHandlerWrapper.post {
-                    onTaskFinished(CTaskState.STATE_UNZIP_FAIL, STaskFinishType.FAIL(e), appTask)
+                    onTaskFinished(ATaskState.STATE_UNZIP_FAIL, appTask, taskQueueName, STaskFinishType.FAIL(e))
                 }
             }
         }
     }
 
     @WorkerThread
-    protected fun startUnzipOnBack(appTask: AppTask): String {
+    protected fun startUnzipOnBack(appTask: AppTask, @ATaskQueueName taskQueueName: String): String {
         val dir = _unzipDir ?: throw CErrorCode.CODE_TASK_UNZIP_DIR_NULL.intErrorCode2taskException()
         if (appTask.filePathNameExt.isEmpty())
             throw CErrorCode.CODE_TASK_UNZIP_DIR_NULL.intErrorCode2taskException()
         val fileSource = appTask.filePathNameExt.strFilePath2file()
-        val strFilePathNameApk = startUnzipOnBack(fileSource, dir.absolutePath, appTask)
+        val strFilePathNameApk = startUnzipOnBack(fileSource, dir.absolutePath, appTask, taskQueueName)
         UtilKLogWrapper.d(TAG, "unzipOnBack: fileSource ${fileSource.absolutePath} strFilePathNameApk $strFilePathNameApk")
         return strFilePathNameApk
     }
@@ -135,7 +136,7 @@ open class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifec
      * @param strFilePathDest String ///storage/emulated/0/Android/data/com.mozhimen.basicktest/files/Download/
      */
     @WorkerThread
-    protected open fun startUnzipOnBack(fileSource: File, strFilePathDest: String, appTask: AppTask): String {
+    protected open fun startUnzipOnBack(fileSource: File, strFilePathDest: String, appTask: AppTask, @ATaskQueueName taskQueueName: String): String {
         // gameName
         val strFileNameReal = fileSource.name.getSplitLastIndexToStart(".", false)//name.subSequence(0, name.lastIndexOf("."))
         // /storage/emulated/0/Android/data/com.mozhimen.basicktest/files/Download/gameName
@@ -208,11 +209,11 @@ open class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifec
                         ioProgress = (ioOffset.toFloat() / ioSizeTotal.toFloat()).constraint(0f, 1f) * 100f
                         lastIoOffset = ioOffset
                         UtilKHandlerWrapper.post {
-                            onTaskStarted(CTaskState.STATE_UNZIPING, appTask.apply {
+                            onTaskStarted(ATaskState.STATE_UNZIPING, appTask.apply {
                                 taskDownloadFileSpeed = ioSpeedPerSeconds
                                 taskDownloadFileSizeOffset = ioOffset
                                 taskDownloadProgress = ioProgress.toInt()
-                            })
+                            }, taskQueueName)
                         }
                     }
                 })

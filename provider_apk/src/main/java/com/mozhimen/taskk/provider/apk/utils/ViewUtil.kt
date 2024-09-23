@@ -5,6 +5,7 @@ import android.view.View
 import com.mozhimen.kotlin.elemk.commons.IAB_Listener
 import com.mozhimen.kotlin.elemk.commons.I_AListener
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.db.AppTask
 
@@ -21,12 +22,13 @@ object ViewUtil {
     fun generateViewLongClickOfAppTask(
         view: View,
         taskManager: ATaskManager,
+        @ATaskQueueName taskQueueName: String,
         onGetAppTask: I_AListener<AppTask>,
-        onTaskCancel: IAB_Listener<Context, AppTask>
+        onTaskCancel: IAB_Listener<Context, AppTask>,
     ) {
         view.setOnLongClickListener {
             val appTask = onGetAppTask.invoke()
-            if (appTask.canTaskCancel(taskManager)) {
+            if (appTask.canTaskCancel(taskManager, taskQueueName)) {
                 onTaskCancel.invoke(it.context, appTask)
             }
             true
@@ -38,13 +40,14 @@ object ViewUtil {
     fun generateViewClickOfAppTask(
         view: View,
         taskManager: ATaskManager,
+        @ATaskQueueName taskQueueName: String,
         onGetAppTask: I_AListener<AppTask>,
         onTaskStart: IAB_Listener<Context, AppTask>,
         onTaskOpen: IAB_Listener<Context, AppTask>,
         onTaskPause: IAB_Listener<Context, AppTask>,
         onTaskResume: IAB_Listener<Context, AppTask>,
         onTaskInstall: IAB_Listener<Context, AppTask>,
-        onTaskCancel: IAB_Listener<Context, AppTask>
+        onTaskCancel: IAB_Listener<Context, AppTask>,
     ) {
         view.setOnClickListener {
             val appTask: AppTask = onGetAppTask.invoke()
@@ -53,7 +56,7 @@ object ViewUtil {
                     onTaskStart.invoke(it.context, appTask)
                 }
 
-                appTask.isTaskSuccess() -> {
+                appTask.isTaskSuccess(taskManager, taskQueueName) -> {
                     onTaskOpen.invoke(it.context, appTask)
                 }
 
@@ -73,6 +76,6 @@ object ViewUtil {
                 }
             }
         }
-        generateViewLongClickOfAppTask(view, taskManager, onGetAppTask, onTaskCancel)
+        generateViewLongClickOfAppTask(view, taskManager, taskQueueName, onGetAppTask, onTaskCancel)
     }
 }
