@@ -6,6 +6,7 @@ import com.mozhimen.kotlin.lintk.optins.permission.OPermission_REQUEST_INSTALL_P
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.wrapper.UtilKAppInstall
 import com.mozhimen.taskk.provider.apk.cons.CExt
+import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
 import com.mozhimen.taskk.provider.basic.db.AppTask
@@ -35,7 +36,7 @@ class TaskInstallApk(
 
     @SuppressLint("MissingSuperCall")
     @OPermission_REQUEST_INSTALL_PACKAGES
-    override fun taskStart(appTask: AppTask) {
+    override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
         if (!appTask.canTaskInstall()) {
             UtilKLogWrapper.e(TAG, "install: the task hasn't unzip or verify success")
 //            onTaskFinished(CTaskState.STATE_INSTALL_FAIL, STaskFinishType.FAIL(CErrorCode.CODE_TASK_INSTALL_HAST_VERIFY_OR_UNZIP.intErrorCode2taskException()), appTask)

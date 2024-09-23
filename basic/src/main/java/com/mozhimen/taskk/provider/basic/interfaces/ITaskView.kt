@@ -60,6 +60,14 @@ interface ITaskViewUninstall<V> {
     fun onTaskUninstallCancel(view: V?, appTask: AppTask) {}
 }
 
+interface ITaskViewDelete<V> {
+    fun onTaskDeleting(view: V?, appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {}
+    fun onTaskDeletePause(view: V?, appTask: AppTask) {}
+    fun onTaskDeleteSuccess(view: V?, appTask: AppTask) {}
+    fun onTaskDeleteFail(view: V?, appTask: AppTask, exception: TaskException) {}
+    fun onTaskDeleteCancel(view: V?, appTask: AppTask) {}
+}
+
 interface ITaskView<V> {
     fun onTaskCreate(view: V?, appTask: AppTask, isUpdate: Boolean){}
     fun onTaskUnavailable(view: V?, appTask: AppTask) {}
@@ -73,4 +81,5 @@ interface ITaskViews<V> :
     ITaskViewInstall<V>,
     ITaskViewOpen<V>,
     ITaskViewUninstall<V>,
+    ITaskViewDelete<V>,
     ITaskView<V>,IUtilK

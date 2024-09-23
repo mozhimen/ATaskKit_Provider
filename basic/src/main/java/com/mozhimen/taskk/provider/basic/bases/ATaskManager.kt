@@ -7,6 +7,8 @@ import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.bases.BaseUtilK
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
+import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetDelete
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetDownload
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetInstall
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetOpen
@@ -43,7 +45,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
         )
     }
     protected val _taskQuenes by lazy {
-        ConcurrentHashMap<String, List<@ATaskName String>>(getTaskQueues())
+        ConcurrentHashMap<String, Map<String, List<@ATaskName String>>>(getTaskQueues())
     }
 
     protected val _iTaskLifecycle: ITaskLifecycle = object : ITaskLifecycle {
@@ -103,8 +105,8 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
         return _taskSets[taskName].also { UtilKLogWrapper.d(TAG, "getTaskSet: taskName $taskName taskSet $it") }
     }
 
-    fun getNextTaskName(fileExt: String, @ATaskName currentTaskName: String): String? {
-        val taskQueue = getTaskQueue(fileExt) ?: return null
+    fun getNextTaskName(fileExt: String, @ATaskQueueName taskQueueName: String, @ATaskName currentTaskName: String): String? {
+        val taskQueue = getTaskQueue(fileExt, taskQueueName) ?: return null
         val currentIndex = taskQueue.indexOf(currentTaskName)
         if (currentIndex < 0) return null
         val nextIndex = currentIndex + 1
@@ -114,12 +116,12 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             null).also { UtilKLogWrapper.d(TAG, "getNextTaskName: $it") }
     }
 
-    fun getNextTaskSet(fileExt: String, @ATaskName taskName: String): ATaskSet<*>? {
-        return getNextTaskName(fileExt, taskName)?.let { getTaskSet(it) }
+    fun getNextTaskSet(fileExt: String, @ATaskQueueName taskQueueName: String, @ATaskName taskName: String): ATaskSet<*>? {
+        return getNextTaskName(fileExt, taskQueueName, taskName)?.let { getTaskSet(it) }
     }
 
-    fun getTaskQueue(fileExt: String): List<@ATaskName String>? {
-        return _taskQuenes[fileExt]
+    fun getTaskQueue(fileExt: String, fileTaskName: String): List<@ATaskName String>? {
+        return _taskQuenes.get(fileExt)?.get(fileTaskName)
     }
 
     fun getAppTaskDaoManager(): AppTaskDaoManager =
@@ -127,7 +129,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
 
     /////////////////////////////////////////////////////////////////
 
-    abstract fun getTaskQueues(): Map<String, List<@ATaskName String>>
+    abstract fun getTaskQueues(): Map<String, Map<String, List<@ATaskName String>>>
     abstract fun getTaskSets(): List<ATaskSet<*>>
     abstract fun getTaskProviders(): List<ATaskProvider>
 
@@ -158,58 +160,62 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
         return getTaskSet(ATaskName.TASK_UNINSTALL) as? ATaskSetUninstall
     }
 
+    fun getTaskSetDelete(): ATaskSetDelete? {
+        return getTaskSet(ATaskName.TASK_DELETE) as? ATaskSetDelete
+    }
+
     /////////////////////////////////////////////////////////////////
 
-    override fun taskStart(appTask: AppTask) {
-        if (!canTaskStart(appTask))
+    override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+        if (!canTaskStart(appTask, taskQueueName))
             return
         UtilKLogWrapper.d(TAG, "taskStart: appTask $appTask")
-        val currentTaskName = appTask.getCurrentTaskName(getTaskQueue(appTask.fileExt)?.getOrNull(0) ?: return) ?: return
+        val currentTaskName = appTask.getCurrentTaskName(getTaskQueue(appTask.fileExt, taskQueueName)?.getOrNull(0) ?: return) ?: return
         if (appTask.isAnyTaskSuccess()) {
             UtilKLogWrapper.d(TAG, "taskStart: getNextTaskSet")
-            getNextTaskSet(appTask.fileExt, currentTaskName)?.taskStart(appTask)
+            getNextTaskSet(appTask.fileExt, taskQueueName, currentTaskName)?.taskStart(appTask,taskQueueName)
         } else {
             UtilKLogWrapper.d(TAG, "taskStart: getTaskSet")
-            getTaskSet(currentTaskName)?.taskStart(appTask)
+            getTaskSet(currentTaskName)?.taskStart(appTask,taskQueueName)
         }
     }
 
-    override fun taskResume(appTask: AppTask) {
-        if (!canTaskResume(appTask))
+    override fun taskResume(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+        if (!canTaskResume(appTask, taskQueueName))
             return
         UtilKLogWrapper.d(TAG, "taskResume: appTask $appTask")
-        getTaskSet(appTask.getCurrentTaskName() ?: return)?.taskResume(appTask)
+        getTaskSet(appTask.getCurrentTaskName() ?: return)?.taskResume(appTask,taskQueueName)
     }
 
-    override fun taskPause(appTask: AppTask) {
-        if (!canTaskPause(appTask))
+    override fun taskPause(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+        if (!canTaskPause(appTask, taskQueueName))
             return
         UtilKLogWrapper.d(TAG, "taskPause: appTask $appTask")
-        getTaskSet(appTask.getCurrentTaskName() ?: return)?.taskPause(appTask)
+        getTaskSet(appTask.getCurrentTaskName() ?: return)?.taskPause(appTask,taskQueueName)
     }
 
-    override fun taskCancel(appTask: AppTask/*, onCancelBlock: IAB_Listener<Boolean, Int>? = null*/) {
-        if (!canTaskCancel(appTask))
+    override fun taskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+        if (!canTaskCancel(appTask, taskQueueName))
             return
         UtilKLogWrapper.d(TAG, "taskCancel: appTask $appTask")
-        getTaskSet(appTask.getCurrentTaskName() ?: return)?.taskCancel(appTask)
+        getTaskSet(appTask.getCurrentTaskName() ?: return)?.taskCancel(appTask,taskQueueName)
     }
 
     /////////////////////////////////////////////////////////////////
 
-    override fun canTaskStart(appTask: AppTask): Boolean {
+    override fun canTaskStart(appTask: AppTask, @ATaskQueueName  taskQueueName: String): Boolean {
         if (appTask.isTaskProcess() && !appTask.isAnyTaskPause() && !appTask.isAnyTaskSuccess()) {
             UtilKLogWrapper.d(TAG, "canTaskStart: task is process")
             return false
         }
-        if (appTask.isTaskSuccess()){
+        if (appTask.isTaskSuccess()) {
             UtilKLogWrapper.d(TAG, "canTaskStart: task is success")
             return false
         }
-        return getTaskSet(getTaskQueue(appTask.fileExt)?.getOrNull(0) ?: return false)?.canTaskStart(appTask) ?: false
+        return getTaskSet(getTaskQueue(appTask.fileExt, taskQueueName)?.getOrNull(0) ?: return false)?.canTaskStart(appTask,taskQueueName) ?: false
     }
 
-    override fun canTaskResume(appTask: AppTask): Boolean {
+    override fun canTaskResume(appTask: AppTask, @ATaskQueueName  taskQueueName: String): Boolean {
         if (!appTask.isTaskProcess()) {
             UtilKLogWrapper.d(TAG, "taskResume: task is not process")
             return false
@@ -218,10 +224,10 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             UtilKLogWrapper.d(TAG, "taskResume: task is not pause")
             return false
         }
-        return getTaskSet(appTask.getCurrentTaskName() ?: return false)?.canTaskResume(appTask) ?: false
+        return getTaskSet(appTask.getCurrentTaskName() ?: return false)?.canTaskResume(appTask,taskQueueName) ?: false
     }
 
-    override fun canTaskPause(appTask: AppTask): Boolean {
+    override fun canTaskPause(appTask: AppTask,  @ATaskQueueName taskQueueName: String): Boolean {
         if (!appTask.isTaskProcess()) {
             UtilKLogWrapper.d(TAG, "taskPause: task is not process")
             return false
@@ -230,11 +236,11 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             UtilKLogWrapper.d(TAG, "taskPause: already pause")
             return false
         }
-        return getTaskSet(appTask.getCurrentTaskName() ?: return false)?.canTaskPause(appTask) ?: false
+        return getTaskSet(appTask.getCurrentTaskName() ?: return false)?.canTaskPause(appTask,taskQueueName) ?: false
     }
 
-    override fun canTaskCancel(appTask: AppTask): Boolean {
-        if (appTask.isTaskSuccess()){
+    override fun canTaskCancel(appTask: AppTask, @ATaskQueueName  taskQueueName: String): Boolean {
+        if (appTask.isTaskSuccess()) {
             UtilKLogWrapper.d(TAG, "canTaskStart: task is success")
             return false
         }
@@ -242,7 +248,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             UtilKLogWrapper.d(TAG, "canTaskCancel: task is not process")
             return false
         }
-        return getTaskSet(appTask.getCurrentTaskName() ?: return false)?.canTaskCancel(appTask) ?: false
+        return getTaskSet(appTask.getCurrentTaskName() ?: return false)?.canTaskCancel(appTask,taskQueueName) ?: false
     }
 
     /////////////////////////////////////////////////////////////////
@@ -293,6 +299,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
                 CTaskState.STATE_INSTALL_FAIL -> listener.onTaskInstallFail(appTask, exception)
                 CTaskState.STATE_OPEN_FAIL -> listener.onTaskOpenFail(appTask, exception)
                 CTaskState.STATE_UNINSTALL_FAIL -> listener.onTaskUninstallFail(appTask, exception)
+                CTaskState.STATE_DELETE_FAIL -> listener.onTaskDeleteFail(appTask, exception)
             }
         }
         //
@@ -316,6 +323,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
                 CTaskState.STATE_INSTALLING -> listener.onTaskInstalling(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
                 CTaskState.STATE_OPENING -> listener.onTaskOpening(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
                 CTaskState.STATE_UNINSTALLING -> listener.onTaskUninstalling(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
+                CTaskState.STATE_DELETING -> listener.onTaskDeleting(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
             }
         }
     }
@@ -353,16 +361,29 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
                 CTaskState.STATE_UNINSTALL_PAUSE -> listener.onTaskUninstallPause(appTask)
                 CTaskState.STATE_UNINSTALL_SUCCESS -> listener.onTaskUninstallSuccess(appTask)
                 CTaskState.STATE_UNINSTALL_CANCEL -> listener.onTaskUninstallCancel(appTask)
+                ///////////////////////////////////////////////////////////////////////////////
+                CTaskState.STATE_DELETE_PAUSE -> listener.onTaskDeletePause(appTask)
+                CTaskState.STATE_DELETE_SUCCESS -> listener.onTaskDeleteSuccess(appTask)
+                CTaskState.STATE_DELETE_CANCEL -> listener.onTaskDeleteCancel(appTask)
             }
         }
         //
         if (appTask.isAnyTaskSuccess()) {
-            getNextTaskSet(appTask.fileExt, appTask.getCurrentTaskName() ?: return)?.taskStart(appTask)
+            val currentTaskName = appTask.getCurrentTaskName() ?: return
+            val taskQueueName = getTaskQueueName(appTask.fileExt, currentTaskName) ?: return
+            getNextTaskSet(appTask.fileExt,taskQueueName , currentTaskName)?.taskStart(appTask,taskQueueName)
         }
         if (appTask.isAnyTaskCancel() && !appTask.isTaskCancel()) {
             onTaskFinish(appTask, STaskFinishType.CANCEL)
         } else if (appTask.isTaskCancel()) {
             onTaskCreate(appTask, appTask.taskStateInit == CState.STATE_TASK_UPDATE)
         }
+    }
+
+    /////////////////////////////////////////////////////////////////
+
+    fun getTaskQueueName(fileExt: String, taskName: String): String? {
+        val taskQueues = _taskQuenes.get(fileExt) ?: return null
+        return taskQueues.filter { it.value.contains(taskName) }.keys.firstOrNull()
     }
 }

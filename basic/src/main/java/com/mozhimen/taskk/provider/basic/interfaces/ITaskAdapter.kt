@@ -2,6 +2,7 @@ package com.mozhimen.taskk.provider.basic.interfaces
 
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.impls.TaskException
 
@@ -60,10 +61,21 @@ interface ITaskAdapterUninstall<A : Adapter<ViewHolder>> {
     fun onTaskUninstallCancel(adapter: A?, position: Int, appTask: AppTask) {}
 }
 
+interface ITaskAdapterDelete<A : Adapter<ViewHolder>> {
+    fun onTaskDeleting(adapter: A?, position: Int, appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {}//安装中
+    fun onTaskDeletePause(adapter: A?, position: Int, appTask: AppTask) {}
+    fun onTaskDeleteSuccess(adapter: A?, position: Int, appTask: AppTask) {}
+    fun onTaskDeleteFail(adapter: A?, position: Int, appTask: AppTask, exception: TaskException) {}
+    fun onTaskDeleteCancel(adapter: A?, position: Int, appTask: AppTask) {}
+}
+
 interface ITaskAdapter<A : Adapter<ViewHolder>> {
-    fun onTaskCreate(adapter: A?, position: Int, appTask: AppTask, isUpdate: Boolean)
+    fun onTaskCreate(adapter: A?, position: Int, appTask: AppTask, isUpdate: Boolean){}
+    fun onTaskUnavailable(adapter: A?, position: Int,appTask: AppTask) {}
+    fun onTaskFinish(adapter: A?, position: Int,appTask: AppTask, finishType: STaskFinishType) {}
+
     //    fun onTaskWait(adapter: V?, appTask: AppTask) //任务等待的回调
 }
 
-interface ITaskAdapters<A : Adapter<ViewHolder>> : ITaskAdapterDownload<A>, ITaskAdapterVerify<A>, ITaskAdapterUnzip<A>, ITaskAdapterInstall<A>, ITaskAdapterOpen<A>, ITaskAdapterUninstall<A>,
+interface ITaskAdapters<A : Adapter<ViewHolder>> : ITaskAdapterDownload<A>, ITaskAdapterVerify<A>, ITaskAdapterUnzip<A>, ITaskAdapterInstall<A>, ITaskAdapterOpen<A>, ITaskAdapterUninstall<A>,ITaskAdapterDelete<A>,
     ITaskAdapter<A>

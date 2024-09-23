@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.CallSuper
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDelete
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskOpen
@@ -42,7 +43,9 @@ abstract class ATaskProvider(
     abstract fun getTaskInstall(): ATaskInstall?
     abstract fun getTaskOpen(): ATaskOpen?
     abstract fun getTaskUninstall(): ATaskUninstall?
-    abstract fun getTaskQueue(): List<String>
+    abstract fun getTaskDelete(): ATaskDelete?
+
+    abstract fun getTaskQueue(): Map<String, List<String>>
 
     @OptIn(OPermission_INTERNET::class)
     fun getSupportFileExtensions(): List<String> {
@@ -52,13 +55,14 @@ abstract class ATaskProvider(
             getTaskUnzip()?.getSupportFileExts(),
             getTaskInstall()?.getSupportFileExts(),
             getTaskOpen()?.getSupportFileExts(),
-            getTaskUninstall()?.getSupportFileExts()
+            getTaskUninstall()?.getSupportFileExts(),
+            getTaskDelete()?.getSupportFileExts()
         ).filterNotNull().fold(emptySet()) { acc, nex -> acc + nex }
         return set.toList()
     }
 }
 
-fun main() {
+fun main() {///for test
     val list: Set<Int> = listOf(
         listOf(1, 2, 3),
         listOf(2, 2, 2)

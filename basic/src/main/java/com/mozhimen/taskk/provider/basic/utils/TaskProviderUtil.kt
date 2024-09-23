@@ -52,6 +52,13 @@ object TaskProviderUtil : IUtilK {
             CTaskState.STATE_UNINSTALL_SUCCESS -> "卸载成功"
             CTaskState.STATE_UNINSTALL_FAIL -> "卸载失败"
 
+            CTaskState.STATE_DELETING -> "删除中 "
+            CTaskState.STATE_DELETE_PAUSE -> "删除暂停"
+            CTaskState.STATE_DELETE_CANCEL -> "删除取消"
+            CTaskState.STATE_DELETE_SUCCESS -> "删除成功"
+            CTaskState.STATE_DELETE_FAIL -> "删除失败"
+
+
             CState.STATE_TASK_CREATE -> "任务创建"
             CState.STATE_TASK_UPDATE -> "任务更新"
 //            CState.STATE_TASK_WAIT -> "任务等待"

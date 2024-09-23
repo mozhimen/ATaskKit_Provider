@@ -16,6 +16,7 @@ import androidx.annotation.StringDef
     ATaskName.TASK_INSTALL,
     ATaskName.TASK_OPEN,
     ATaskName.TASK_UNINSTALL,
+    ATaskName.TASK_DELETE,
 )
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.TYPE,AnnotationTarget.VALUE_PARAMETER)
@@ -27,5 +28,6 @@ annotation class ATaskName {
         const val TASK_INSTALL = "TASK_INSTALL"
         const val TASK_OPEN = "TASK_OPEN"
         const val TASK_UNINSTALL = "TASK_UNINSTALL"
+        const val TASK_DELETE = "TASK_DELETE"
     }
 }

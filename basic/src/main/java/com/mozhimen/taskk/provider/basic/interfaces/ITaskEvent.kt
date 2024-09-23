@@ -1,5 +1,6 @@
 package com.mozhimen.taskk.provider.basic.interfaces
 
+import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.db.AppTask
 
 /**
@@ -10,13 +11,13 @@ import com.mozhimen.taskk.provider.basic.db.AppTask
  * @Version 1.0
  */
 interface ITaskEvent {
-    fun taskStart(appTask: AppTask)
-    fun taskResume(appTask: AppTask)
-    fun taskPause(appTask: AppTask)
-    fun taskCancel(appTask: AppTask)
+    fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String)
+    fun taskResume(appTask: AppTask, @ATaskQueueName taskQueueName: String)
+    fun taskPause(appTask: AppTask, @ATaskQueueName taskQueueName: String)
+    fun taskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String)
 
-    fun canTaskStart(appTask: AppTask): Boolean
-    fun canTaskResume(appTask: AppTask): Boolean
-    fun canTaskPause(appTask: AppTask): Boolean
-    fun canTaskCancel(appTask: AppTask): Boolean
+    fun canTaskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean
+    fun canTaskResume(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean
+    fun canTaskPause(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean
+    fun canTaskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean
 }

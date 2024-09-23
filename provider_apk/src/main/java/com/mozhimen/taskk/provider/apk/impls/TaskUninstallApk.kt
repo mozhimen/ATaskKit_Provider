@@ -1,13 +1,8 @@
 package com.mozhimen.taskk.provider.apk.impls
 
-import android.annotation.SuppressLint
 import com.mozhimen.taskk.provider.apk.cons.CExt
-import com.mozhimen.taskk.provider.basic.bases.ATask
-import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUninstall
-import com.mozhimen.taskk.provider.basic.cons.CState
-import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
-import com.mozhimen.taskk.provider.basic.db.AppTask
+import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
 
 /**
  * @ClassName TaskProviderUninstallDefault

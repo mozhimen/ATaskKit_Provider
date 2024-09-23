@@ -162,6 +162,30 @@ object CTaskState {
 
     //////////////////////////////////////////////////////////////
 
+    //卸载
+    const val STATE_DELETE_CREATE = 80
+    const val STATE_DELETING = STATE_DELETE_CREATE + CState.STATE_TASKING//52
+    const val STATE_DELETE_PAUSE = STATE_DELETE_CREATE + CState.STATE_TASK_PAUSE//53
+    const val STATE_DELETE_CANCEL = STATE_DELETE_CREATE + CState.STATE_TASK_CANCEL//57
+    const val STATE_DELETE_SUCCESS = STATE_DELETE_CREATE + CState.STATE_TASK_SUCCESS//58
+    const val STATE_DELETE_FAIL = STATE_DELETE_CREATE + CState.STATE_TASK_FAIL//59
+
+    @JvmStatic
+    fun canTaskDelete(state: Int): Boolean =
+        state in STATE_UNINSTALL_SUCCESS..STATE_DELETE_PAUSE|| state in CState.STATE_TASK_CREATE..CState.STATE_TASK_UPDATE || state in CState.STATE_TASK_CANCEL..CState.STATE_TASK_FAIL
+
+    @JvmStatic
+    fun atTaskDelete(state: Int): Boolean =
+        state in STATE_DELETE_CREATE..STATE_DELETE_FAIL
+
+    @JvmStatic
+    fun isTaskDeleting(state: Int): Boolean =
+        state == STATE_DELETING
+
+    @JvmStatic
+    fun isTaskDeleteSuccess(state: Int): Boolean =
+        state >= STATE_DELETE_SUCCESS || state == CState.STATE_TASK_SUCCESS
+
     /*//更新
     const val STATE_UPDATE_CREATE = 50//需要更新
     const val STATE_UPDATEING = 51//STATE_NEED_UPDATE = 17//更新中

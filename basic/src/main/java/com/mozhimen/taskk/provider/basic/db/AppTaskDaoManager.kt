@@ -187,6 +187,11 @@ object AppTaskDaoManager : IUtilK {
         return _appTasks.filter { it.value.atTaskUninstall() }.values.toList()
     }
 
+    @JvmStatic
+    fun gets_ofAtTaskDelete():List<AppTask>{
+        return _appTasks.filter { it.value.atTaskDelete() }.values.toList()
+    }
+
     ////////////////////////////////////////////////////////////
 
     @JvmStatic
@@ -217,6 +222,11 @@ object AppTaskDaoManager : IUtilK {
     @JvmStatic
     fun gets_ofIsTaskUninstalling(): List<AppTask> {
         return _appTasks.filter { it.value.isTaskUninstalling() }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskDeleting():List<AppTask>{
+        return _appTasks.filter { it.value.isTaskDeleting() }.values.toList()
     }
 
     ////////////////////////////////////////////////////////////
@@ -251,6 +261,11 @@ object AppTaskDaoManager : IUtilK {
         return _appTasks.filter { it.value.isTaskUninstallSuccess() }.values.toList()
     }
 
+    @JvmStatic
+    fun gets_ofIsTaskDeleteSuccess():List<AppTask>{
+        return _appTasks.filter { it.value.isTaskDeleteSuccess() }.values.toList()
+    }
+
     ////////////////////////////////////////////////////////////
 
     fun has_ofAtTaskDownload(): Boolean {
@@ -275,6 +290,10 @@ object AppTaskDaoManager : IUtilK {
 
     fun has_ofAtTaskUninstall(): Boolean {
         return gets_ofAtTaskUninstall().isNotEmpty()
+    }
+
+    fun has_ofAtTaskDelete():Boolean {
+        return gets_ofAtTaskDelete().isNotEmpty()
     }
 
     //////////////////////////////////////////////////////////

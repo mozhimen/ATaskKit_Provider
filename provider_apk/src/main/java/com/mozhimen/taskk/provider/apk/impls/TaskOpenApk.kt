@@ -7,6 +7,7 @@ import com.mozhimen.kotlin.utilk.android.app.UtilKApplicationWrapper
 import com.mozhimen.kotlin.utilk.android.content.UtilKContextStart
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.taskk.provider.apk.cons.CExt
+import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskOpen
 import com.mozhimen.taskk.provider.basic.cons.CErrorCode
@@ -32,18 +33,18 @@ class TaskOpenApk(iTaskLifecycle: ITaskLifecycle) : ATaskOpen(iTaskLifecycle) {
 
     @SuppressLint("MissingSuperCall")
     @OptIn(OPermission_QUERY_ALL_PACKAGES::class)
-    override fun taskStart(appTask: AppTask) {
+    override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
         try {
             val boolean = UtilKContextStart.startContext_ofPackageName(UtilKApplicationWrapper.instance.get(), appTask.apkPackageName)
             if (boolean) {
 //                onTaskFinished(CTaskState.STATE_OPEN_SUCCESS, STaskFinishType.SUCCESS, appTask)
             } else {
-                onTaskFinished(CTaskState.STATE_OPEN_FAIL, STaskFinishType.FAIL(CErrorCode.CODE_TASK_OPEN_FAIL.intErrorCode2taskException()), appTask)
+//                onTaskFinished(CTaskState.STATE_OPEN_FAIL, STaskFinishType.FAIL(CErrorCode.CODE_TASK_OPEN_FAIL.intErrorCode2taskException()), appTask)
             }
         } catch (e: Exception) {
             e.printStackTrace()
             UtilKLogWrapper.e(TAG, "taskStart: ", e)
-            onTaskFinished(CTaskState.STATE_OPEN_FAIL, STaskFinishType.FAIL(e.exception2taskException()), appTask)
+//            onTaskFinished(CTaskState.STATE_OPEN_FAIL, STaskFinishType.FAIL(e.exception2taskException()), appTask)
         }
     }
 }

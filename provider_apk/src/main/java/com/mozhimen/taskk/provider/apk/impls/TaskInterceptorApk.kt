@@ -20,7 +20,6 @@ import com.mozhimen.taskk.provider.basic.interfaces.ITaskInterceptor
 object TaskInterceptorApk : ITaskInterceptor {
     private val _cacheKDSProvider by lazy { CacheKDS.instance.with(NAME) }
     var is_delete_apk_file by CacheKDSVarPropertyBoolean(_cacheKDSProvider, "is_delete_apk_file", true)
-    var is_auto_install by CacheKDSVarPropertyBoolean(_cacheKDSProvider, "is_auto_install", true)
 
     override fun isAutoDeleteOrgFiles(): Boolean {
         return is_delete_apk_file
@@ -44,9 +43,5 @@ object TaskInterceptorApk : ITaskInterceptor {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
-
-    override fun isAutoInstall(): Boolean {
-        return is_auto_install
     }
 }

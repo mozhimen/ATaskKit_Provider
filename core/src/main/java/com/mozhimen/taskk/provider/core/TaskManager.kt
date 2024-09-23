@@ -6,6 +6,7 @@ import com.mozhimen.kotlin.utilk.kotlin.collections.joinT2list
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.ATaskSet
+import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDelete
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskOpen
@@ -18,6 +19,7 @@ import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetOpen
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetUninstall
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetUnzip
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetVerify
+import com.mozhimen.taskk.provider.delete.TaskSetDelete
 import com.mozhimen.taskk.provider.download.TaskSetDownload
 import com.mozhimen.taskk.provider.install.TaskSetInstall
 import com.mozhimen.taskk.provider.open.TaskSetOpen
@@ -53,10 +55,13 @@ abstract class TaskManager : ATaskManager() {
     open fun getTaskUninstalls(): List<ATaskUninstall> =
         getTaskProviders().joinT2list { it.getTaskUninstall() }.filterNotNull()
 
+    open fun getTaskDeletes(): List<ATaskDelete> =
+        getTaskProviders().joinT2list { it.getTaskDelete() }.filterNotNull()
+
     /////////////////////////////////////////////////////////////////
 
-    override fun getTaskQueues(): Map<String, List<String>> {
-        return getTaskProviders().map { provider -> (provider.getSupportFileExtensions().associateWith { provider.getTaskQueue() }).toMutableMap() }.fold(emptyMap()){ acc, nex-> acc+nex}
+    override fun getTaskQueues(): Map<String, Map<String, List<@ATaskName String>>> {
+        return getTaskProviders().map { provider -> (provider.getSupportFileExtensions().associateWith { provider.getTaskQueue() }).toMutableMap() }.fold(emptyMap()) { acc, nex -> acc + nex }
     }
 
     override fun getTaskSets(): List<ATaskSet<*>> {
@@ -66,7 +71,8 @@ abstract class TaskManager : ATaskManager() {
             TaskSetUnzip(getTaskUnzips()),
             TaskSetInstall(getTaskInstalls()),
             TaskSetOpen(getTaskOpens()),
-            TaskSetUninstall(getTaskUninstalls())
+            TaskSetUninstall(getTaskUninstalls()),
+            TaskSetDelete(getTaskDeletes())
         )
     }
 }

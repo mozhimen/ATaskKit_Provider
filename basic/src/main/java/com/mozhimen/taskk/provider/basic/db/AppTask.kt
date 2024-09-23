@@ -139,6 +139,7 @@ data class AppTask constructor(
         apkVersionCode,
         apkVersionName
     )
+
     //for zip
     constructor(
         taskId: String,//主键
@@ -150,7 +151,7 @@ data class AppTask constructor(
         taskUnzipEnable: Boolean,
         fileNameExt: String,//和apkName的区别是有后缀
         apkPackageName: String,//包名
-    ): this(
+    ) : this(
         taskId,
         taskState,
         taskState,
@@ -178,6 +179,8 @@ data class AppTask constructor(
         0,
         ""
     )
+
+    ////////////////////////////////////////////////////////////////
 
     fun taskDownloadReset() {
         taskDownloadId = 0
@@ -215,6 +218,7 @@ data class AppTask constructor(
             CTaskState.STATE_INSTALL_CREATE / 10 -> ATaskName.TASK_INSTALL
             CTaskState.STATE_OPEN_CREATE / 10 -> ATaskName.TASK_OPEN
             CTaskState.STATE_UNINSTALL_CREATE / 10 -> ATaskName.TASK_UNINSTALL
+            CTaskState.STATE_DELETE_CREATE / 10 -> ATaskName.TASK_DELETE
             else -> null
         }.also { UtilKLogWrapper.d(TAG, "getCurrentTaskName: task $task state $state taskName $it") }
     }
@@ -222,23 +226,23 @@ data class AppTask constructor(
     ////////////////////////////////////////////////////////////////
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskStart(taskManager: ATaskManager): Boolean {
-        return taskManager.canTaskStart(this)
+    fun canTaskStart(taskManager: ATaskManager, taskName: String): Boolean {
+        return taskManager.canTaskStart(this, taskName)
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskResume(taskManager: ATaskManager): Boolean {
-        return taskManager.canTaskResume(this)
+    fun canTaskResume(taskManager: ATaskManager, taskName: String): Boolean {
+        return taskManager.canTaskResume(this, taskName)
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskPause(taskManager: ATaskManager): Boolean {
-        return taskManager.canTaskPause(this)
+    fun canTaskPause(taskManager: ATaskManager, taskName: String): Boolean {
+        return taskManager.canTaskPause(this, taskName)
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskCancel(taskManager: ATaskManager): Boolean {
-        return taskManager.canTaskCancel(this)
+    fun canTaskCancel(taskManager: ATaskManager, taskName: String): Boolean {
+        return taskManager.canTaskCancel(this, taskName)
     }
 
     ////////////////////////////////////////////////////////////
@@ -307,6 +311,9 @@ data class AppTask constructor(
     fun canTaskUninstall(): Boolean =
         CTaskState.canTaskUninstall(taskState)
 
+    fun canTaskDelete(): Boolean =
+        CTaskState.canTaskDelete(taskState)
+
     ////////////////////////////////////////////////////////////
 
     fun atTaskDownload(): Boolean =
@@ -326,6 +333,9 @@ data class AppTask constructor(
 
     fun atTaskUninstall(): Boolean =
         CTaskState.atTaskUninstall(taskState)
+
+    fun atTaskDelete(): Boolean =
+        CTaskState.atTaskDelete(taskState)
 
     ////////////////////////////////////////////////////////////
 
@@ -347,6 +357,9 @@ data class AppTask constructor(
     fun isTaskUninstalling(): Boolean =
         CTaskState.isTaskUninstalling(taskState)
 
+    fun isTaskDeleting(): Boolean =
+        CTaskState.isTaskDeleting(taskState)
+
     ////////////////////////////////////////////////////////////
 
     fun isTaskDownloadSuccess(): Boolean =
@@ -366,6 +379,9 @@ data class AppTask constructor(
 
     fun isTaskUninstallSuccess(): Boolean =
         CTaskState.isTaskUninstallSuccess(taskState)
+
+    fun isTaskDeleteSuccess(): Boolean =
+        CTaskState.isTaskDeleteSuccess(taskState)
 
     ////////////////////////////////////////////////////////////
 

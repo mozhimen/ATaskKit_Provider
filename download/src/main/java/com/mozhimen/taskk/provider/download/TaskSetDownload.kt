@@ -3,6 +3,7 @@ package com.mozhimen.taskk.provider.download
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.java.io.UtilKFileDir
+import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetDownload
 import com.mozhimen.taskk.provider.basic.cons.CErrorCode
@@ -28,7 +29,7 @@ class TaskSetDownload(override val providerDefaults: List<ATaskDownload>) : ATas
         )
     }
 
-    override fun taskStart(appTask: AppTask) {
+    override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
         try {
             if (appTask.isTaskProcess() && !appTask.isAnyTaskPause()) {
                 UtilKLogWrapper.d(TAG, "taskStart: the task already start")
@@ -50,7 +51,7 @@ class TaskSetDownload(override val providerDefaults: List<ATaskDownload>) : ATas
                 }
             }
 
-            super.taskStart(appTask)
+            super.taskStart(appTask,taskQueueName)
         } catch (e: TaskException) {
             onTaskFinished(CTaskState.STATE_DOWNLOAD_FAIL, STaskFinishType.FAIL(e), appTask)//onDownloadFail(appTask, exception)
         } catch (e: Exception) {

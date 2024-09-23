@@ -17,6 +17,7 @@ import com.mozhimen.kotlin.elemk.javax.net.bases.BaseX509TrustManager
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.java.io.UtilKFileDir
+import com.mozhimen.kotlin.utilk.java.io.createFolder
 import com.mozhimen.kotlin.utilk.javax.net.UtilKSSLSocketFactory
 import com.mozhimen.kotlin.utilk.kotlin.ranges.constraint
 import com.mozhimen.taskk.provider.basic.interfaces.ITaskLifecycle
@@ -61,6 +62,16 @@ abstract class TaskDownloadOkDownload(iTaskLifecycle: ITaskLifecycle) : ATaskDow
         .hostnameVerifier { _, _ -> true }
 
     override var _downloadDir: File? = UtilKFileDir.External.getFilesDownloads()
+
+    private fun getAppTaskDownloadDir(appTask: AppTask): File? {
+        if (appTask.filePathNameExt.isNotEmpty()) {
+            val file = File(appTask.filePathNameExt)
+            return file.parentFile?.apply {
+                createFolder()
+            }
+        }
+        return null
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -226,8 +237,8 @@ abstract class TaskDownloadOkDownload(iTaskLifecycle: ITaskLifecycle) : ATaskDow
     }
 
     fun getDownloadTask(appTask: AppTask): DownloadTask? {
-        val dir = _downloadDir ?: run {
-            UtilKLogWrapper.d(TAG, "getDownloadTask: get download dir fail")
+        val dir = getAppTaskDownloadDir(appTask) ?: _downloadDir ?: run {
+            UtilKLogWrapper.d(TAG, "getDownloadTask: get downloadDir fail")
             return null
         }
         val downloadTask = DownloadTask.Builder(appTask.taskDownloadUrlCurrent, dir.absolutePath, appTask.fileNameExt, _breakpointCompare).build()
@@ -240,8 +251,8 @@ abstract class TaskDownloadOkDownload(iTaskLifecycle: ITaskLifecycle) : ATaskDow
 
     @Throws(TaskException::class)
     fun download(appTask: AppTask) {
-        val dir = _downloadDir
-            ?: throw CErrorCode.CODE_TASK_DOWNLOAD_PATH_NOT_EXIST.intErrorCode2taskException()
+        val dir = getAppTaskDownloadDir(appTask) ?: _downloadDir
+        ?: throw CErrorCode.CODE_TASK_DOWNLOAD_PATH_NOT_EXIST.intErrorCode2taskException()
         val downloadTask = DownloadTask.Builder(appTask.taskDownloadUrlCurrent, dir, _breakpointCompare)//先构建一个Task 框架可以保证Id唯一
             .setConnectionCount(1)
             .setFilename(appTask.fileNameExt)

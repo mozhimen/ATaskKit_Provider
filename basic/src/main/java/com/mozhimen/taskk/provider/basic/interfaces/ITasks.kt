@@ -59,13 +59,21 @@ interface ITaskUninstall {
     fun onTaskUninstallCancel(appTask: AppTask) {}
 }
 
+interface ITaskDelete {
+    fun onTaskDeleting(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {}
+    fun onTaskDeletePause(appTask: AppTask) {}
+    fun onTaskDeleteSuccess(appTask: AppTask) {}//文件删除的监听
+    fun onTaskDeleteFail(appTask: AppTask, exception: TaskException) {}
+    fun onTaskDeleteCancel(appTask: AppTask) {}
+}
+
 interface ITask {
     fun onTaskCreate(appTask: AppTask, isUpdate: Boolean) {}
     fun onTaskUnavailable(appTask: AppTask) {}
-    fun onTaskFinish(appTask: AppTask, finishType: STaskFinishType){}
+    fun onTaskFinish(appTask: AppTask, finishType: STaskFinishType) {}
 }
 
-interface ITasks : ITaskDownload, ITaskVerify, ITaskUnzip, ITaskInstall, ITaskOpen, ITaskUninstall, ITask
+interface ITasks : ITaskDownload, ITaskVerify, ITaskUnzip, ITaskInstall, ITaskOpen, ITaskUninstall, ITaskDelete, ITask
 //    /**
 //     * 任务等待取消的回调
 //     */

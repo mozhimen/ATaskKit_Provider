@@ -22,6 +22,7 @@ import com.mozhimen.kotlin.utilk.kotlin.ranges.constraint
 import com.mozhimen.kotlin.utilk.kotlin.strFilePath2file
 import com.mozhimen.taskk.executor.TaskKExecutor
 import com.mozhimen.taskk.provider.apk.cons.CExt
+import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUnzip
 import com.mozhimen.taskk.provider.basic.cons.CErrorCode
 import com.mozhimen.taskk.provider.basic.cons.CTaskState
@@ -65,7 +66,7 @@ open class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifec
 
     //////////////////////////////////////////////////////////////////
 
-    override fun taskStart(appTask: AppTask) {
+    override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
         if (!appTask.canTaskUnzip()) {
             UtilKLogWrapper.e(TAG, "install: the task hasn't verify success")
             return
@@ -74,7 +75,7 @@ open class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifec
             UtilKLogWrapper.e(TAG, "install: the task is already unziping")
             return
         }
-        super.taskStart(appTask)
+        super.taskStart(appTask, taskQueueName)
         if (appTask.taskUnzipEnable) {
             startUnzip(appTask)
         } else {
@@ -82,10 +83,10 @@ open class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifec
         }
     }
 
-    override fun taskCancel(appTask: AppTask) {
+    override fun taskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
         if (appTask.isTaskUnzipSuccess()) {
             _iTaskInterceptor?.deleteOrgFiles(appTask)
-            super.taskCancel(appTask)
+            super.taskCancel(appTask, taskQueueName)
         }
     }
 

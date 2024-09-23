@@ -13,5 +13,4 @@ import com.mozhimen.taskk.provider.basic.db.AppTask
 interface ITaskInterceptor : IUtilK {
     fun isAutoDeleteOrgFiles(): Boolean
     fun deleteOrgFiles(appTask: AppTask)
-    fun isAutoInstall(): Boolean
 }

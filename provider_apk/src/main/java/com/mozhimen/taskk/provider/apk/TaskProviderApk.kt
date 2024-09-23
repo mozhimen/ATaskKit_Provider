@@ -9,6 +9,7 @@ import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.kotlin.utilk.android.content.UtilKPackage
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.installk.manager.commons.IPackagesChangeListener
+import com.mozhimen.taskk.provider.apk.impls.TaskDeleteApk
 import com.mozhimen.taskk.provider.apk.impls.TaskDownloadOkDownloadApk
 import com.mozhimen.taskk.provider.apk.impls.TaskInstallApk
 import com.mozhimen.taskk.provider.apk.impls.TaskOpenApk
@@ -18,6 +19,7 @@ import com.mozhimen.taskk.provider.apk.impls.TaskVerifyApk
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.ATaskProvider
+import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDelete
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskOpen
@@ -100,6 +102,10 @@ open class TaskProviderApk(
         return TaskUninstallApk(_iTaskLifecycle)
     }
 
+    override fun getTaskDelete(): ATaskDelete? {
+        return TaskDeleteApk(_iTaskLifecycle)
+    }
+
     ////////////////////////////////////////////////////////////////////
 
     @OptIn(OApiInit_InApplication::class)
@@ -130,8 +136,12 @@ open class TaskProviderApk(
 
     ////////////////////////////////////////////////////////////////////
 
-    override fun getTaskQueue(): List<String> {
-        return listOf(ATaskName.TASK_DOWNLOAD, ATaskName.TASK_VERIFY, ATaskName.TASK_UNZIP, ATaskName.TASK_INSTALL)
+    override fun getTaskQueue(): Map<String, List<String>> {
+        return mapOf(
+            ATaskName.TASK_INSTALL to listOf(ATaskName.TASK_DOWNLOAD, ATaskName.TASK_VERIFY, ATaskName.TASK_UNZIP, ATaskName.TASK_INSTALL),
+            ATaskName.TASK_OPEN to listOf(ATaskName.TASK_OPEN),
+            ATaskName.TASK_UNINSTALL to listOf(ATaskName.TASK_DELETE)
+        )
     }
 
     ////////////////////////////////////////////////////////////////////
