@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @Version 1.0
  */
 @OptIn(OApiInit_InApplication::class)
-open class TaskSetDelete constructor(override val taskManager: ATaskManager, override val providerDefaults: List<ATaskDelete>) : ATaskSetDelete() {
+open class TaskSetDelete constructor(taskManager: ATaskManager, override val providerDefaults: List<ATaskDelete>) : ATaskSetDelete(taskManager) {
     override val providers: ConcurrentHashMap<String, ATaskDelete> by lazy {
         ConcurrentHashMap<String, ATaskDelete>(
             providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskDelete>)?.toMutableMap() }.fold(emptyMap()) { a, n -> a + n })

@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @Version 1.0
  */
 @OptIn(OApiInit_InApplication::class)
-class TaskSetClose(override val taskManager: ATaskManager, override val providerDefaults: List<ATaskClose>) : ATaskSetClose() {
+class TaskSetClose(taskManager: ATaskManager, override val providerDefaults: List<ATaskClose>) : ATaskSetClose(taskManager) {
     override val providers: ConcurrentHashMap<String, ATaskClose> by lazy {
         ConcurrentHashMap(
             providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskClose>)?.toMutableMap() }.fold(emptyMap()) { acc, nex -> acc + nex }

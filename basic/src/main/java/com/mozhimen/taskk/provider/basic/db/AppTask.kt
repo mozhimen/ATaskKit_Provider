@@ -50,7 +50,7 @@ data class AppTask constructor(
     @ColumnInfo(name = "download_progress")
     var taskDownloadProgress: Int = 0,//下载进度
     @ColumnInfo(name = "download_file_size")
-    var taskDownloadFileSizeOffset: Long = 0,
+    var taskDownloadFileSizeOffset: Long = 0,//下载的大小
     @ColumnInfo(name = "apk_file_size")
     var taskDownloadFileSizeTotal: Long = 0,//软件大小
     @ColumnInfo(name = "task_download_file_speed")
@@ -92,7 +92,8 @@ data class AppTask constructor(
     @ColumnInfo(name = "apk_version_code")
     val apkVersionCode: Int,
     @ColumnInfo(name = "apk_version_name")
-    val apkVersionName: String/*,
+    val apkVersionName: String,
+    /*,
     @ColumnInfo(name = "apk_is_installed")
     var apkIsInstalled: Boolean,//是否安装0未,1安装*/
 ) : IUtilK {
@@ -110,7 +111,7 @@ data class AppTask constructor(
         fileNameExt: String,//和apkName的区别是有后缀
         apkPackageName: String,//包名
         apkVersionCode: Int,
-        apkVersionName: String
+        apkVersionName: String,
     ) : this(
         taskId,
         taskState,
@@ -238,22 +239,22 @@ data class AppTask constructor(
     ////////////////////////////////////////////////////////////////
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskStart(taskManager: ATaskManager,@ATaskQueueName taskQueueName: String): Boolean {
+    fun canTaskStart(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean {
         return taskManager.canTaskStart(this, taskQueueName)
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskResume(taskManager: ATaskManager,@ATaskQueueName taskQueueName: String): Boolean {
+    fun canTaskResume(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean {
         return taskManager.canTaskResume(this, taskQueueName)
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskPause(taskManager: ATaskManager,@ATaskQueueName taskQueueName: String): Boolean {
+    fun canTaskPause(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean {
         return taskManager.canTaskPause(this, taskQueueName)
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskCancel(taskManager: ATaskManager,@ATaskQueueName taskQueueName: String): Boolean {
+    fun canTaskCancel(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean {
         return taskManager.canTaskCancel(this, taskQueueName)
     }
 
@@ -307,29 +308,37 @@ data class AppTask constructor(
 
     ////////////////////////////////////////////////////////////
 
-    fun canTaskDownload(): Boolean =
-        ATaskState.canTaskDownload(taskState)
+    @OptIn(OApiInit_InApplication::class)
+    fun canTaskDownload(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
+        ATaskState.canTaskDownload(taskState, taskManager, fileExt, taskQueueName)
 
-    fun canTaskVerify(): Boolean =
-        ATaskState.canTaskVerify(taskState)
+    @OptIn(OApiInit_InApplication::class)
+    fun canTaskVerify(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
+        ATaskState.canTaskVerify(taskState, taskManager, fileExt, taskQueueName)
 
-    fun canTaskUnzip(): Boolean =
-        ATaskState.canTaskUnzip(taskState)
+    @OptIn(OApiInit_InApplication::class)
+    fun canTaskUnzip(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
+        ATaskState.canTaskUnzip(taskState, taskManager, fileExt, taskQueueName)
 
-    fun canTaskInstall(): Boolean =
-        ATaskState.canTaskInstall(taskState)
+    @OptIn(OApiInit_InApplication::class)
+    fun canTaskInstall(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
+        ATaskState.canTaskInstall(taskState, taskManager, fileExt, taskQueueName)
 
-    fun canTaskOpen(): Boolean =
-        ATaskState.canTaskOpen(taskState)
+    @OptIn(OApiInit_InApplication::class)
+    fun canTaskOpen(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
+        ATaskState.canTaskOpen(taskState, taskManager, fileExt, taskQueueName)
 
-    fun canTaskClose(): Boolean =
-        ATaskState.canTaskClose(taskState)
+    @OptIn(OApiInit_InApplication::class)
+    fun canTaskClose(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
+        ATaskState.canTaskClose(taskState, taskManager, fileExt, taskQueueName)
 
-    fun canTaskUninstall(): Boolean =
-        ATaskState.canTaskUninstall(taskState)
+    @OptIn(OApiInit_InApplication::class)
+    fun canTaskUninstall(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
+        ATaskState.canTaskUninstall(taskState, taskManager, fileExt, taskQueueName)
 
-    fun canTaskDelete(): Boolean =
-        ATaskState.canTaskDelete(taskState)
+    @OptIn(OApiInit_InApplication::class)
+    fun canTaskDelete(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
+        ATaskState.canTaskDelete(taskState, taskManager, fileExt, taskQueueName)
 
     ////////////////////////////////////////////////////////////
 

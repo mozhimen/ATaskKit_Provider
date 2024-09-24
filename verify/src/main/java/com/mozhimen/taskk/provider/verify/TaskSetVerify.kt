@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @Version 1.0
  */
 @OptIn(OApiInit_InApplication::class)
-class TaskSetVerify(override val taskManager: ATaskManager, override val providerDefaults: List<ATaskVerify>) : ATaskSetVerify() {
+class TaskSetVerify(taskManager: ATaskManager, override val providerDefaults: List<ATaskVerify>) : ATaskSetVerify(taskManager) {
     override val providers: ConcurrentHashMap<String, ATaskVerify> by lazy {
         ConcurrentHashMap(
             providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskVerify>) }.fold(emptyMap()) { acc, nex -> acc + nex }

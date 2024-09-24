@@ -1,6 +1,18 @@
 package com.mozhimen.taskk.provider.basic.annors
 
+import android.util.Log
 import androidx.annotation.IntDef
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.taskk.provider.basic.annors.ATaskName.Companion.TASK_CLOSE
+import com.mozhimen.taskk.provider.basic.annors.ATaskName.Companion.TASK_DELETE
+import com.mozhimen.taskk.provider.basic.annors.ATaskName.Companion.TASK_DOWNLOAD
+import com.mozhimen.taskk.provider.basic.annors.ATaskName.Companion.TASK_INSTALL
+import com.mozhimen.taskk.provider.basic.annors.ATaskName.Companion.TASK_OPEN
+import com.mozhimen.taskk.provider.basic.annors.ATaskName.Companion.TASK_UNINSTALL
+import com.mozhimen.taskk.provider.basic.annors.ATaskName.Companion.TASK_UNZIP
+import com.mozhimen.taskk.provider.basic.annors.ATaskName.Companion.TASK_VERIFY
+import com.mozhimen.taskk.provider.basic.bases.ATask
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 
 /**
  * @ClassName ATaskState
@@ -70,58 +82,72 @@ import androidx.annotation.IntDef
 annotation class ATaskState {
     companion object {
         fun getTaskCode(@ATaskState taskState: Int): @ATaskState Int =
-            taskState / 10
+            (taskState / 10).also { Log.d("ATaskState>>>>>", "getTaskCode: $it") }
+
+        fun taskState2taskName(@ATaskState taskState: Int): @ATaskName String? {
+            return (when (taskState) {
+                STATE_DOWNLOAD_CREATE / 10 -> TASK_DOWNLOAD
+                STATE_VERIFY_CREATE / 10 -> TASK_VERIFY
+                STATE_UNZIP_CREATE / 10 -> TASK_UNZIP
+                STATE_INSTALL_CREATE / 10 -> TASK_INSTALL
+                STATE_OPEN_CREATE / 10 -> TASK_OPEN
+                STATE_CLOSE_CREATE / 10 -> TASK_CLOSE
+                STATE_UNINSTALL_CREATE / 10 -> TASK_UNINSTALL
+                STATE_DELETE_CREATE / 10 -> TASK_DELETE
+                else -> null
+            }).also { Log.d("ATaskState>>>>>", "taskState2taskName: $it") }
+        }
 
         fun intTaskState2strTaskState(state: Int): String =
             when (state) {
 //            CNetKAppState.STATE_DOWNLOAD_WAIT -> "下载等待"
-                ATaskState.STATE_DOWNLOADING -> "下载中 "
-                ATaskState.STATE_DOWNLOAD_PAUSE -> "下载暂停"
-                ATaskState.STATE_DOWNLOAD_CANCEL -> "下载取消"
-                ATaskState.STATE_DOWNLOAD_SUCCESS -> "下载成功"
-                ATaskState.STATE_DOWNLOAD_FAIL -> "下载失败"
+                STATE_DOWNLOADING -> "下载中 "
+                STATE_DOWNLOAD_PAUSE -> "下载暂停"
+                STATE_DOWNLOAD_CANCEL -> "下载取消"
+                STATE_DOWNLOAD_SUCCESS -> "下载成功"
+                STATE_DOWNLOAD_FAIL -> "下载失败"
 
-                ATaskState.STATE_VERIFYING -> "验证中 "
-                ATaskState.STATE_VERIFY_PAUSE -> "验证暂停"
-                ATaskState.STATE_VERIFY_CANCEL -> "验证取消"
-                ATaskState.STATE_VERIFY_SUCCESS -> "验证成功"
-                ATaskState.STATE_VERIFY_FAIL -> "验证失败"
+                STATE_VERIFYING -> "验证中 "
+                STATE_VERIFY_PAUSE -> "验证暂停"
+                STATE_VERIFY_CANCEL -> "验证取消"
+                STATE_VERIFY_SUCCESS -> "验证成功"
+                STATE_VERIFY_FAIL -> "验证失败"
 
-                ATaskState.STATE_UNZIPING -> "解压中 "
-                ATaskState.STATE_UNZIP_PAUSE -> "解压暂停"
-                ATaskState.STATE_UNZIP_CANCEL -> "解压取消"
-                ATaskState.STATE_UNZIP_SUCCESS -> "解压成功"
-                ATaskState.STATE_UNZIP_FAIL -> "解压失败"
+                STATE_UNZIPING -> "解压中 "
+                STATE_UNZIP_PAUSE -> "解压暂停"
+                STATE_UNZIP_CANCEL -> "解压取消"
+                STATE_UNZIP_SUCCESS -> "解压成功"
+                STATE_UNZIP_FAIL -> "解压失败"
 
-                ATaskState.STATE_INSTALLING -> "安装中 "
-                ATaskState.STATE_INSTALL_PAUSE -> "安装暂停"
-                ATaskState.STATE_INSTALL_CANCEL -> "安装取消"
-                ATaskState.STATE_INSTALL_SUCCESS -> "安装成功"
-                ATaskState.STATE_INSTALL_FAIL -> "安装失败"
+                STATE_INSTALLING -> "安装中 "
+                STATE_INSTALL_PAUSE -> "安装暂停"
+                STATE_INSTALL_CANCEL -> "安装取消"
+                STATE_INSTALL_SUCCESS -> "安装成功"
+                STATE_INSTALL_FAIL -> "安装失败"
 
-                ATaskState.STATE_OPENING -> "打开中 "
-                ATaskState.STATE_OPEN_PAUSE -> "打开暂停"
-                ATaskState.STATE_OPEN_CANCEL -> "打开取消"
-                ATaskState.STATE_OPEN_SUCCESS -> "打开成功"
-                ATaskState.STATE_OPEN_FAIL -> "打开失败"
+                STATE_OPENING -> "打开中 "
+                STATE_OPEN_PAUSE -> "打开暂停"
+                STATE_OPEN_CANCEL -> "打开取消"
+                STATE_OPEN_SUCCESS -> "打开成功"
+                STATE_OPEN_FAIL -> "打开失败"
 
-                ATaskState.STATE_CLOSING -> "关闭中 "
-                ATaskState.STATE_CLOSE_PAUSE -> "关闭暂停"
-                ATaskState.STATE_CLOSE_CANCEL -> "关闭取消"
-                ATaskState.STATE_CLOSE_SUCCESS -> "关闭成功"
-                ATaskState.STATE_CLOSE_FAIL -> "关闭失败"
+                STATE_CLOSING -> "关闭中 "
+                STATE_CLOSE_PAUSE -> "关闭暂停"
+                STATE_CLOSE_CANCEL -> "关闭取消"
+                STATE_CLOSE_SUCCESS -> "关闭成功"
+                STATE_CLOSE_FAIL -> "关闭失败"
 
-                ATaskState.STATE_UNINSTALLING -> "卸载中 "
-                ATaskState.STATE_UNINSTALL_PAUSE -> "卸载暂停"
-                ATaskState.STATE_UNINSTALL_CANCEL -> "卸载取消"
-                ATaskState.STATE_UNINSTALL_SUCCESS -> "卸载成功"
-                ATaskState.STATE_UNINSTALL_FAIL -> "卸载失败"
+                STATE_UNINSTALLING -> "卸载中 "
+                STATE_UNINSTALL_PAUSE -> "卸载暂停"
+                STATE_UNINSTALL_CANCEL -> "卸载取消"
+                STATE_UNINSTALL_SUCCESS -> "卸载成功"
+                STATE_UNINSTALL_FAIL -> "卸载失败"
 
-                ATaskState.STATE_DELETING -> "删除中 "
-                ATaskState.STATE_DELETE_PAUSE -> "删除暂停"
-                ATaskState.STATE_DELETE_CANCEL -> "删除取消"
-                ATaskState.STATE_DELETE_SUCCESS -> "删除成功"
-                ATaskState.STATE_DELETE_FAIL -> "删除失败"
+                STATE_DELETING -> "删除中 "
+                STATE_DELETE_PAUSE -> "删除暂停"
+                STATE_DELETE_CANCEL -> "删除取消"
+                STATE_DELETE_SUCCESS -> "删除成功"
+                STATE_DELETE_FAIL -> "删除失败"
 
 
                 AState.STATE_TASK_CREATE -> "任务创建"
@@ -134,9 +160,28 @@ annotation class ATaskState {
                 else -> "任务中 "
             }
 
+        @OptIn(OApiInit_InApplication::class)
+        fun canTaskExecute(
+            @ATaskState taskState: Int,
+            taskManager: ATaskManager,
+            @AFileExt fileExt: String,
+            @ATaskQueueName taskQueueName: String,
+            @ATaskState currentTaskCode: Int,
+            @ATaskState prevTaskCode: Int? = null,
+        ): Boolean {
+            val preTaskCode = taskManager.getPrevTaskName_ofTaskQueue(fileExt, taskQueueName, getTaskCode(taskState).taskState2taskName())?.taskName2taskState() ?: prevTaskCode?.let { getTaskCode(it) }
+            return (preTaskCode?.let {
+                AState.canTaskExecute(taskState, currentTaskCode, it)
+            } ?: run {
+//                AState.canTaskStart(taskState)
+                true
+            }).also { Log.d("ATaskState>>>>>", "canTaskExecute: $it preTaskCode $preTaskCode ") } //taskState in STATE_DOWNLOAD_CREATE..STATE_DOWNLOAD_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE
+        }
+
         /////////////////////////////////////////////////////////////////////
 
         const val STATE_DOWNLOAD_CREATE = 10//STATE_DOWNLOADED = 5//未下载
+
         //    const val STATE_DOWNLOAD_WAIT = STATE_DOWNLOAD_CREATE + CNetKAppTaskState.STATE_TASK_WAIT//11//下载等待
         const val STATE_DOWNLOADING = STATE_DOWNLOAD_CREATE + AState.STATE_TASKING//12//STATE_DOWNLOAD_IN_PROGRESS = 6//正在下载
         const val STATE_DOWNLOAD_PAUSE = STATE_DOWNLOAD_CREATE + AState.STATE_TASK_PAUSE//13//STATE_DOWNLOAD_PAUSED = 7//下载暂停
@@ -144,8 +189,9 @@ annotation class ATaskState {
         const val STATE_DOWNLOAD_SUCCESS = STATE_DOWNLOAD_CREATE + AState.STATE_TASK_SUCCESS//18//STATE_DOWNLOAD_COMPLETED = 8//下载完成
         const val STATE_DOWNLOAD_FAIL = STATE_DOWNLOAD_CREATE + AState.STATE_TASK_FAIL//19//STATE_DOWNLOAD_FAILED = 10//下载失败
 
-        fun canTaskDownload(taskState: Int): Boolean =
-            taskState in STATE_DOWNLOAD_CREATE..STATE_DOWNLOAD_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE
+        @OptIn(OApiInit_InApplication::class)
+        fun canTaskDownload(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
+            canTaskExecute(taskState, taskManager, fileExt, taskQueueName, STATE_DOWNLOAD_CREATE)
 
         fun atTaskDownload(taskState: Int): Boolean =
             taskState in STATE_DOWNLOAD_CREATE..STATE_DOWNLOAD_FAIL
@@ -165,8 +211,10 @@ annotation class ATaskState {
         const val STATE_VERIFY_SUCCESS = STATE_VERIFY_CREATE + AState.STATE_TASK_SUCCESS//28//STATE_CHECKING_SUCCESS = 15//校验成功
         const val STATE_VERIFY_FAIL = STATE_VERIFY_CREATE + AState.STATE_TASK_FAIL//29//STATE_CHECKING_FAILURE = 16//校验失败
 
-        fun canTaskVerify(taskState: Int): Boolean =
-            taskState in STATE_DOWNLOAD_SUCCESS..STATE_VERIFY_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE
+        @OptIn(OApiInit_InApplication::class)
+        fun canTaskVerify(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
+            canTaskExecute(taskState, taskManager, fileExt, taskQueueName, STATE_VERIFY_CREATE)
+        //taskState in STATE_DOWNLOAD_SUCCESS..STATE_VERIFY_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE
 
         fun atTaskVerify(taskState: Int): Boolean =
             taskState in STATE_VERIFY_CREATE..STATE_VERIFY_FAIL
@@ -186,8 +234,10 @@ annotation class ATaskState {
         const val STATE_UNZIP_SUCCESS = STATE_UNZIP_CREATE + AState.STATE_TASK_SUCCESS//38//STATE_UNPACKING_SUCCESSFUL = 12//解压成功
         const val STATE_UNZIP_FAIL = STATE_UNZIP_CREATE + AState.STATE_TASK_FAIL//39//STATE_UNPACKING_FAILED = 13//解压失败
 
-        fun canTaskUnzip(taskState: Int): Boolean =
-            taskState in STATE_VERIFY_SUCCESS..STATE_UNZIP_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE
+        @OptIn(OApiInit_InApplication::class)
+        fun canTaskUnzip(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
+            canTaskExecute(taskState, taskManager, fileExt, taskQueueName, STATE_UNZIP_CREATE)
+        //taskState in STATE_VERIFY_SUCCESS..STATE_UNZIP_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE
 
         fun atTaskUnzip(taskState: Int): Boolean =
             taskState in STATE_UNZIP_CREATE..STATE_UNZIP_FAIL
@@ -207,8 +257,10 @@ annotation class ATaskState {
         const val STATE_INSTALL_SUCCESS = STATE_INSTALL_CREATE + AState.STATE_TASK_SUCCESS//48//STATE_INSTALLED = 2//已安装
         const val STATE_INSTALL_FAIL = STATE_INSTALL_CREATE + AState.STATE_TASK_FAIL//49//STATE_INSTALLED = 2//已安装
 
-        fun canTaskInstall(taskState: Int): Boolean =
-            taskState in STATE_UNZIP_SUCCESS..STATE_INSTALL_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE
+        @OptIn(OApiInit_InApplication::class)
+        fun canTaskInstall(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
+            canTaskExecute(taskState, taskManager, fileExt, taskQueueName, STATE_INSTALL_CREATE)
+//            taskState in STATE_UNZIP_SUCCESS..STATE_INSTALL_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE
 
         fun atTaskInstall(taskState: Int): Boolean =
             taskState in STATE_INSTALL_CREATE..STATE_INSTALL_FAIL
@@ -229,8 +281,10 @@ annotation class ATaskState {
         const val STATE_OPEN_SUCCESS = STATE_OPEN_CREATE + AState.STATE_TASK_SUCCESS//58
         const val STATE_OPEN_FAIL = STATE_OPEN_CREATE + AState.STATE_TASK_FAIL//59
 
-        fun canTaskOpen(taskState: Int): Boolean =
-            taskState in STATE_INSTALL_SUCCESS..STATE_OPEN_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE
+        @OptIn(OApiInit_InApplication::class)
+        fun canTaskOpen(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
+            canTaskExecute(taskState, taskManager, fileExt, taskQueueName, STATE_OPEN_CREATE)
+//            taskState in STATE_INSTALL_SUCCESS..STATE_OPEN_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE
 
         fun atTaskOpen(taskState: Int): Boolean =
             taskState in STATE_OPEN_CREATE..STATE_OPEN_FAIL
@@ -251,8 +305,9 @@ annotation class ATaskState {
         const val STATE_CLOSE_SUCCESS = STATE_CLOSE_CREATE + AState.STATE_TASK_SUCCESS//58
         const val STATE_CLOSE_FAIL = STATE_CLOSE_CREATE + AState.STATE_TASK_FAIL//59
 
-        fun canTaskClose(taskState: Int): Boolean =
-            taskState in STATE_OPEN_SUCCESS..STATE_CLOSE_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE || taskState in AState.STATE_TASK_CANCEL..AState.STATE_TASK_FAIL
+        @OptIn(OApiInit_InApplication::class)
+        fun canTaskClose(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
+            canTaskExecute(taskState, taskManager, fileExt, taskQueueName, STATE_CLOSE_CREATE, STATE_OPEN_CREATE) || AState.canTaskStart(taskState) || AState.canTaskFinish(taskState)
 
         fun atTaskClose(taskState: Int): Boolean =
             taskState in STATE_CLOSE_CREATE..STATE_CLOSE_FAIL
@@ -273,8 +328,9 @@ annotation class ATaskState {
         const val STATE_UNINSTALL_SUCCESS = STATE_UNINSTALL_CREATE + AState.STATE_TASK_SUCCESS//58
         const val STATE_UNINSTALL_FAIL = STATE_UNINSTALL_CREATE + AState.STATE_TASK_FAIL//59
 
-        fun canTaskUninstall(taskState: Int): Boolean =
-            taskState in STATE_INSTALL_SUCCESS..STATE_UNINSTALL_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE || taskState in AState.STATE_TASK_CANCEL..AState.STATE_TASK_FAIL
+        @OptIn(OApiInit_InApplication::class)
+        fun canTaskUninstall(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
+            canTaskExecute(taskState, taskManager, fileExt, taskQueueName, STATE_UNINSTALL_CREATE, STATE_INSTALL_CREATE) || AState.canTaskStart(taskState) || AState.canTaskFinish(taskState)
 
         fun atTaskUninstall(taskState: Int): Boolean =
             taskState in STATE_UNINSTALL_CREATE..STATE_UNINSTALL_FAIL
@@ -295,8 +351,16 @@ annotation class ATaskState {
         const val STATE_DELETE_SUCCESS = STATE_DELETE_CREATE + AState.STATE_TASK_SUCCESS//98
         const val STATE_DELETE_FAIL = STATE_DELETE_CREATE + AState.STATE_TASK_FAIL//99
 
-        fun canTaskDelete(taskState: Int): Boolean =
-            taskState in STATE_DOWNLOAD_SUCCESS..STATE_DELETE_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE || taskState in AState.STATE_TASK_CANCEL..AState.STATE_TASK_FAIL
+        @OptIn(OApiInit_InApplication::class)
+        fun canTaskDelete(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
+            canTaskExecute(
+                taskState,
+                taskManager,
+                fileExt,
+                taskQueueName,
+                STATE_DELETE_CREATE,
+                STATE_DOWNLOAD_CREATE
+            )/*taskState in STATE_DOWNLOAD_SUCCESS..STATE_DELETE_PAUSE*/ || AState.canTaskStart(taskState) || AState.canTaskFinish(taskState)
 
         fun atTaskDelete(taskState: Int): Boolean =
             taskState in STATE_DELETE_CREATE..STATE_DELETE_FAIL
@@ -314,3 +378,6 @@ annotation class ATaskState {
         const val STATE_UPDATE_FAIL = 59*/
     }
 }
+
+fun @ATaskState Int.taskState2taskName(): @ATaskName String? =
+    ATaskState.taskState2taskName(this)

@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @Version 1.0
  */
 @OptIn(OPermission_INTERNET::class, OApiInit_InApplication::class)
-class TaskSetDownload constructor(override val taskManager: ATaskManager, override val providerDefaults: List<ATaskDownload>) : ATaskSetDownload() {
+class TaskSetDownload constructor(taskManager: ATaskManager, override val providerDefaults: List<ATaskDownload>) : ATaskSetDownload(taskManager) {
     override val providers: ConcurrentHashMap<String, ATaskDownload> by lazy {
         ConcurrentHashMap(
             providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskDownload>)?.toMutableMap() }.fold(emptyMap()) { acc, nex -> acc + nex }
@@ -34,7 +34,7 @@ class TaskSetDownload constructor(override val taskManager: ATaskManager, overri
     @OptIn(OApiInit_InApplication::class)
     override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
         try {
-            if (appTask.isTaskProcess(taskManager, taskQueueName) && !appTask.isAnyTaskPause()) {
+            if (appTask.isTaskProcess(_taskManager, taskQueueName) && !appTask.isAnyTaskPause()) {
                 UtilKLogWrapper.d(TAG, "taskStart: the task already start")
                 return
             }

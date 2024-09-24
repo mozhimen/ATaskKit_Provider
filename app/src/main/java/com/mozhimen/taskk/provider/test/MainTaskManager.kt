@@ -39,7 +39,7 @@ object MainTaskManager : TaskManager() {
     @SuppressLint("MissingPermission")
     @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class, OPermission_POST_NOTIFICATIONS::class)
     override fun getTaskInstalls(): List<ATaskInstall> {
-        return mutableListOf(TaskInstallSplitsAckpine(_iTaskLifecycle, _applyPermissionListener = { _, taskInstallSplitsAckpine, appTask ->
+        return mutableListOf(TaskInstallSplitsAckpine(this,_iTaskLifecycle, _applyPermissionListener = { _, taskInstallSplitsAckpine, appTask ->
             UtilKLogWrapper.d(TAG, "getTaskInstalls: permissions")
             StackKCb.instance.getStackTopActivity()?.let {
                 requestPermissionInstall(it) {

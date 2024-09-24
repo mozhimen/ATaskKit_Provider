@@ -2,6 +2,7 @@ package com.mozhimen.taskk.provider.basic.bases
 
 import android.content.Context
 import androidx.annotation.CallSuper
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.commons.ITaskEvent
@@ -22,7 +23,8 @@ import java.util.concurrent.atomic.AtomicBoolean
  *     |                                        |             |      ↓
  * delete(90)   <------------------------- uninstall(70) <- close(60)
  */
-abstract class ATask(protected val _iTaskLifecycle: ITaskLifecycle?) : IUtilK, ITaskLifecycle, ITaskEvent {
+@OptIn(OApiInit_InApplication::class)
+abstract class ATask(protected val _taskManager: ATaskManager, protected val _iTaskLifecycle: ITaskLifecycle?) : IUtilK, ITaskLifecycle, ITaskEvent {
     val isInit: AtomicBoolean = AtomicBoolean(false)
 
     //////////////////////////////////////////////////////

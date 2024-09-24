@@ -48,6 +48,17 @@ annotation class AState {
 
         /////////////////////////////////////////////////////////////////////
 
+        fun canTaskExecute(taskState: Int, currentTaskCode: Int, preTaskCode: Int?): Boolean =
+            taskState in (preTaskCode?.let { it + STATE_TASK_SUCCESS } ?: (currentTaskCode + STATE_TASK_CREATE))..(currentTaskCode + STATE_TASK_PAUSE)
+
+        fun canTaskStart(taskState: Int): Boolean =
+            taskState in STATE_TASK_CREATE..STATE_TASK_UPDATE
+
+        fun canTaskFinish(taskState: Int): Boolean =
+            taskState in STATE_TASK_CANCEL..STATE_TASK_FAIL
+
+        /////////////////////////////////////////////////////////////////////
+
         @OptIn(OApiInit_InApplication::class)
         fun isTaskProcess(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
             !isTaskCreate(taskState) &&

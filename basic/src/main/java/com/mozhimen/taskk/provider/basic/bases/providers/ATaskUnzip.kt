@@ -5,6 +5,7 @@ import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATask
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 import java.io.File
@@ -16,7 +17,7 @@ import java.io.File
  * @Date 2024/8/19
  * @Version 1.0
  */
-abstract class ATaskUnzip(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifecycle) {
+abstract class ATaskUnzip(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle?) : ATask(taskManager,iTaskLifecycle) {
     protected abstract var _unzipDir: File?
 
     @Volatile

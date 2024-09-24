@@ -17,12 +17,9 @@ import java.util.concurrent.ConcurrentHashMap
  * @Date 2024/8/19
  * @Version 1.0
  */
-abstract class ATaskSet<T : ATask> : ATask(null) {
+abstract class ATaskSet<T : ATask>(taskManager: ATaskManager) : ATask(taskManager, null) {
     abstract val providerDefaults: List<T>
     abstract val providers: ConcurrentHashMap<String, T>
-
-    @OptIn(OApiInit_InApplication::class)
-    abstract val taskManager: ATaskManager
 
     ////////////////////////////////////////////////////////////////////
 

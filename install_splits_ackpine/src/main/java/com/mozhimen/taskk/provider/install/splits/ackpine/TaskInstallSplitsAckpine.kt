@@ -1,5 +1,6 @@
 package com.mozhimen.taskk.provider.install.splits.ackpine
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.mozhimen.kotlin.elemk.commons.IABC_Listener
@@ -13,6 +14,7 @@ import com.mozhimen.kotlin.utilk.wrapper.UtilKPermission
 import com.mozhimen.installk.splits.ackpine.InstallKSplitsAckpine
 import com.mozhimen.installk.splits.ackpine.cons.SInstallState
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
@@ -28,16 +30,19 @@ import java.io.File
 @OPermission_REQUEST_INSTALL_PACKAGES
 @OPermission_POST_NOTIFICATIONS
 class TaskInstallSplitsAckpine constructor(
+    taskManager:ATaskManager,
     iTaskLifecycle: ITaskLifecycle,
     private val _applyPermissionListener: IABC_Listener<File, TaskInstallSplitsAckpine, AppTask>? = null,
     private val _installListener: IA_Listener<SInstallState>? = null
-) : ATaskInstall(iTaskLifecycle) {
+) : ATaskInstall(taskManager,iTaskLifecycle) {
 
     override fun getSupportFileExts(): List<String> {
         return listOf("zip", "apks", "xapk", "apkm", "apk")
     }
 
+    @SuppressLint("MissingSuperCall")
     override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+//        super.taskStart(appTask, taskQueueName)
         val file = if (appTask.taskUnzipEnable) {
             appTask.taskUnzipFilePath.strFilePath2file()
         } else {

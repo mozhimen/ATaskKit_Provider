@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @Version 1.0
  */
 @OptIn(OApiInit_InApplication::class)
-open class TaskSetInstall(override val taskManager: ATaskManager, override val providerDefaults: List<ATaskInstall>) : ATaskSetInstall() {
+open class TaskSetInstall(taskManager: ATaskManager, override val providerDefaults: List<ATaskInstall>) : ATaskSetInstall(taskManager) {
     override val providers: ConcurrentHashMap<String, ATaskInstall> by lazy {
         ConcurrentHashMap<String, ATaskInstall>(
             providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskInstall>)?.toMutableMap() }.fold(emptyMap()) { a, n -> a + n })

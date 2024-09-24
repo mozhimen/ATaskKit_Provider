@@ -48,5 +48,5 @@ annotation class ATaskName {
     }
 }
 
-fun @receiver:ATaskName String.taskName2taskState(): @ATaskState Int =
+fun @ATaskName String.taskName2taskState(): @ATaskState Int =
     ATaskName.taskName2taskState(this)

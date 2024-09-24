@@ -68,7 +68,7 @@ object ViewUtil {
                     onTaskResume.invoke(it.context, appTask)
                 }
 
-                appTask.canTaskInstall()/*CTaskState.STATE_UNZIP_SUCCESS, CTaskState.STATE_INSTALLING*/ -> {
+                appTask.canTaskInstall(taskManager,taskQueueName)/*CTaskState.STATE_UNZIP_SUCCESS, CTaskState.STATE_INSTALLING*/ -> {
                     onTaskInstall.invoke(it.context, appTask)
                 }
 

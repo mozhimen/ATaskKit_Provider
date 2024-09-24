@@ -7,6 +7,7 @@ import com.mozhimen.kotlin.utilk.kotlin.strFilePath2file
 import com.mozhimen.taskk.provider.apk.cons.CExt
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskVerify
 import com.mozhimen.taskk.provider.basic.cons.CErrorCode
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
@@ -21,7 +22,7 @@ import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
  * @Date 2024/8/21 21:56
  * @Version 1.0
  */
-class TaskVerifyApk(iTaskLifecycle: ITaskLifecycle) : ATaskVerify(iTaskLifecycle) {
+class TaskVerifyApk(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle) : ATaskVerify(taskManager,iTaskLifecycle) {
 
     override fun getSupportFileExts(): List<String> {
         return listOf(CExt.EXT_APK)

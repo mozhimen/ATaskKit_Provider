@@ -3,6 +3,7 @@ package com.mozhimen.taskk.provider.apk.impls
 import android.os.Environment
 import android.util.Log
 import androidx.annotation.WorkerThread
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.app.UtilKApplicationWrapper
 import com.mozhimen.kotlin.utilk.android.content.UtilKContextDir
 import com.mozhimen.kotlin.utilk.android.os.UtilKHandlerWrapper
@@ -24,6 +25,7 @@ import com.mozhimen.taskk.provider.apk.cons.CExt
 import com.mozhimen.taskk.provider.apk.impls.interceptors.TaskInterceptorApk
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUnzip
 import com.mozhimen.taskk.provider.basic.cons.CErrorCode
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
@@ -42,7 +44,7 @@ import java.util.zip.ZipFile
  * @Date 2024/8/21 21:41
  * @Version 1.0
  */
-open class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifecycle) {
+open class TaskUnzipApk(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(taskManager,iTaskLifecycle) {
     //    override val unzipTasks: CopyOnWriteArrayList<AppTask> = CopyOnWriteArrayList()
     override var _unzipDir: File? = UtilKFileDir.External.getFilesDownloads()
 
@@ -58,8 +60,9 @@ open class TaskUnzipApk(iTaskLifecycle: ITaskLifecycle?) : ATaskUnzip(iTaskLifec
 
     //////////////////////////////////////////////////////////////////
 
+    @OptIn(OApiInit_InApplication::class)
     override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        if (!appTask.canTaskUnzip()) {
+        if (!appTask.canTaskUnzip(_taskManager, taskQueueName)) {
             UtilKLogWrapper.e(TAG, "install: the task hasn't verify success")
             return
         }

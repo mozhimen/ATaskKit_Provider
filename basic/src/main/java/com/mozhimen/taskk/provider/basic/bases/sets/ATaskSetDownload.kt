@@ -3,6 +3,7 @@ package com.mozhimen.taskk.provider.basic.bases.sets
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.ATaskSet
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
 import java.io.File
@@ -15,7 +16,7 @@ import java.io.File
  * @Version 1.0
  */
 @OPermission_INTERNET
-abstract class ATaskSetDownload : ATaskSet<ATaskDownload>() {
+abstract class ATaskSetDownload(taskManager: ATaskManager) : ATaskSet<ATaskDownload>(taskManager) {
     fun getDownloadDirs(): List<File> =
         providers.values.mapNotNull { it.getDownloadDir() }.toSet().toList()
 

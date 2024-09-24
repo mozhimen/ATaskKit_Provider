@@ -5,6 +5,7 @@ import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATask
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 
@@ -15,7 +16,7 @@ import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
  * @Date 2024/8/20
  * @Version 1.0
  */
-abstract class ATaskOpen(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifecycle) {
+abstract class ATaskOpen(taskManager:ATaskManager,iTaskLifecycle: ITaskLifecycle?) : ATask(taskManager,iTaskLifecycle) {
     override fun getTaskName(): String {
         return ATaskName.TASK_OPEN
     }

@@ -2,6 +2,7 @@ package com.mozhimen.taskk.provider.download.okdownload
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.OkDownload
 import com.liulishuo.okdownload.StatusUtil
@@ -23,6 +24,7 @@ import com.mozhimen.kotlin.utilk.kotlin.ranges.constraint
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 import com.mozhimen.taskk.provider.basic.impls.TaskException
 import com.mozhimen.taskk.provider.basic.impls.intErrorCode2taskException
@@ -47,7 +49,7 @@ import kotlin.math.abs
  * @Version 1.0
  */
 @OPermission_INTERNET
-abstract class TaskDownloadOkDownload(iTaskLifecycle: ITaskLifecycle) : ATaskDownload(iTaskLifecycle) {
+abstract class TaskDownloadOkDownload(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle) : ATaskDownload(taskManager,iTaskLifecycle) {
 
     companion object {
         private const val PARALLEL_RUNNING_COUNT = 3
@@ -115,6 +117,7 @@ abstract class TaskDownloadOkDownload(iTaskLifecycle: ITaskLifecycle) : ATaskDow
 
     @SuppressLint("MissingSuperCall")
     override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+        Log.d(TAG, "taskStart: download")
         download(appTask, taskQueueName)
     }
 

@@ -7,6 +7,7 @@ import com.mozhimen.kotlin.utilk.android.content.UtilKContextStart
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.taskk.provider.apk.cons.CExt
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskOpen
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
@@ -18,7 +19,7 @@ import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
  * @Date 2024/8/21 21:55
  * @Version 1.0
  */
-class TaskOpenApk(iTaskLifecycle: ITaskLifecycle) : ATaskOpen(iTaskLifecycle) {
+class TaskOpenApk(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle) : ATaskOpen(taskManager,iTaskLifecycle) {
 
     override fun getSupportFileExts(): List<String> {
         return listOf(CExt.EXT_APK)

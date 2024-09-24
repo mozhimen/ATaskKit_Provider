@@ -1,6 +1,7 @@
 package com.mozhimen.taskk.provider.basic.bases
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.CallSuper
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
@@ -139,12 +140,33 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             null).also { UtilKLogWrapper.d(TAG, "getNextTaskName: $it") }
     }
 
+    fun hasTaskName_ofTaskQueue(@AFileExt fileExt: String, @ATaskQueueName taskQueueName: String, @ATaskName taskName: String): Boolean {
+        return getTaskQueue(fileExt, taskQueueName)?.contains(taskName) ?: false
+    }
+
     fun getLastTaskName_ofTaskQueue(@AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): @ATaskName String? {
         return getTaskQueue(fileExt, taskQueueName)?.lastOrNull()
     }
 
     fun getFirstTaskName_ofTaskQueue(@AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): @ATaskName String? {
         return getTaskQueue(fileExt, taskQueueName)?.firstOrNull()
+    }
+
+    fun getPrevTaskName_ofTaskQueue(@AFileExt fileExt: String, @ATaskQueueName taskQueueName: String, @ATaskName currentTaskName: String?): @ATaskName String? {
+        currentTaskName ?: run {
+            Log.d(TAG, "getPrevTaskName_ofTaskQueue: currentTaskName is null")
+            return null
+        }
+        val indexOf = getTaskQueue(fileExt, taskQueueName)?.indexOf(currentTaskName)
+        if (indexOf != null && indexOf != -1) {
+            val preIndexOf = indexOf - 1
+            return (if (preIndexOf < 0) {
+                null
+            } else {
+                getTaskQueue(fileExt, taskQueueName)?.get(preIndexOf)
+            }).also { Log.d(TAG, "getPrevTaskName_ofTaskQueue: $it") }
+        } else
+            return null
     }
 
     fun getTaskQueueName_ofTaskName(@AFileExt fileExt: String, @ATaskName taskName: String): @ATaskQueueName String? {
@@ -196,14 +218,20 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             return
         UtilKLogWrapper.d(TAG, "taskStart: appTask $appTask")
         val currTaskName = getCurrTaskName_ofTaskQueue(appTask, taskQueueName, getFirstTaskName_ofTaskQueue(appTask.fileExt, taskQueueName) ?: return) ?: return
-        val nextTaskName = getNextTaskName_ofTaskQueue(appTask.fileExt, taskQueueName, currTaskName) ?: return
+        var nextTaskName = getNextTaskName_ofTaskQueue(appTask.fileExt, taskQueueName, currTaskName)
+        UtilKLogWrapper.d(TAG, "taskStart: currTaskName $currTaskName nextTaskName $nextTaskName")
         if (appTask.isAnyTaskSuccess()) {
             UtilKLogWrapper.d(TAG, "taskStart: getNextTaskSet")
-            if (nextTaskName != ATaskQueueName.TASK_RESTART) {
+            if (nextTaskName != null && nextTaskName != ATaskQueueName.TASK_RESTART) {
 //                getNextTaskSet(appTask.fileExt, taskQueueName, currTaskName)?.taskStart(appTask, taskQueueName)
                 getTaskSet(nextTaskName)?.taskStart(appTask, taskQueueName)
+            } else if (!hasTaskName_ofTaskQueue(appTask.fileExt, taskQueueName, currTaskName)) {
+                nextTaskName = getFirstTaskName_ofTaskQueue(appTask.fileExt, taskQueueName)
+                nextTaskName?.let {
+                    getTaskSet(nextTaskName)?.taskStart(appTask, taskQueueName)
+                }
             } else {
-                UtilKLogWrapper.d(TAG, "taskStart: getNextTaskSet nextTaskName==ATaskName.TASK_END")
+                UtilKLogWrapper.d(TAG, "taskStart: getNextTaskSet is null")
             }
         } else {
             UtilKLogWrapper.d(TAG, "taskStart: getTaskSet")

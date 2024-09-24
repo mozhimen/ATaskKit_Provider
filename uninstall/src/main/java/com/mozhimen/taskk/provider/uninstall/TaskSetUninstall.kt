@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @Version 1.0
  */
 @OptIn(OApiInit_InApplication::class)
-class TaskSetUninstall(override val taskManager: ATaskManager, override val providerDefaults: List<ATaskUninstall>) : ATaskSetUninstall() {
+class TaskSetUninstall(  taskManager: ATaskManager, override val providerDefaults: List<ATaskUninstall>) : ATaskSetUninstall(taskManager) {
     override val providers: ConcurrentHashMap<String, ATaskUninstall> by lazy {
         ConcurrentHashMap(
             providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskUninstall>)?.toMutableMap() }.fold(emptyMap()) { acc, nex -> acc + nex }

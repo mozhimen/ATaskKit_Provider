@@ -19,6 +19,7 @@ import com.mozhimen.taskk.provider.apk.impls.TaskUninstallApk
 import com.mozhimen.taskk.provider.apk.impls.TaskUnzipApk
 import com.mozhimen.taskk.provider.apk.impls.TaskVerifyApk
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
+import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.ATaskProvider
@@ -65,7 +66,7 @@ open class TaskProviderApk(
 
     @OPermission_INTERNET
     override fun getTaskDownload(): ATaskDownload {
-        return TaskDownloadOkDownloadApk(_iTaskLifecycle).apply {
+        return TaskDownloadOkDownloadApk(_taskManager,_iTaskLifecycle).apply {
             _breakpointCompare?.let {
                 setBreakpointCompare(it)
             }
@@ -73,11 +74,11 @@ open class TaskProviderApk(
     }
 
     override fun getTaskVerify(): ATaskVerify {
-        return TaskVerifyApk(_iTaskLifecycle)
+        return TaskVerifyApk(_taskManager,_iTaskLifecycle)
     }
 
     override fun getTaskUnzip(): ATaskUnzip {
-        return TaskUnzipApk(_iTaskLifecycle).apply {
+        return TaskUnzipApk(_taskManager,_iTaskLifecycle).apply {
             if (_sniffTargetFiles.isNotEmpty()) {
                 addTargetFiles(_sniffTargetFiles)
             }
@@ -86,13 +87,13 @@ open class TaskProviderApk(
 
     @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class)
     override fun getTaskInstall(): ATaskInstall {
-        return TaskInstallApk(_iTaskLifecycle).apply {
+        return TaskInstallApk(_taskManager,_iTaskLifecycle).apply {
             this.setInstallKReceiverProxy(InstallKManager.getInstallKReceiverProxy())
         }
     }
 
     override fun getTaskOpen(): ATaskOpen {
-        return TaskOpenApk(_iTaskLifecycle)
+        return TaskOpenApk(_taskManager,_iTaskLifecycle)
     }
 
     override fun getTaskClose(): ATaskClose? {
@@ -100,11 +101,11 @@ open class TaskProviderApk(
     }
 
     override fun getTaskUninstall(): ATaskUninstall {
-        return TaskUninstallApk(_iTaskLifecycle)
+        return TaskUninstallApk(_taskManager,_iTaskLifecycle)
     }
 
     override fun getTaskDelete(): ATaskDelete? {
-        return TaskDeleteApk(_iTaskLifecycle)
+        return TaskDeleteApk(_taskManager,_iTaskLifecycle)
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -143,7 +144,7 @@ open class TaskProviderApk(
         return mapOf(
             ATaskName.TASK_INSTALL to listOf(ATaskName.TASK_DOWNLOAD, ATaskName.TASK_VERIFY, ATaskName.TASK_UNZIP, ATaskName.TASK_INSTALL),
             ATaskName.TASK_OPEN to listOf(ATaskName.TASK_OPEN),
-            ATaskName.TASK_UNINSTALL to listOf(ATaskName.TASK_UNINSTALL, ATaskName.TASK_DELETE, ATaskName.TASK_RESTART)
+            ATaskName.TASK_UNINSTALL to listOf(ATaskName.TASK_UNINSTALL, ATaskName.TASK_DELETE, ATaskQueueName.TASK_RESTART)
         )
     }
 

@@ -1,11 +1,13 @@
 package com.mozhimen.taskk.provider.basic.bases.providers
 
 import androidx.annotation.CallSuper
+import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATask
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 
@@ -16,8 +18,8 @@ import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
  * @Date 2024/8/19
  * @Version 1.0
  */
-abstract class ATaskDelete(iTaskLifecycle: ITaskLifecycle?) : ATask(iTaskLifecycle) {
-    open fun taskDeleteAll(appTasks: List<AppTask>, @ATaskQueueName taskQueueName: String){
+abstract class ATaskDelete(taskManager: ATaskManager, iTaskLifecycle: ITaskLifecycle?) : ATask(taskManager, iTaskLifecycle) {
+    open fun taskDeleteAll(appTasks: List<AppTask>, @ATaskQueueName taskQueueName: String) {
         appTasks.forEach { value ->
             taskStart(value, taskQueueName)
             UtilKLogWrapper.d(TAG, "taskDeleteAll: appTask $value")

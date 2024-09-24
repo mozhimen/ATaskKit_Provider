@@ -7,6 +7,7 @@ import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.taskk.provider.apk.cons.CExt
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
+import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
@@ -20,7 +21,7 @@ import com.mozhimen.taskk.provider.download.okdownload.TaskDownloadOkDownload
  * @Version 1.0
  */
 @OPermission_INTERNET
-class TaskDownloadOkDownloadApk(iTaskLifecycle: ITaskLifecycle) : TaskDownloadOkDownload(iTaskLifecycle) {
+class TaskDownloadOkDownloadApk(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle) : TaskDownloadOkDownload(taskManager,iTaskLifecycle) {
 
     override fun getSupportFileExts(): List<String> {
         return listOf(CExt.EXT_APK)
