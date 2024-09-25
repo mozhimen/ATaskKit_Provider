@@ -1,5 +1,6 @@
 package com.mozhimen.taskk.provider.basic.db
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -15,6 +16,9 @@ import androidx.room.Update
  */
 @Dao
 interface AppTaskDao {
+    @Query("select * from netk_app_task")
+    fun gets_ofPagingSource(): PagingSource<Int, AppTask>
+
     @Query("select * from netk_app_task")
     fun gets_ofAll(): List<AppTask>
 

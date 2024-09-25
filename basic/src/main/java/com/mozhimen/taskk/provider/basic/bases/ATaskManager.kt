@@ -348,7 +348,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
     /////////////////////////////////////////////////////////////////
 
     fun onTask_ofFail(appTask: AppTask, @ATaskQueueName taskQueueName: String, exception: TaskException) {
-        UtilKLogWrapper.d(TAG, "onTask: id ${appTask.taskId} state ${appTask.getTaskStateStr()} exception ${exception.msg} appTask $appTask")
+        UtilKLogWrapper.d(TAG, "onTask: id ${appTask.id} state ${appTask.getTaskStateStr()} exception ${exception.msg} appTask $appTask")
         for (listener in _taskListeners) {
             when (appTask.taskState) {
                 AState.STATE_TASK_FAIL -> listener.onTaskFinish(appTask, taskQueueName, STaskFinishType.FAIL(exception))
@@ -371,7 +371,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
     fun onTask_ofIng(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
         UtilKLogWrapper.d(
             TAG,
-            "onTask: id ${appTask.taskId} state ${appTask.getTaskStateStr()} progress $progress currentIndex $currentIndex totalIndex $totalIndex offsetIndexPerSeconds $offsetIndexPerSeconds appTask $appTask"
+            "onTask: id ${appTask.id} state ${appTask.getTaskStateStr()} progress $progress currentIndex $currentIndex totalIndex $totalIndex offsetIndexPerSeconds $offsetIndexPerSeconds appTask $appTask"
         )
         for (listener in _taskListeners) {
             when (appTask.taskState) {
@@ -387,7 +387,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
     }
 
     fun onTask_ofOther(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        UtilKLogWrapper.d(TAG, "onTask: id ${appTask.taskId} state ${appTask.getTaskStateStr()} appTask $appTask")
+        UtilKLogWrapper.d(TAG, "onTask: id ${appTask.id} state ${appTask.getTaskStateStr()} appTask $appTask")
         for (listener in _taskListeners) {
             when (appTask.taskState) {
                 AState.STATE_TASK_CREATE -> listener.onTaskCreate(appTask, taskQueueName, false)

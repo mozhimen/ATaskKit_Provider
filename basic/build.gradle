@@ -34,6 +34,7 @@ android {
 dependencies {
     implementation project(':KUtilKit:utilk_android')
     implementation project(':ALibKit_Jetpack:room')
+    implementation project(':ALibKit_Jetpack:room_paging')
     implementation project(':ATaskKit:taskk_executor')
 
     //kapt

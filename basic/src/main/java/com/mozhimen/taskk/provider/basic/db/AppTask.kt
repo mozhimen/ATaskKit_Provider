@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.mozhimen.kotlin.elemk.commons.IHasId
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.commons.IUtilK
@@ -26,7 +27,7 @@ import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 data class AppTask constructor(
     @PrimaryKey
     @ColumnInfo(name = "task_id")
-    val taskId: String,//主键
+    override val id: String,//主键
     @ColumnInfo(name = "task_state")
     var taskState: Int,//下载状态
     @ColumnInfo(name = "task_state_init")
@@ -96,7 +97,7 @@ data class AppTask constructor(
     /*,
     @ColumnInfo(name = "apk_is_installed")
     var apkIsInstalled: Boolean,//是否安装0未,1安装*/
-) : IUtilK {
+) : IUtilK, IHasId {
     //for apk
     constructor(
         taskId: String,//主键
@@ -421,7 +422,7 @@ data class AppTask constructor(
     ////////////////////////////////////////////////////////////
 
     override fun toString(): String {
-        return "AppTask(taskId='$taskId', taskState=$taskState, taskName=${taskName}, taskStateInit=$taskStateInit, taskUpdateTime=$taskUpdateTime, taskDownloadId=$taskDownloadId, taskDownloadProgress=$taskDownloadProgress, taskDownloadFileSize=$taskDownloadFileSizeOffset, taskDownloadFileSizeTotal=$taskDownloadFileSizeTotal, taskVerifyEnable=$taskVerifyEnable, taskVerifyFileMd5='$taskVerifyFileMd5', taskUnzipEnable=$taskUnzipEnable, fileIconUrl='$fileIconUrl', fileIconId=$fileIconId, fileName='$fileName', fileExt='$fileExt', fileNameExt='$fileNameExt', filePathNameExt='$filePathNameExt', apkPackageName='$apkPackageName', apkVersionCode=$apkVersionCode, apkVersionName='$apkVersionName', taskDownloadUrlCurrent='$taskDownloadUrlCurrent', taskDownloadUrlInside='$taskDownloadUrlInside', taskDownloadUrlOutside='$taskDownloadUrlOutside')"
+        return "AppTask(taskId='$id', taskState=$taskState, taskName=${taskName}, taskStateInit=$taskStateInit, taskUpdateTime=$taskUpdateTime, taskDownloadId=$taskDownloadId, taskDownloadProgress=$taskDownloadProgress, taskDownloadFileSize=$taskDownloadFileSizeOffset, taskDownloadFileSizeTotal=$taskDownloadFileSizeTotal, taskVerifyEnable=$taskVerifyEnable, taskVerifyFileMd5='$taskVerifyFileMd5', taskUnzipEnable=$taskUnzipEnable, fileIconUrl='$fileIconUrl', fileIconId=$fileIconId, fileName='$fileName', fileExt='$fileExt', fileNameExt='$fileNameExt', filePathNameExt='$filePathNameExt', apkPackageName='$apkPackageName', apkVersionCode=$apkVersionCode, apkVersionName='$apkVersionName', taskDownloadUrlCurrent='$taskDownloadUrlCurrent', taskDownloadUrlInside='$taskDownloadUrlInside', taskDownloadUrlOutside='$taskDownloadUrlOutside')"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -430,7 +431,7 @@ data class AppTask constructor(
 
         other as AppTask
 
-        if (taskId != other.taskId) return false
+        if (id != other.id) return false
         if (taskState != other.taskState) return false
         if (taskStateInit != other.taskStateInit) return false
         if (taskUpdateTime != other.taskUpdateTime) return false
@@ -458,7 +459,7 @@ data class AppTask constructor(
     }
 
     override fun hashCode(): Int {
-        var result = taskId.hashCode()
+        var result = id.hashCode()
         result = 31 * result + taskState
         result = 31 * result + taskStateInit
         result = 31 * result + taskUpdateTime.hashCode()

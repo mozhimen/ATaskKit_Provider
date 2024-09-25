@@ -26,7 +26,7 @@ object AppTaskDaoManager : IUtilK {
     fun init() {
         Log.d(TAG, "init: ")
         TaskKExecutor.execute(TAG + "init") {
-            _appTasks.putAll(AppTaskDb.getAppTaskDao().gets_ofAll().associateBy { it.taskId })
+            _appTasks.putAll(AppTaskDb.getAppTaskDao().gets_ofAll().associateBy { it.id })
             UtilKLogWrapper.d(TAG, "init: _appTasks $_appTasks")
         }
     }
@@ -352,8 +352,8 @@ object AppTaskDaoManager : IUtilK {
     @WorkerThread
     private fun deleteOnBack(appTask: AppTask) {
         try {
-            if (has_ofTaskId(appTask.taskId)) {
-                _appTasks.remove(appTask.taskId)
+            if (has_ofTaskId(appTask.id)) {
+                _appTasks.remove(appTask.id)
             } else return
             AppTaskDb.getAppTaskDao().delete(appTask)
         } catch (e: Exception) {
@@ -370,12 +370,12 @@ object AppTaskDaoManager : IUtilK {
     private fun addOrUpdateOnBack(vararg appTasks: AppTask) {
         try {
             appTasks.forEach { appTask ->
-                if (has_ofTaskId(appTask.taskId)) {
-                    _appTasks[appTask.taskId] = appTask
+                if (has_ofTaskId(appTask.id)) {
+                    _appTasks[appTask.id] = appTask
                     UtilKLogWrapper.v(TAG, "addOrUpdateOnBack: update")
                     AppTaskDb.getAppTaskDao().update(appTask)//将本条数据插入到数据库
                 } else {
-                    _appTasks[appTask.taskId] = appTask
+                    _appTasks[appTask.id] = appTask
                     UtilKLogWrapper.v(TAG, "addOrUpdateOnBack: addAll")
                     AppTaskDb.getAppTaskDao().addAll(appTask)
                 }

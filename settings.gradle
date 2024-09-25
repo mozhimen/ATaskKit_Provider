@@ -54,6 +54,7 @@ include(':AInstallKit:installk_splits_ackpine')
 include(':ALibKit_Jetpack')
 project(':ALibKit_Jetpack').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Jetpack")
 include(':ALibKit_Jetpack:room')
+include(':ALibKit_Jetpack:room_paging')
 include(':ALibKit_Jetpack:datastore')
 include(':ALibKit_Jetpack:startup')
 //ALibKit_Squareup
