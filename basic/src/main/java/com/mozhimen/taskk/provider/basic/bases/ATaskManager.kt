@@ -220,7 +220,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
         val currTaskName = getCurrTaskName_ofTaskQueue(appTask, taskQueueName, getFirstTaskName_ofTaskQueue(appTask.fileExt, taskQueueName) ?: return) ?: return
         var nextTaskName = getNextTaskName_ofTaskQueue(appTask.fileExt, taskQueueName, currTaskName)
         UtilKLogWrapper.d(TAG, "taskStart: currTaskName $currTaskName nextTaskName $nextTaskName")
-        if (appTask.isAnyTaskSuccess()) {
+        if (appTask.isAnyTaskSuccess()||appTask.isAnyTasking()) {
             UtilKLogWrapper.d(TAG, "taskStart: getNextTaskSet")
             if (nextTaskName != null && nextTaskName != ATaskQueueName.TASK_RESTART) {
 //                getNextTaskSet(appTask.fileExt, taskQueueName, currTaskName)?.taskStart(appTask, taskQueueName)
@@ -263,7 +263,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
     /////////////////////////////////////////////////////////////////
 
     override fun canTaskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean {
-        if (appTask.isTaskProcess(this, taskQueueName) && !appTask.isAnyTaskPause() && !appTask.isAnyTaskSuccess()) {
+        if (appTask.isTaskProcess(this, taskQueueName) && !appTask.isAnyTaskPause() && !appTask.isAnyTaskSuccess() && !appTask.isAnyTasking()) {
             UtilKLogWrapper.d(TAG, "canTaskStart: task is process")
             return false
         }
