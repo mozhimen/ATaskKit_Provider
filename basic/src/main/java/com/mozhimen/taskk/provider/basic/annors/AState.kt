@@ -60,6 +60,15 @@ annotation class AState {
         /////////////////////////////////////////////////////////////////////
 
         @OptIn(OApiInit_InApplication::class)
+        fun isTaskProcess(taskState: Int): Boolean =
+            !isTaskCreate(taskState) &&
+                    !isTaskUpdate(taskState) &&
+                    !isTaskUnAvailable(taskState) &&
+                    !isTaskCancel(taskState) &&
+                    !isTaskFail(taskState) &&
+                    !isTaskSuccess(taskState)
+
+        @OptIn(OApiInit_InApplication::class)
         fun isTaskProcess(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
             !isTaskCreate(taskState) &&
                     !isTaskUpdate(taskState) &&
@@ -83,12 +92,15 @@ annotation class AState {
         fun isTaskCancel(state: Int): Boolean =
             state == STATE_TASK_CANCEL
 
+        fun isTaskSuccess(state: Int):Boolean =
+            state == STATE_TASK_SUCCESS
+
         @OptIn(OApiInit_InApplication::class)
         fun isTaskSuccess(state: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
-            state == STATE_TASK_SUCCESS || run {
+            isTaskSuccess(state) || run {
                 val lastTaskCode: Int = taskManager.getLastTaskName_ofTaskQueue(fileExt, taskQueueName)?.taskName2taskState() ?: return@run false
                 val taskCode: Int = ATaskState.getTaskCode(state)
-                val stateCode: Int = AState.getStateCode(state)
+                val stateCode: Int = getStateCode(state)
                 lastTaskCode == taskCode && stateCode == STATE_TASK_SUCCESS
             }
 

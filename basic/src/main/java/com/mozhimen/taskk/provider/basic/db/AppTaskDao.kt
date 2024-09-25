@@ -16,8 +16,11 @@ import androidx.room.Update
  */
 @Dao
 interface AppTaskDao {
-    @Query("select * from netk_app_task")
+    @Query("select * from netk_app_task order by task_update_time desc")
     fun gets_ofPagingSource(): PagingSource<Int, AppTask>
+
+    @Query("select * from netk_app_task where task_state > 9 order by task_update_time desc")
+    fun gets_progress_ofPagingSource(): PagingSource<Int, AppTask>
 
     @Query("select * from netk_app_task")
     fun gets_ofAll(): List<AppTask>

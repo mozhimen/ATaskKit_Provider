@@ -265,6 +265,9 @@ data class AppTask constructor(
     fun isTaskProcess(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
         AState.isTaskProcess(taskState, taskManager, fileExt, taskQueueName)
 
+    fun isTaskProcess(): Boolean =
+        AState.isTaskProcess(taskState)
+
     fun isTaskCreate(): Boolean =
         AState.isTaskCreate(taskState)
 
@@ -283,6 +286,9 @@ data class AppTask constructor(
     @OptIn(OApiInit_InApplication::class)
     fun isTaskSuccess(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
         AState.isTaskSuccess(taskState, taskManager, fileExt, taskQueueName)
+
+    fun isTaskSuccess(): Boolean =
+        AState.isTaskSuccess(taskState)
 
     fun isTaskFail(): Boolean =
         AState.isTaskFail(taskState)

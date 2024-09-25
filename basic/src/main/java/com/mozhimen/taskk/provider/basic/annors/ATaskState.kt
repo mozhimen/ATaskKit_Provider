@@ -82,7 +82,7 @@ import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 annotation class ATaskState {
     companion object {
         fun getTaskCode(@ATaskState taskState: Int): @ATaskState Int =
-            (taskState / 10).also { Log.d("ATaskState>>>>>", "getTaskCode: $it") }
+            (taskState / 10)
 
         fun taskState2taskName(@ATaskState taskState: Int): @ATaskName String? {
             return (when (taskState) {

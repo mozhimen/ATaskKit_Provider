@@ -94,6 +94,12 @@ object AppTaskDaoManager : IUtilK {
         return _appTasks.filter { it.value.isTaskProcess(taskManager, taskQueueName) }.values.toList()
     }
 
+    @OptIn(OApiInit_InApplication::class)
+    @JvmStatic
+    fun gets_ofIsTaskProcess(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskProcess() }.values.toList()
+    }
+
     @JvmStatic
     fun gets_ofIsTaskCreate(): List<AppTask> {
         return _appTasks.filter { it.value.isTaskCreate() }.values.toList()
@@ -123,6 +129,11 @@ object AppTaskDaoManager : IUtilK {
     @JvmStatic
     fun gets_ofIsTaskSuccess(taskManager: ATaskManager,@ATaskQueueName taskQueueName: String): List<AppTask> {
         return _appTasks.filter { it.value.isTaskSuccess(taskManager, taskQueueName) }.values.toList()
+    }
+
+    @JvmStatic
+    fun gets_ofIsTaskSuccess(): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskSuccess() }.values.toList()
     }
 
     @JvmStatic
