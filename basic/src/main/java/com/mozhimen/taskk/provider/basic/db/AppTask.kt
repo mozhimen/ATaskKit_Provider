@@ -98,6 +98,9 @@ data class AppTask constructor(
     @ColumnInfo(name = "apk_is_installed")
     var apkIsInstalled: Boolean,//是否安装0未,1安装*/
 ) : IUtilK, IHasId {
+    //for compose
+    constructor() : this("", AState.STATE_TASK_CREATE, "taskName taskName taskName taskName taskName taskName taskName", "", false, "", false, "", "")
+
     //for apk
     constructor(
         taskId: String,//主键

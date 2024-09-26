@@ -21,7 +21,7 @@ object AppTaskUtil : IUtilK {
     @OptIn(OApiInit_InApplication::class)
     fun generateAppTask_ofDb_installed_version(taskManager: ATaskManager, appTask: AppTask, @ATaskQueueName taskQueueName: String): AppTask {
         val installedPackageBundle = InstallKManager.getPackageBundle_ofPackageName(appTask.apkPackageName)//小于已安装版本
-        val appTask_ofDb = AppTaskDaoManager.get_ofTaskId_ApkPackageName_ApkVersionCode(appTask.taskId, appTask.apkPackageName, appTask.apkVersionCode)
+        val appTask_ofDb = AppTaskDaoManager.get_ofTaskId_ApkPackageName_ApkVersionCode(appTask.id, appTask.apkPackageName, appTask.apkVersionCode)
         if (installedPackageBundle == null) {//未安装
             if (appTask_ofDb == null) {
                 UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask_ofDb == null")
