@@ -404,6 +404,32 @@ data class AppTask constructor(
 
     ////////////////////////////////////////////////////////////
 
+    fun isTaskDownloadPause(): Boolean =
+        ATaskState.isTaskDownloadPause(taskState)
+
+    fun isTaskVerifyPause(): Boolean =
+        ATaskState.isTaskVerifyPause(taskState)
+
+    fun isTaskUnzipPause(): Boolean =
+        ATaskState.isTaskUnzipPause(taskState)
+
+    fun isTaskInstallPause(): Boolean =
+        ATaskState.isTaskInstallPause(taskState)
+
+    fun isTaskOpenPause(): Boolean =
+        ATaskState.isTaskOpenPause(taskState)
+
+    fun isTaskClosePause(): Boolean =
+        ATaskState.isTaskClosePause(taskState)
+
+    fun isTaskUninstallPause(): Boolean =
+        ATaskState.isTaskUninstallPause(taskState)
+
+    fun isTaskDeletePause(): Boolean =
+        ATaskState.isTaskDeletePause(taskState)
+
+    ////////////////////////////////////////////////////////////
+
     fun isTaskDownloadSuccess(): Boolean =
         ATaskState.isTaskDownloadSuccess(taskState)
 

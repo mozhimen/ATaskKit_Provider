@@ -169,13 +169,19 @@ annotation class ATaskState {
             @ATaskState currentTaskCode: Int,
             @ATaskState prevTaskCode: Int? = null,
         ): Boolean {
-            val preTaskCode = taskManager.getPrevTaskName_ofTaskQueue(fileExt, taskQueueName, getTaskCode(taskState).taskState2taskName())?.taskName2taskState() ?: prevTaskCode?.let { getTaskCode(it) }
+            val preTaskCode =
+                taskManager.getPrevTaskName_ofTaskQueue(fileExt, taskQueueName, getTaskCode(taskState).taskState2taskName())?.taskName2taskState() ?: prevTaskCode?.let { getTaskCode(it) }
             return (preTaskCode?.let {
                 AState.canTaskExecute(taskState, currentTaskCode, it)
             } ?: run {
 //                AState.canTaskStart(taskState)
                 true
-            }).also { Log.d("ATaskState>>>>>", "canTaskExecute: $it preTaskCode $preTaskCode ") } //taskState in STATE_DOWNLOAD_CREATE..STATE_DOWNLOAD_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE
+            }).also {
+                Log.d(
+                    "ATaskState>>>>>",
+                    "canTaskExecute: $it preTaskCode $preTaskCode "
+                )
+            } //taskState in STATE_DOWNLOAD_CREATE..STATE_DOWNLOAD_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE
         }
 
         /////////////////////////////////////////////////////////////////////
@@ -198,6 +204,9 @@ annotation class ATaskState {
 
         fun isTaskDownloading(taskState: Int): Boolean =
             taskState == STATE_DOWNLOADING
+
+        fun isTaskDownloadPause(taskState: Int): Boolean =
+            taskState == STATE_DOWNLOAD_PAUSE
 
         fun isTaskDownloadSuccess(taskState: Int): Boolean =
             taskState >= STATE_DOWNLOAD_SUCCESS || taskState == AState.STATE_TASK_SUCCESS
@@ -222,6 +231,9 @@ annotation class ATaskState {
         fun isTaskVerifying(taskState: Int): Boolean =
             taskState == STATE_VERIFYING
 
+        fun isTaskVerifyPause(taskState: Int): Boolean =
+            taskState == STATE_VERIFY_PAUSE
+
         fun isTaskVerifySuccess(taskState: Int): Boolean =
             taskState >= STATE_VERIFY_SUCCESS || taskState == AState.STATE_TASK_SUCCESS
 
@@ -245,6 +257,9 @@ annotation class ATaskState {
         fun isTaskUnziping(taskState: Int): Boolean =
             taskState == STATE_UNZIPING
 
+        fun isTaskUnzipPause(taskState: Int): Boolean =
+            taskState == STATE_UNZIP_PAUSE
+
         fun isTaskUnzipSuccess(taskState: Int): Boolean =
             taskState >= STATE_UNZIP_SUCCESS || taskState == AState.STATE_TASK_SUCCESS
 
@@ -267,6 +282,9 @@ annotation class ATaskState {
 
         fun isTaskInstalling(taskState: Int): Boolean =
             taskState == STATE_INSTALLING
+
+        fun isTaskInstallPause(taskState: Int): Boolean =
+            taskState == STATE_INSTALL_PAUSE
 
         fun isTaskInstallSuccess(taskState: Int): Boolean =
             taskState >= STATE_INSTALL_SUCCESS || taskState == AState.STATE_TASK_SUCCESS
@@ -292,6 +310,9 @@ annotation class ATaskState {
         fun isTaskOpening(taskState: Int): Boolean =
             taskState == STATE_OPENING
 
+        fun isTaskOpenPause(taskState: Int): Boolean =
+            taskState == STATE_OPEN_PAUSE
+
         fun isTaskOpenSuccess(taskState: Int): Boolean =
             taskState >= STATE_OPEN_SUCCESS || taskState == AState.STATE_TASK_SUCCESS
 
@@ -315,6 +336,9 @@ annotation class ATaskState {
         fun isTaskClosing(taskState: Int): Boolean =
             taskState == STATE_CLOSING
 
+        fun isTaskClosePause(taskState: Int): Boolean =
+            taskState == STATE_CLOSE_PAUSE
+
         fun isTaskCloseSuccess(taskState: Int): Boolean =
             taskState >= STATE_CLOSE_SUCCESS || taskState == AState.STATE_TASK_SUCCESS
 
@@ -337,6 +361,9 @@ annotation class ATaskState {
 
         fun isTaskUninstalling(taskState: Int): Boolean =
             taskState == STATE_UNINSTALLING
+
+        fun isTaskUninstallPause(taskState: Int): Boolean =
+            taskState == STATE_UNINSTALL_PAUSE
 
         fun isTaskUninstallSuccess(taskState: Int): Boolean =
             taskState >= STATE_UNINSTALL_SUCCESS || taskState == AState.STATE_TASK_SUCCESS
@@ -368,6 +395,9 @@ annotation class ATaskState {
         fun isTaskDeleting(taskState: Int): Boolean =
             taskState == STATE_DELETING
 
+        fun isTaskDeletePause(taskState: Int): Boolean =
+            taskState == STATE_DELETE_PAUSE
+
         fun isTaskDeleteSuccess(taskState: Int): Boolean =
             taskState >= STATE_DELETE_SUCCESS || taskState == AState.STATE_TASK_SUCCESS
 
@@ -381,3 +411,6 @@ annotation class ATaskState {
 
 fun @ATaskState Int.taskState2taskName(): @ATaskName String? =
     ATaskState.taskState2taskName(this)
+
+fun @ATaskState Int.getTaskCode(): Int =
+    ATaskState.getTaskCode(this) * 10

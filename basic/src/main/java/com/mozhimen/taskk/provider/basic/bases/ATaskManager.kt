@@ -3,6 +3,8 @@ package com.mozhimen.taskk.provider.basic.bases
 import android.content.Context
 import android.util.Log
 import androidx.annotation.CallSuper
+import com.mozhimen.kotlin.elemk.commons.IA_Listener
+import com.mozhimen.kotlin.elemk.commons.I_Listener
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
@@ -12,7 +14,9 @@ import com.mozhimen.taskk.provider.basic.annors.AState
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
+import com.mozhimen.taskk.provider.basic.annors.getTaskCode
 import com.mozhimen.taskk.provider.basic.annors.taskName2taskState
+import com.mozhimen.taskk.provider.basic.annors.taskState2taskName
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetDelete
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetDownload
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetInstall
@@ -213,6 +217,193 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
 
     /////////////////////////////////////////////////////////////////
 
+    fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String, finishType: STaskFinishType, @ATaskState taskState: Int, listener: IA_Listener<AppTask>) {
+        taskStart(appTask, taskQueueName)
+        registerTaskListener(object : ITasks {
+            override fun onTaskDownloadCancel(appTask: AppTask) {
+                if (finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_DOWNLOAD_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            override fun onTaskDownloadSuccess(appTask: AppTask) {
+                if (finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_DOWNLOAD_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            override fun onTaskDownloadFail(appTask: AppTask, exception: TaskException) {
+                if (finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_DOWNLOAD_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            /////////////////////////////////////////////////////////
+
+            override fun onTaskVerifyCancel(appTask: AppTask) {
+                if (finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_VERIFY_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            override fun onTaskVerifySuccess(appTask: AppTask) {
+                if (finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_VERIFY_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            override fun onTaskVerifyFail(appTask: AppTask, exception: TaskException) {
+                if (finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_VERIFY_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            /////////////////////////////////////////////////////////
+
+            override fun onTaskUnzipCancel(appTask: AppTask) {
+                if (finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_UNZIP_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            override fun onTaskUnzipSuccess(appTask: AppTask) {
+                if (finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_UNZIP_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            override fun onTaskUnzipFail(appTask: AppTask, exception: TaskException) {
+                if (finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_UNZIP_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            /////////////////////////////////////////////////////////
+
+            override fun onTaskInstallCancel(appTask: AppTask) {
+                if (finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_INSTALL_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            override fun onTaskInstallSuccess(appTask: AppTask) {
+                if (finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_INSTALL_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            override fun onTaskInstallFail(appTask: AppTask, exception: TaskException) {
+                if (finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_INSTALL_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            /////////////////////////////////////////////////////////
+
+            override fun onTaskOpenCancel(appTask: AppTask) {
+                if (finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_OPEN_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            override fun onTaskOpenSuccess(appTask: AppTask) {
+                if (finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_OPEN_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            override fun onTaskOpenFail(appTask: AppTask, exception: TaskException) {
+                if (finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_OPEN_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            /////////////////////////////////////////////////////////
+
+            override fun onTaskCloseCancel(appTask: AppTask) {
+                if (finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_CLOSE_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            override fun onTaskCloseSuccess(appTask: AppTask) {
+                if (finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_CLOSE_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            override fun onTaskCloseFail(appTask: AppTask, exception: TaskException) {
+                if (finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_CLOSE_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            /////////////////////////////////////////////////////////
+
+            override fun onTaskUninstallCancel(appTask: AppTask) {
+                if (finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_UNINSTALL_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            override fun onTaskUninstallSuccess(appTask: AppTask) {
+                if (finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_UNINSTALL_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            override fun onTaskUninstallFail(appTask: AppTask, exception: TaskException) {
+                if (finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_UNINSTALL_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            /////////////////////////////////////////////////////////
+
+            override fun onTaskDeleteCancel(appTask: AppTask) {
+                if (finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_DELETE_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            override fun onTaskDeleteSuccess(appTask: AppTask) {
+                if (finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_DELETE_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+
+            override fun onTaskDeleteFail(appTask: AppTask, exception: TaskException) {
+                if (finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_DELETE_CREATE) {
+                    unregisterTaskListener(this)
+                    listener.invoke(appTask)
+                }
+            }
+        })
+    }
+
     override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
         if (!canTaskStart(appTask, taskQueueName))
             return
@@ -220,16 +411,18 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
         val currTaskName = getCurrTaskName_ofTaskQueue(appTask, taskQueueName, getFirstTaskName_ofTaskQueue(appTask.fileExt, taskQueueName) ?: return) ?: return
         var nextTaskName = getNextTaskName_ofTaskQueue(appTask.fileExt, taskQueueName, currTaskName)
         UtilKLogWrapper.d(TAG, "taskStart: currTaskName $currTaskName nextTaskName $nextTaskName")
-        if (appTask.isAnyTaskSuccess()||appTask.isAnyTasking()) {
+        if (appTask.isAnyTaskSuccess() || appTask.isAnyTasking() || appTask.isAnyTaskPause()) {
             UtilKLogWrapper.d(TAG, "taskStart: getNextTaskSet")
-            if (nextTaskName != null && nextTaskName != ATaskQueueName.TASK_RESTART) {
+            if (nextTaskName != null && nextTaskName != ATaskQueueName.TASK_RESTART) {//继续下一个任务
 //                getNextTaskSet(appTask.fileExt, taskQueueName, currTaskName)?.taskStart(appTask, taskQueueName)
                 getTaskSet(nextTaskName)?.taskStart(appTask, taskQueueName)
-            } else if (!hasTaskName_ofTaskQueue(appTask.fileExt, taskQueueName, currTaskName)) {
+            } else if (!hasTaskName_ofTaskQueue(appTask.fileExt, taskQueueName, currTaskName)) {//另外一个队列的任务
                 nextTaskName = getFirstTaskName_ofTaskQueue(appTask.fileExt, taskQueueName)
                 nextTaskName?.let {
                     getTaskSet(nextTaskName)?.taskStart(appTask, taskQueueName)
                 }
+            } else if (appTask.isAnyTaskPause()) {//是暂停的就继续
+                getTaskSet(currTaskName)?.taskStart(appTask, taskQueueName)
             } else {
                 UtilKLogWrapper.d(TAG, "taskStart: getNextTaskSet is null")
             }
@@ -271,7 +464,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             UtilKLogWrapper.d(TAG, "canTaskStart: task is success")
             return false
         }
-        return getTaskSet(getFirstTaskName_ofTaskQueue(appTask.fileExt, taskQueueName) ?: return false)?.canTaskStart(appTask, taskQueueName) ?: false
+        return (getTaskSet(getFirstTaskName_ofTaskQueue(appTask.fileExt, taskQueueName) ?: return false)?.canTaskStart(appTask, taskQueueName) ?: false).also { Log.d(TAG, "canTaskStart: $it") }
     }
 
     override fun canTaskResume(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean {
