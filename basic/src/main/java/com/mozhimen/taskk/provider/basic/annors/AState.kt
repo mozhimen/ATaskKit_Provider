@@ -1,7 +1,9 @@
 package com.mozhimen.taskk.provider.basic.annors
 
+import android.util.Log
 import androidx.annotation.IntDef
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 
 /**
@@ -26,7 +28,7 @@ import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 )
 @Retention(AnnotationRetention.SOURCE)
 annotation class AState {
-    companion object {
+    companion object : IUtilK {
         //任务
         const val STATE_TASK_CREATE = 0//STATE_NOT_INSTALLED = 0//任务创建 未安装 处于未下载，
         const val STATE_TASK_UPDATE = 1//需要更新状态
@@ -92,17 +94,18 @@ annotation class AState {
         fun isTaskCancel(state: Int): Boolean =
             state == STATE_TASK_CANCEL
 
-        fun isTaskSuccess(state: Int):Boolean =
+        fun isTaskSuccess(state: Int): Boolean =
             state == STATE_TASK_SUCCESS
 
         @OptIn(OApiInit_InApplication::class)
         fun isTaskSuccess(state: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
-            isTaskSuccess(state) || run {
+            (isTaskSuccess(state) || run {
                 val lastTaskCode: Int = taskManager.getLastTaskName_ofTaskQueue(fileExt, taskQueueName)?.taskName2taskState() ?: return@run false
                 val taskCode: Int = ATaskState.getTaskCode(state)
                 val stateCode: Int = getStateCode(state)
+                Log.d(TAG, "isTaskSuccess: state $state lastTaskCode $lastTaskCode taskCode $taskCode stateCode $stateCode")
                 lastTaskCode == taskCode && stateCode == STATE_TASK_SUCCESS
-            }
+            }).also { Log.d(TAG, "isTaskSuccess: $it") }
 
         fun isTaskFail(state: Int): Boolean =
             state == STATE_TASK_FAIL

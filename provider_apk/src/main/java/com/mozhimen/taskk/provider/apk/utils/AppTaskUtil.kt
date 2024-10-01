@@ -4,6 +4,7 @@ import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.commons.IUtilK
+import com.mozhimen.taskk.provider.basic.annors.AState
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
@@ -32,30 +33,28 @@ object AppTaskUtil : IUtilK {
                     appTask.isTaskSuccess(taskManager, taskQueueName) -> taskManager.onTaskFinish(appTask, taskQueueName, STaskFinishType.SUCCESS)
                 }
                 return appTask
-            } else {
+            } else {//存在库中
                 if (appTask_ofDb.isTaskSuccess(taskManager, taskQueueName)) {
                     UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask_ofDb != null appTask_ofDb.isTaskSuccess()")
-                    when {
-                        appTask.isTaskCreate() -> taskManager.onTaskCreate(appTask, taskQueueName, false)
-                        appTask.isTaskUpdate() -> taskManager.onTaskCreate(appTask, taskQueueName, true)
-                    }
+                    taskManager.onTaskCreate(appTask, taskQueueName, false)
                 } else if (appTask_ofDb.isTaskProcess(taskManager, taskQueueName)) {
+                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask_ofDb != null appTask_ofDb.isTaskProcess")
                     return appTask_ofDb
                 } else {
-//                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask_ofDb != null")
+                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask_ofDb != null")
                 }
                 return appTask
             }
         } else {//已安装
             if (appTask.apkVersionCode > installedPackageBundle.versionCode) {
-                if (appTask_ofDb != null && !appTask.isTaskUpdate()) {
+                if (appTask_ofDb != null && !appTask.isTaskUpdate() && !appTask.isTaskProcess(taskManager, taskQueueName)) {
                     UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode > installedPackageBundle.versionCode appTask_ofDb != null && !appTask.isTaskCreate()")
                     taskManager.onTaskCreate(appTask, taskQueueName, true)
                 } else if (appTask_ofDb == null) {
                     UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode > installedPackageBundle.versionCode appTask_ofDb == null")
                     taskManager.onTaskCreate(appTask, taskQueueName, true)
                 } else {
-//                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode > installedPackageBundle.versionCode else")
+                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode > installedPackageBundle.versionCode else")
                 }
                 return appTask
             } else {
@@ -66,7 +65,7 @@ object AppTaskUtil : IUtilK {
                     UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode <= installedPackageBundle.versionCode appTask_ofDb == null")
                     taskManager.onTaskFinish(appTask, taskQueueName, STaskFinishType.SUCCESS)
                 } else {
-//                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode <= installedPackageBundle.versionCode else")
+                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask.apkVersionCode <= installedPackageBundle.versionCode else")
                 }
                 return appTask
             }

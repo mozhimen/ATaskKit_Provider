@@ -220,14 +220,14 @@ data class AppTask constructor(
                 null
             }
 
-            ATaskState.STATE_DOWNLOAD_CREATE / 10 -> ATaskName.TASK_DOWNLOAD//1
-            ATaskState.STATE_VERIFY_CREATE / 10 -> ATaskName.TASK_VERIFY
-            ATaskState.STATE_UNZIP_CREATE / 10 -> ATaskName.TASK_UNZIP
-            ATaskState.STATE_INSTALL_CREATE / 10 -> ATaskName.TASK_INSTALL
-            ATaskState.STATE_OPEN_CREATE / 10 -> ATaskName.TASK_OPEN
-            ATaskState.STATE_CLOSE_CREATE / 10 -> ATaskName.TASK_CLOSE
-            ATaskState.STATE_UNINSTALL_CREATE / 10 -> ATaskName.TASK_UNINSTALL
-            ATaskState.STATE_DELETE_CREATE / 10 -> ATaskName.TASK_DELETE
+            ATaskState.STATE_DOWNLOAD_CREATE -> ATaskName.TASK_DOWNLOAD//1
+            ATaskState.STATE_VERIFY_CREATE -> ATaskName.TASK_VERIFY
+            ATaskState.STATE_UNZIP_CREATE -> ATaskName.TASK_UNZIP
+            ATaskState.STATE_INSTALL_CREATE -> ATaskName.TASK_INSTALL
+            ATaskState.STATE_OPEN_CREATE -> ATaskName.TASK_OPEN
+            ATaskState.STATE_CLOSE_CREATE -> ATaskName.TASK_CLOSE
+            ATaskState.STATE_UNINSTALL_CREATE -> ATaskName.TASK_UNINSTALL
+            ATaskState.STATE_DELETE_CREATE -> ATaskName.TASK_DELETE
             else -> null
         }.also { UtilKLogWrapper.d(TAG, "getCurrentTaskName: task $taskCode state $stateCode taskName $it") }
     }

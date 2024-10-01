@@ -9,7 +9,9 @@ import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.wrapper.UtilKAppInstall
 import com.mozhimen.taskk.provider.apk.cons.CExt
 import com.mozhimen.taskk.provider.apk.impls.interceptors.TaskInterceptorApk
+import com.mozhimen.taskk.provider.basic.annors.AState
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
 import com.mozhimen.taskk.provider.basic.db.AppTask
@@ -26,7 +28,7 @@ import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 class TaskInstallApk(
     taskManager: ATaskManager,
     iTaskLifecycle: ITaskLifecycle,
-) : ATaskInstall(taskManager,iTaskLifecycle) {
+) : ATaskInstall(taskManager, iTaskLifecycle) {
 
     protected var _iInstallKReceiverProxy: IInstallKReceiverProxy? = null
 
@@ -43,17 +45,17 @@ class TaskInstallApk(
     @SuppressLint("MissingSuperCall")
     @OPermission_REQUEST_INSTALL_PACKAGES
     override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        if (!appTask.canTaskInstall(_taskManager,taskQueueName)) {
+        if (!appTask.canTaskInstall(_taskManager, taskQueueName)) {
             UtilKLogWrapper.e(TAG, "install: the task hasn't unzip or verify success")
-//            onTaskFinished(CTaskState.STATE_INSTALL_FAIL, STaskFinishType.FAIL(CErrorCode.CODE_TASK_INSTALL_HAST_VERIFY_OR_UNZIP.intErrorCode2taskException()), appTask)
+//            onTaskFinished(ATaskState.STATE_INSTALL_FAIL, STaskFinishType.FAIL(CErrorCode.CODE_TASK_INSTALL_HAST_VERIFY_OR_UNZIP.intErrorCode2taskException()), appTask)
             return
         }
 //        super.taskStart(appTask)
         if (appTask.apkPackageName.isNotEmpty()) {
             _iInstallKReceiverProxy?.addPackageName(appTask.apkPackageName)
         }
-        if (appTask.taskUnzipEnable) {
-            UtilKLogWrapper.d(TAG, "taskStart: appTask.taskUnzipEnable true")
+        if (appTask.taskUnzipEnable && appTask.taskUnzipFilePath.isNotEmpty()) {
+            UtilKLogWrapper.d(TAG, "taskStart: appTask.taskUnzipEnable true appTask.taskUnzipFilePath ${appTask.taskUnzipFilePath}")
             UtilKAppInstall.install_ofView(appTask.taskUnzipFilePath)
         } else {
             UtilKLogWrapper.d(TAG, "taskStart: appTask.taskUnzipEnable false")

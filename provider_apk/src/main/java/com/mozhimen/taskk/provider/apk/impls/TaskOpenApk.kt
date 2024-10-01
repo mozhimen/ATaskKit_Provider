@@ -31,14 +31,14 @@ class TaskOpenApk(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle) : AT
         try {
             val boolean = UtilKContextStart.startContext_ofPackageName(UtilKApplicationWrapper.instance.get(), appTask.apkPackageName)
             if (boolean) {
-//                onTaskFinished(CTaskState.STATE_OPEN_SUCCESS, STaskFinishType.SUCCESS, appTask)
+//                onTaskFinished(ATaskState.STATE_OPEN_SUCCESS, STaskFinishType.SUCCESS, appTask)
             } else {
-//                onTaskFinished(CTaskState.STATE_OPEN_FAIL, STaskFinishType.FAIL(CErrorCode.CODE_TASK_OPEN_FAIL.intErrorCode2taskException()), appTask)
+//                onTaskFinished(ATaskState.STATE_OPEN_FAIL, STaskFinishType.FAIL(CErrorCode.CODE_TASK_OPEN_FAIL.intErrorCode2taskException()), appTask)
             }
         } catch (e: Exception) {
             e.printStackTrace()
             UtilKLogWrapper.e(TAG, "taskStart: ", e)
-//            onTaskFinished(CTaskState.STATE_OPEN_FAIL, STaskFinishType.FAIL(e.exception2taskException()), appTask)
+//            onTaskFinished(ATaskState.STATE_OPEN_FAIL, STaskFinishType.FAIL(e.exception2taskException()), appTask)
         }
     }
 }

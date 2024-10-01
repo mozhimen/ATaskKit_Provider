@@ -37,7 +37,7 @@ include ':support_compose'
 include ':SwiftKit'
 project(':SwiftKit').projectDir = new File("D:\\WorkSpace\\GitHub\\SwiftKit")
 include ':SwiftKit:basick'
-include ':SwiftKit:mvvmk'
+include ':SwiftKit:bindk'
 //ANetKit_okdownload
 include(':ANetKit_okdownload')
 project(':ANetKit_okdownload').projectDir = new File("D:\\WorkSpace\\GitHub\\ANetKit_okdownload")

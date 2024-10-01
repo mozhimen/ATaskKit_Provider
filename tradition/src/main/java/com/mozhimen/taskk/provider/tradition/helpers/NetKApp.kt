@@ -301,7 +301,7 @@
 //    //region # state
 //    fun generateAppTaskByPackageName(appTask: AppTask): AppTask {
 //        if (
-//            getAppTaskByTaskId_PackageName_VersionCode(appTask.taskId, appTask.apkPackageName, appTask.apkVersionCode) == null &&
+//            getAppTaskByTaskId_PackageName_VersionCode(appTask.id, appTask.apkPackageName, appTask.apkVersionCode) == null &&
 //            InstallKManager.hasPackageName_satisfyVersion(appTask.apkPackageName, appTask.apkVersionCode)
 //        ) {
 //            UtilKLogWrapper.d(TAG, "generateAppTaskByPackageName: hasPackageNameAndSatisfyVersion appTask $appTask")
@@ -338,7 +338,7 @@
 //                    }, true)
 //                }
 //            }
-//        } else if (getAppTaskByTaskId_PackageName_VersionCode(appTask.taskId, appTask.apkPackageName, appTask.apkVersionCode) == null) {
+//        } else if (getAppTaskByTaskId_PackageName_VersionCode(appTask.id, appTask.apkPackageName, appTask.apkVersionCode) == null) {
 //            when (appTask.taskState) {
 //                CNetKAppTaskState.STATE_TASK_CREATE -> {
 //                    /**
@@ -503,7 +503,7 @@
 //                }
 //                applyAppTaskState(appTask, CNetKAppTaskState.STATE_TASK_CANCEL, finishType = finishType, onNext = {
 ////                    //推送任务取消的指令
-//                    PostKLiveData.instance.with<String>(CNetKAppEvent.EVENT_TASK_CANCEL_OR_FAIL).postValue(appTask.taskId)
+//                    PostKLiveData.instance.with<String>(CNetKAppEvent.EVENT_TASK_CANCEL_OR_FAIL).postValue(appTask.id)
 //
 //                    /**
 //                     * [CNetKAppTaskState.STATE_TASK_CREATE]
@@ -519,7 +519,7 @@
 ////                }
 //                applyAppTaskState(appTask, CNetKAppTaskState.STATE_TASK_FAIL, finishType = finishType, onNext = {
 //                    //                    //推送任务失败的指令
-//                    PostKLiveData.instance.with<String>(CNetKAppEvent.EVENT_TASK_CANCEL_OR_FAIL).postValue(appTask.taskId)
+//                    PostKLiveData.instance.with<String>(CNetKAppEvent.EVENT_TASK_CANCEL_OR_FAIL).postValue(appTask.id)
 //
 //                    /**
 //                     * [CNetKAppTaskState.STATE_TASK_PAUSE]
@@ -741,7 +741,7 @@
 //            this.taskState = state
 //            if (progress > 0) taskDownloadProgress = progress
 //        }
-//        UtilKLogWrapper.d(TAG, "applyAppTaskState: id ${appTask.taskId} state ${appTask.getStrTaskState()} progress ${appTask.taskDownloadProgress} appTask $appTask")
+//        UtilKLogWrapper.d(TAG, "applyAppTaskState: id ${appTask.id} state ${appTask.getTaskStateStr()} progress ${appTask.taskDownloadProgress} appTask $appTask")
 //        AppTaskDaoManager.update(appTask)
 //        postAppTaskState(appTask, state, appTask.taskDownloadProgress, finishType, onNext)
 //    }
@@ -755,7 +755,7 @@
 //        }
 //        UtilKLogWrapper.d(
 //            TAG,
-//            "applyAppTaskState: id ${appTask.taskId} state ${appTask.getStrTaskState()} progress ${appTask.taskDownloadProgress} currentIndex $currentIndex totalIndex $totalIndex offsetIndexPerSeconds $offsetIndexPerSeconds appTask $appTask"
+//            "applyAppTaskState: id ${appTask.id} state ${appTask.getTaskStateStr()} progress ${appTask.taskDownloadProgress} currentIndex $currentIndex totalIndex $totalIndex offsetIndexPerSeconds $offsetIndexPerSeconds appTask $appTask"
 //        )
 //        AppTaskDaoManager.update(appTask)
 //        postAppTaskState(appTask, state, appTask.taskDownloadProgress, currentIndex, totalIndex, offsetIndexPerSeconds, onNext)
@@ -768,7 +768,7 @@
 //            this.taskState = state
 //            if (progress > 0) taskDownloadProgress = progress
 //        }
-//        UtilKLogWrapper.d(TAG, "applyAppTaskState: id ${appTask.taskId} state ${appTask.getStrTaskState()} exception $exception appTask $appTask")
+//        UtilKLogWrapper.d(TAG, "applyAppTaskState: id ${appTask.id} state ${appTask.getTaskStateStr()} exception $exception appTask $appTask")
 //        AppTaskDaoManager.update(appTask)
 //        postAppTaskState(appTask, state, exception, onNext)
 //    }

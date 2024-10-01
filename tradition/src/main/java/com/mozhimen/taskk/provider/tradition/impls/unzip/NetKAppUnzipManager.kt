@@ -63,7 +63,7 @@ internal object NetKAppUnzipManager : IUtilK {
      */
     @JvmStatic
     fun isUnziping(appTask: AppTask): Boolean {
-        return _unzippingTasks.containsBy { it.taskId == appTask.taskId } && appTask.atTaskUnzip()
+        return _unzippingTasks.containsBy { it.taskId == appTask.id } && appTask.atTaskUnzip()
     }
 
     @JvmStatic

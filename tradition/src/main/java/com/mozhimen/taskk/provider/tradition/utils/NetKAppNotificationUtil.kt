@@ -12,8 +12,9 @@ import com.mozhimen.kotlin.utilk.android.app.UtilKPendingIntentWrapper
 import com.mozhimen.kotlin.utilk.android.content.UtilKApplicationInfo
 import com.mozhimen.kotlin.utilk.android.os.UtilKBuildVersion
 import com.mozhimen.netk.app.R
-import com.mozhimen.taskk.provider.basic.cons.CState
-import com.mozhimen.taskk.provider.basic.cons.CTaskState
+import com.mozhimen.taskk.provider.basic.annors.AState
+import com.mozhimen.taskk.provider.basic.annors.ATaskState
+
 import com.mozhimen.taskk.provider.basic.db.AppTask
 
 /**
@@ -83,7 +84,7 @@ object NetKAppNotificationUtil {
                 builder.setProgress(
                     100,
                     appTask.taskDownloadProgress,
-                    appTask.taskDownloadProgress <= 0 || appTask.taskState == CTaskState.STATE_INSTALLING || appTask.taskState == CTaskState.STATE_VERIFYING/*percent <= 0*/
+                    appTask.taskDownloadProgress <= 0 || appTask.taskState == ATaskState.STATE_INSTALLING || appTask.taskState == ATaskState.STATE_VERIFYING/*percent <= 0*/
                 )
             }
 

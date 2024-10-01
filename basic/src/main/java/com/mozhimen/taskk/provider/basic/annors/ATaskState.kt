@@ -82,18 +82,18 @@ import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 annotation class ATaskState {
     companion object {
         fun getTaskCode(@ATaskState taskState: Int): @ATaskState Int =
-            (taskState / 10)
+            (taskState / 10) * 10
 
         fun taskState2taskName(@ATaskState taskState: Int): @ATaskName String? {
             return (when (taskState) {
-                STATE_DOWNLOAD_CREATE / 10 -> TASK_DOWNLOAD
-                STATE_VERIFY_CREATE / 10 -> TASK_VERIFY
-                STATE_UNZIP_CREATE / 10 -> TASK_UNZIP
-                STATE_INSTALL_CREATE / 10 -> TASK_INSTALL
-                STATE_OPEN_CREATE / 10 -> TASK_OPEN
-                STATE_CLOSE_CREATE / 10 -> TASK_CLOSE
-                STATE_UNINSTALL_CREATE / 10 -> TASK_UNINSTALL
-                STATE_DELETE_CREATE / 10 -> TASK_DELETE
+                STATE_DOWNLOAD_CREATE  -> TASK_DOWNLOAD
+                STATE_VERIFY_CREATE  -> TASK_VERIFY
+                STATE_UNZIP_CREATE  -> TASK_UNZIP
+                STATE_INSTALL_CREATE  -> TASK_INSTALL
+                STATE_OPEN_CREATE  -> TASK_OPEN
+                STATE_CLOSE_CREATE  -> TASK_CLOSE
+                STATE_UNINSTALL_CREATE  -> TASK_UNINSTALL
+                STATE_DELETE_CREATE  -> TASK_DELETE
                 else -> null
             }).also { Log.d("ATaskState>>>>>", "taskState2taskName: $it") }
         }
@@ -413,4 +413,8 @@ fun @ATaskState Int.taskState2taskName(): @ATaskName String? =
     ATaskState.taskState2taskName(this)
 
 fun @ATaskState Int.getTaskCode(): Int =
-    ATaskState.getTaskCode(this) * 10
+    ATaskState.getTaskCode(this)
+
+fun main() {
+    println(48/10*10)
+}

@@ -1,6 +1,7 @@
 package com.mozhimen.taskk.provider.install.splits.ackpine
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.mozhimen.kotlin.elemk.commons.IABC_Listener
@@ -60,6 +61,7 @@ class TaskInstallSplitsAckpine constructor(
 
     @OPermission_POST_NOTIFICATIONS
     private fun installInternal(file: File) {
+        Log.d(TAG, "installInternal: file $file")
         file.file2uri()?.let {
             InstallKSplitsAckpine.install(it, ProcessLifecycleOwner.get().lifecycleScope, _installListener)
         } ?: run {

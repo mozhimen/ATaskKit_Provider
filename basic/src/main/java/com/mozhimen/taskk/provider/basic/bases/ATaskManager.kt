@@ -605,9 +605,9 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
                 ATaskState.STATE_INSTALL_SUCCESS -> listener.onTaskInstallSuccess(appTask)
                 ATaskState.STATE_INSTALL_CANCEL -> listener.onTaskInstallCancel(appTask)
                 ///////////////////////////////////////////////////////////////////////////////
-                ATaskState.STATE_OPEN_PAUSE -> listener.onTaskInstallPause(appTask)
-                ATaskState.STATE_OPEN_SUCCESS -> listener.onTaskInstallSuccess(appTask)
-                ATaskState.STATE_OPEN_CANCEL -> listener.onTaskInstallCancel(appTask)
+                ATaskState.STATE_OPEN_PAUSE -> listener.onTaskOpenPause(appTask)
+                ATaskState.STATE_OPEN_SUCCESS -> listener.onTaskOpenSuccess(appTask)
+                ATaskState.STATE_OPEN_CANCEL -> listener.onTaskOpenCancel(appTask)
                 ///////////////////////////////////////////////////////////////////////////////
                 ATaskState.STATE_UNINSTALL_PAUSE -> listener.onTaskUninstallPause(appTask)
                 ATaskState.STATE_UNINSTALL_SUCCESS -> listener.onTaskUninstallSuccess(appTask)

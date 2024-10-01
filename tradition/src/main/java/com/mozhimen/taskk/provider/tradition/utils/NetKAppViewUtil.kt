@@ -4,8 +4,9 @@ import android.content.Context
 import android.view.View
 import com.mozhimen.kotlin.elemk.commons.IAB_Listener
 import com.mozhimen.kotlin.elemk.commons.I_AListener
-import com.mozhimen.taskk.provider.basic.cons.CState
-import com.mozhimen.taskk.provider.basic.cons.CTaskState
+import com.mozhimen.taskk.provider.basic.annors.AState
+import com.mozhimen.taskk.provider.basic.annors.ATaskState
+
 import com.mozhimen.taskk.provider.basic.db.AppTask
 
 /**
@@ -26,12 +27,12 @@ object NetKAppViewUtil {
             val appTask = onGetAppTask.invoke()
             when (appTask.taskState) {
                 /*CState.STATE_TASK_WAIT,*/
-                CTaskState.STATE_DOWNLOADING, CState.STATE_TASK_PAUSE, CTaskState.STATE_DOWNLOAD_PAUSE -> {
+                ATaskState.STATE_DOWNLOADING, CState.STATE_TASK_PAUSE, ATaskState.STATE_DOWNLOAD_PAUSE -> {
 //                    cancelTask(it.context, appTask)
                     onCancel.invoke(it.context, appTask)
                 }
 
-                CTaskState.STATE_UNZIP_SUCCESS, CTaskState.STATE_INSTALLING -> {
+                ATaskState.STATE_UNZIP_SUCCESS, ATaskState.STATE_INSTALLING -> {
                     onCancel.invoke(it.context, appTask)
                 }
             }
@@ -80,7 +81,7 @@ object NetKAppViewUtil {
 //                    )
 //                }
                 //如果是下载中，则暂停
-                CTaskState.STATE_DOWNLOADING -> {
+                ATaskState.STATE_DOWNLOADING -> {
 //                    NetKApp.instance.taskPause(appTask)
                     onPause.invoke(it.context, appTask)
                 }
@@ -107,12 +108,12 @@ object NetKAppViewUtil {
 //                    textKProgress.setText("等待中")
 //                    download(it.context, button, fileParams)
 //                }
-                CTaskState.STATE_VERIFY_SUCCESS, CTaskState.STATE_UNZIPING -> {
+                ATaskState.STATE_VERIFY_SUCCESS, ATaskState.STATE_UNZIPING -> {
 //                    NetKApp.instance.unzip(appTask)
                     onUnzip.invoke(it.context, appTask)
                 }
 
-                CTaskState.STATE_UNZIP_SUCCESS, CTaskState.STATE_INSTALLING -> {
+                ATaskState.STATE_UNZIP_SUCCESS, ATaskState.STATE_INSTALLING -> {
 //                    startInstall(it.context, appTask)
                     onInstall.invoke(it.context, appTask)
                 }
