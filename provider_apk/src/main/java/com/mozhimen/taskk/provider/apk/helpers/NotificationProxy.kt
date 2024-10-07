@@ -81,7 +81,14 @@ class NotificationProxy : BaseWakeBefDestroyLifecycleObserver() {
                 builder.setProgress(0, 0, false)
             }
 
-            appTask.isTaskUnzipSuccess() -> {
+            !appTask.taskUnzipEnable && appTask.isTaskVerifySuccess() -> {
+                intent?.let {
+                    builder.setContentIntent(UtilKPendingIntentWrapper.get_ofActivity_IMMUTABLE(0, it))
+                }
+                builder.setProgress(0, 0, false)
+            }
+
+            appTask.taskUnzipEnable && appTask.isTaskUnzipSuccess() -> {
                 intent?.let {
                     builder.setContentIntent(UtilKPendingIntentWrapper.get_ofActivity_IMMUTABLE(0, it))
                 }
@@ -92,7 +99,7 @@ class NotificationProxy : BaseWakeBefDestroyLifecycleObserver() {
                 builder.setProgress(
                     100,
                     appTask.taskDownloadProgress,
-                    appTask.taskDownloadProgress <= 0 || appTask.taskDownloadProgress >= 100 || appTask.isTaskInstalling() || appTask.isTaskVerifying()/*percent <= 0*/
+                    appTask.taskDownloadProgress !in 1..99 /*|| appTask.isTaskInstalling() || appTask.isTaskVerifying()*//*percent <= 0*/
                 )
             }
         }

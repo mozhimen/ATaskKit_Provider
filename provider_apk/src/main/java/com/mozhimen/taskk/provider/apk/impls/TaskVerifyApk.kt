@@ -5,6 +5,7 @@ import com.mozhimen.kotlin.utilk.java.io.file2strMd5Hex_use_ofStream
 import com.mozhimen.kotlin.utilk.kotlin.isFileNotExist
 import com.mozhimen.kotlin.utilk.kotlin.strFilePath2file
 import com.mozhimen.taskk.provider.apk.cons.CExt
+import com.mozhimen.taskk.provider.apk.impls.interceptors.TaskInterceptorApk
 import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
@@ -28,6 +29,8 @@ class TaskVerifyApk(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle) : 
         return listOf(CExt.EXT_APK)
     }
 
+    //////////////////////////////////////////////////////////////////
+
     override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
         if (appTask.atTaskUnzip()) {
             UtilKLogWrapper.d(TAG, "verify: the task already verify")
@@ -43,6 +46,19 @@ class TaskVerifyApk(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle) : 
             onTaskFinished(ATaskState.STATE_VERIFY_SUCCESS, appTask, taskQueueName, STaskFinishType.SUCCESS)
         }
     }
+
+    override fun taskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+        if (appTask.isTaskVerifySuccess()) {
+            TaskInterceptorApk.deleteOrgFiles(appTask)
+            onTaskFinished(ATaskState.STATE_VERIFY_CANCEL, appTask, taskQueueName, STaskFinishType.CANCEL)
+        }
+    }
+
+    override fun canTaskCancel(appTask: AppTask, taskQueueName: String): Boolean {
+        return true
+    }
+
+    //////////////////////////////////////////////////////////////////
 
     private fun startVerify(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
         if (appTask.filePathNameExt.isEmpty()) {

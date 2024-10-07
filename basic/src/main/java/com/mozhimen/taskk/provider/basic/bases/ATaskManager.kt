@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.CallSuper
 import com.mozhimen.kotlin.elemk.commons.IA_Listener
-import com.mozhimen.kotlin.elemk.commons.I_Listener
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
@@ -16,7 +15,6 @@ import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.annors.getTaskCode
 import com.mozhimen.taskk.provider.basic.annors.taskName2taskState
-import com.mozhimen.taskk.provider.basic.annors.taskState2taskName
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetDelete
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetDownload
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetInstall
@@ -32,6 +30,7 @@ import com.mozhimen.taskk.provider.basic.commons.ITask
 import com.mozhimen.taskk.provider.basic.commons.ITaskEvent
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 import com.mozhimen.taskk.provider.basic.commons.ITasks
+import com.mozhimen.taskk.provider.basic.commons.ITasks2
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -46,6 +45,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
     protected val _isInit = AtomicBoolean(false)
     protected val _taskListeners = mutableListOf<ITasks>()
+    protected val _task2Listeners = mutableListOf<ITasks2>()
     protected val _taskSets: ConcurrentHashMap<@ATaskName String, ATaskSet<*>> by lazy {
         ConcurrentHashMap<String, ATaskSet<*>>(
             getTaskSets().associateBy { it.getTaskName() }
@@ -60,7 +60,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
     protected val _iTaskLifecycle: ITaskLifecycle = object : ITaskLifecycle {
         override fun onTaskStarted(taskState: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String) {
             if (appTask.isAnyTasking()) {
-                onTask_ofIng(appTask, appTask.taskDownloadProgress, appTask.taskDownloadFileSizeOffset, appTask.taskDownloadFileSizeTotal, appTask.taskDownloadFileSpeed)
+                onTask_ofIng(appTask, taskQueueName, appTask.taskDownloadProgress, appTask.taskDownloadFileSizeOffset, appTask.taskDownloadFileSizeTotal, appTask.taskDownloadFileSpeed)
             } else {
                 onTask_ofOther(appTask, taskQueueName)
             }
@@ -104,10 +104,22 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
         }
     }
 
+    fun registerTask2Listener(listener: ITasks2) {
+        if (!_task2Listeners.contains(listener)) {
+            _task2Listeners.add(listener)
+        }
+    }
+
     fun unregisterTaskListener(listener: ITasks) {
         val indexOf = _taskListeners.indexOf(listener)
         if (indexOf >= 0)
             _taskListeners.removeAt(indexOf)
+    }
+
+    fun unregisterTask2Listener(listener: ITasks2) {
+        val indexOf = _task2Listeners.indexOf(listener)
+        if (indexOf >= 0)
+            _task2Listeners.removeAt(indexOf)
     }
 
     fun getAppTaskDaoManager(): AppTaskDaoManager =
@@ -554,6 +566,12 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
                 ATaskState.STATE_DELETE_FAIL -> listener.onTaskDeleteFail(appTask, exception)
             }
         }
+        for (listener in _task2Listeners) {
+            when (appTask.taskState) {
+                AState.STATE_TASK_FAIL -> listener.onTaskFinish(appTask, taskQueueName, STaskFinishType.FAIL(exception))
+                else -> listener.onTaskFail(appTask, taskQueueName, exception)
+            }
+        }
         //
         if (appTask.isTaskFail())
             onTaskCreate(appTask, taskQueueName, appTask.taskStateInit == AState.STATE_TASK_UPDATE)
@@ -561,7 +579,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             onTaskFinish(appTask, taskQueueName, STaskFinishType.FAIL(exception))
     }
 
-    fun onTask_ofIng(appTask: AppTask, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
+    fun onTask_ofIng(appTask: AppTask, @ATaskQueueName taskQueueName: String, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long) {
         UtilKLogWrapper.d(
             TAG,
             "onTask: id ${appTask.id} state ${appTask.getTaskStateStr()} progress $progress currentIndex $currentIndex totalIndex $totalIndex offsetIndexPerSeconds $offsetIndexPerSeconds appTask $appTask"
@@ -576,6 +594,9 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
                 ATaskState.STATE_UNINSTALLING -> listener.onTaskUninstalling(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
                 ATaskState.STATE_DELETING -> listener.onTaskDeleting(appTask, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
             }
+        }
+        for (listener in _task2Listeners) {
+            listener.onTasking(appTask, taskQueueName, progress, currentIndex, totalIndex, offsetIndexPerSeconds)
         }
     }
 
@@ -616,6 +637,18 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
                 ATaskState.STATE_DELETE_PAUSE -> listener.onTaskDeletePause(appTask)
                 ATaskState.STATE_DELETE_SUCCESS -> listener.onTaskDeleteSuccess(appTask)
                 ATaskState.STATE_DELETE_CANCEL -> listener.onTaskDeleteCancel(appTask)
+            }
+        }
+        for (listener in _task2Listeners) {
+            when {
+                appTask.taskState == AState.STATE_TASK_CREATE -> listener.onTaskCreate(appTask, taskQueueName, false)
+                appTask.taskState == AState.STATE_TASK_UPDATE -> listener.onTaskCreate(appTask, taskQueueName, true)
+                appTask.taskState == AState.STATE_TASK_UNAVAILABLE -> listener.onTaskUnavailable(appTask, taskQueueName)
+                appTask.taskState == AState.STATE_TASK_SUCCESS -> listener.onTaskFinish(appTask, taskQueueName, STaskFinishType.SUCCESS)
+                appTask.taskState == AState.STATE_TASK_CANCEL -> listener.onTaskFinish(appTask, taskQueueName, STaskFinishType.CANCEL)
+                appTask.isAnyTaskPause() -> listener.onTaskPause(appTask, taskQueueName)
+                appTask.isAnyTaskSuccess() -> listener.onTaskSuccess(appTask, taskQueueName)
+                appTask.isAnyTaskCancel() -> listener.onTaskCancel(appTask, taskQueueName)
             }
         }
 

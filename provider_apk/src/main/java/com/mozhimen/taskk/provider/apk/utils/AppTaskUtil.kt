@@ -36,10 +36,15 @@ object AppTaskUtil : IUtilK {
             } else {//存在库中
                 if (appTask_ofDb.isTaskSuccess(taskManager, taskQueueName)) {
                     UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask_ofDb != null appTask_ofDb.isTaskSuccess()")
-                    taskManager.onTaskCreate(appTask, taskQueueName, false)
+                    AppTaskDaoManager.gets_ofApkPackageName(appTask.apkPackageName).forEach { appTask1 ->
+                        taskManager.onTaskCreate(appTask1, taskQueueName, false)
+                    }
                 } else if (appTask_ofDb.isTaskProcess(taskManager, taskQueueName)) {
                     UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask_ofDb != null appTask_ofDb.isTaskProcess")
                     return appTask_ofDb
+                } else if (appTask_ofDb.isTaskUpdate()) {
+                    UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask_ofDb != null appTask_ofDb.isTaskUpdate()")
+                    taskManager.onTaskCreate(appTask, taskQueueName, false)
                 } else {
                     UtilKLogWrapper.d(TAG, "generateAppTask_ofDb_installed_version: appTask_ofDb != null")
                 }
