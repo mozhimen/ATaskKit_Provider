@@ -32,6 +32,8 @@ import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 import com.mozhimen.taskk.provider.basic.commons.ITasks
 import com.mozhimen.taskk.provider.basic.commons.ITasks2
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -44,8 +46,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 @OApiInit_InApplication
 abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
     protected val _isInit = AtomicBoolean(false)
-    protected val _taskListeners = mutableListOf<ITasks>()
-    protected val _task2Listeners = mutableListOf<ITasks2>()
+    protected val _taskListeners = CopyOnWriteArrayList<ITasks>()
+    protected val _task2Listeners = CopyOnWriteArrayList<ITasks2>()
     protected val _taskSets: ConcurrentHashMap<@ATaskName String, ATaskSet<*>> by lazy {
         ConcurrentHashMap<String, ATaskSet<*>>(
             getTaskSets().associateBy { it.getTaskName() }
