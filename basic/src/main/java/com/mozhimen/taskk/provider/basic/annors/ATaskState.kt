@@ -214,7 +214,7 @@ annotation class ATaskState {
         //////////////////////////////////////////////////////////////
         //校验
         const val STATE_VERIFY_CREATE = 20
-        const val STATE_VERIFYING = STATE_VERIFY_CREATE + AState.STATE_TASKING//20//STATE_CHECKING = 14//校验中
+        const val STATE_VERIFYING = STATE_VERIFY_CREATE + AState.STATE_TASKING//22//STATE_CHECKING = 14//校验中
         const val STATE_VERIFY_PAUSE = STATE_VERIFY_CREATE + AState.STATE_TASK_PAUSE//23
         const val STATE_VERIFY_CANCEL = STATE_VERIFY_CREATE + AState.STATE_TASK_CANCEL//27//STATE_CHECKING_SUCCESS = 15//校验成功
         const val STATE_VERIFY_SUCCESS = STATE_VERIFY_CREATE + AState.STATE_TASK_SUCCESS//28//STATE_CHECKING_SUCCESS = 15//校验成功

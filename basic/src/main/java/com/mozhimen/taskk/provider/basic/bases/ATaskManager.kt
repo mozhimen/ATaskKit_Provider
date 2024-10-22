@@ -8,6 +8,7 @@ import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.bases.BaseUtilK
+import com.mozhimen.kotlin.utilk.kotlinx.coroutines.safeResume
 import com.mozhimen.taskk.provider.basic.annors.AFileExt
 import com.mozhimen.taskk.provider.basic.annors.AState
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
@@ -31,9 +32,9 @@ import com.mozhimen.taskk.provider.basic.commons.ITaskEvent
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 import com.mozhimen.taskk.provider.basic.commons.ITasks
 import com.mozhimen.taskk.provider.basic.commons.ITasks2
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
-import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -231,25 +232,36 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
 
     /////////////////////////////////////////////////////////////////
 
-    fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String, finishType: STaskFinishType, @ATaskState taskState: Int, listener: IA_Listener<AppTask>) {
-        taskStart(appTask, taskQueueName)
+    suspend fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String, finishType: STaskFinishType, @ATaskState taskState: Int): AppTask = suspendCancellableCoroutine { coroutine ->
+        taskStart(appTask, taskQueueName, finishType, taskState) {
+            coroutine.resumeWith(Result.success(appTask))
+        }
+    }
+
+    fun taskStart(appTaskInner: AppTask, @ATaskQueueName taskQueueName: String, finishType: STaskFinishType, @ATaskState taskState: Int, listener: IA_Listener<AppTask>) {
         registerTaskListener(object : ITasks {
+            override fun onTaskCreate(appTask: AppTask, taskQueueName: String, isUpdate: Boolean) {
+                if (appTaskInner.id == appTask.id) {
+                    unregisterTaskListener(this)
+                }
+            }
+
             override fun onTaskDownloadCancel(appTask: AppTask) {
-                if (finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_DOWNLOAD_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_DOWNLOAD_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
             }
 
             override fun onTaskDownloadSuccess(appTask: AppTask) {
-                if (finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_DOWNLOAD_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_DOWNLOAD_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
             }
 
             override fun onTaskDownloadFail(appTask: AppTask, exception: TaskException) {
-                if (finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_DOWNLOAD_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_DOWNLOAD_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
@@ -258,21 +270,21 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             /////////////////////////////////////////////////////////
 
             override fun onTaskVerifyCancel(appTask: AppTask) {
-                if (finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_VERIFY_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_VERIFY_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
             }
 
             override fun onTaskVerifySuccess(appTask: AppTask) {
-                if (finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_VERIFY_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_VERIFY_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
             }
 
             override fun onTaskVerifyFail(appTask: AppTask, exception: TaskException) {
-                if (finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_VERIFY_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_VERIFY_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
@@ -281,21 +293,21 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             /////////////////////////////////////////////////////////
 
             override fun onTaskUnzipCancel(appTask: AppTask) {
-                if (finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_UNZIP_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_UNZIP_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
             }
 
             override fun onTaskUnzipSuccess(appTask: AppTask) {
-                if (finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_UNZIP_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_UNZIP_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
             }
 
             override fun onTaskUnzipFail(appTask: AppTask, exception: TaskException) {
-                if (finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_UNZIP_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_UNZIP_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
@@ -304,21 +316,21 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             /////////////////////////////////////////////////////////
 
             override fun onTaskInstallCancel(appTask: AppTask) {
-                if (finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_INSTALL_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_INSTALL_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
             }
 
             override fun onTaskInstallSuccess(appTask: AppTask) {
-                if (finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_INSTALL_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_INSTALL_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
             }
 
             override fun onTaskInstallFail(appTask: AppTask, exception: TaskException) {
-                if (finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_INSTALL_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_INSTALL_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
@@ -327,21 +339,21 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             /////////////////////////////////////////////////////////
 
             override fun onTaskOpenCancel(appTask: AppTask) {
-                if (finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_OPEN_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_OPEN_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
             }
 
             override fun onTaskOpenSuccess(appTask: AppTask) {
-                if (finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_OPEN_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_OPEN_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
             }
 
             override fun onTaskOpenFail(appTask: AppTask, exception: TaskException) {
-                if (finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_OPEN_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_OPEN_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
@@ -350,21 +362,21 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             /////////////////////////////////////////////////////////
 
             override fun onTaskCloseCancel(appTask: AppTask) {
-                if (finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_CLOSE_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_CLOSE_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
             }
 
             override fun onTaskCloseSuccess(appTask: AppTask) {
-                if (finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_CLOSE_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_CLOSE_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
             }
 
             override fun onTaskCloseFail(appTask: AppTask, exception: TaskException) {
-                if (finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_CLOSE_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_CLOSE_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
@@ -373,21 +385,21 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             /////////////////////////////////////////////////////////
 
             override fun onTaskUninstallCancel(appTask: AppTask) {
-                if (finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_UNINSTALL_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_UNINSTALL_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
             }
 
             override fun onTaskUninstallSuccess(appTask: AppTask) {
-                if (finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_UNINSTALL_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_UNINSTALL_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
             }
 
             override fun onTaskUninstallFail(appTask: AppTask, exception: TaskException) {
-                if (finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_UNINSTALL_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_UNINSTALL_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
@@ -396,26 +408,29 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             /////////////////////////////////////////////////////////
 
             override fun onTaskDeleteCancel(appTask: AppTask) {
-                if (finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_DELETE_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType == STaskFinishType.CANCEL && taskState.getTaskCode() == ATaskState.STATE_DELETE_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
             }
 
             override fun onTaskDeleteSuccess(appTask: AppTask) {
-                if (finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_DELETE_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType == STaskFinishType.SUCCESS && taskState.getTaskCode() == ATaskState.STATE_DELETE_CREATE) {
                     unregisterTaskListener(this)
+                    Log.d(TAG, "onTaskDeleteSuccess: ")
                     listener.invoke(appTask)
                 }
             }
 
             override fun onTaskDeleteFail(appTask: AppTask, exception: TaskException) {
-                if (finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_DELETE_CREATE) {
+                if (appTaskInner.id == appTask.id && finishType is STaskFinishType.FAIL && taskState.getTaskCode() == ATaskState.STATE_DELETE_CREATE) {
                     unregisterTaskListener(this)
                     listener.invoke(appTask)
                 }
             }
         })
+
+        taskStart(appTaskInner, taskQueueName)
     }
 
     override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
