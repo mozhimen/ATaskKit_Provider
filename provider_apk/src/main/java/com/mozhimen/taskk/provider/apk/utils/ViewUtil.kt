@@ -22,13 +22,14 @@ object ViewUtil {
     fun generateViewLongClickOfAppTask(
         view: View,
         taskManager: ATaskManager,
-        @ATaskQueueName taskQueueName: String,
+        @ATaskQueueName taskQueueName_process: String,
+        @ATaskQueueName taskQueueName_success: String,
         onGetAppTask: I_AListener<AppTask>,
         onTaskCancel: IAB_Listener<Context, AppTask>,
     ) {
         view.setOnLongClickListener {
             val appTask = onGetAppTask.invoke()
-            if (appTask.canTaskCancel(taskManager, taskQueueName)) {
+            if (appTask.canTaskCancel(taskManager, taskQueueName_process)) {
                 onTaskCancel.invoke(it.context, appTask)
             }
             true
@@ -40,7 +41,8 @@ object ViewUtil {
     fun generateViewClickOfAppTask(
         view: View,
         taskManager: ATaskManager,
-        @ATaskQueueName taskQueueName: String,
+        @ATaskQueueName taskQueueName_process: String,
+        @ATaskQueueName taskQueueName_success: String,
         onGetAppTask: I_AListener<AppTask>,
         onTaskStart: IAB_Listener<Context, AppTask>,
         onTaskOpen: IAB_Listener<Context, AppTask>,
@@ -56,7 +58,7 @@ object ViewUtil {
                     onTaskStart.invoke(it.context, appTask)
                 }
 
-                appTask.isTaskSuccess(taskManager, taskQueueName) -> {
+                appTask.isTaskSuccess(taskManager, taskQueueName_success) -> {
                     onTaskOpen.invoke(it.context, appTask)
                 }
 
@@ -68,7 +70,7 @@ object ViewUtil {
                     onTaskResume.invoke(it.context, appTask)
                 }
 
-                appTask.canTaskInstall(taskManager,taskQueueName)/*ATaskState.STATE_UNZIP_SUCCESS, ATaskState.STATE_INSTALLING*/ -> {
+                appTask.isTaskSuccess(taskManager, taskQueueName_process)/*ATaskState.STATE_UNZIP_SUCCESS, ATaskState.STATE_INSTALLING*/ -> {
                     onTaskInstall.invoke(it.context, appTask)
                 }
 
@@ -76,6 +78,13 @@ object ViewUtil {
                 }
             }
         }
-        generateViewLongClickOfAppTask(view, taskManager, taskQueueName, onGetAppTask, onTaskCancel)
+        generateViewLongClickOfAppTask(
+            view,
+            taskManager,
+            taskQueueName_process,
+            taskQueueName_success,
+            onGetAppTask,
+            onTaskCancel
+        )
     }
 }
