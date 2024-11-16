@@ -4,7 +4,7 @@ import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.java.io.UtilKFileDir
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
@@ -32,9 +32,9 @@ class TaskSetDownload constructor(taskManager: ATaskManager, override val provid
     }
 
     @OptIn(OApiInit_InApplication::class)
-    override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    override fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         try {
-            if (appTask.isTaskProcess(_taskManager, taskQueueName) && !appTask.isAnyTaskPause()) {
+            if (appTask.isTaskProcess(_taskManager, taskNodeQueueName) && !appTask.isAnyTaskPause()) {
                 UtilKLogWrapper.d(TAG, "taskStart: the task already start")
                 return
             }
@@ -54,11 +54,11 @@ class TaskSetDownload constructor(taskManager: ATaskManager, override val provid
                 }
             }
 
-            super.taskStart(appTask, taskQueueName)
+            super.taskStart(appTask, taskNodeQueueName)
         } catch (e: TaskException) {
-            onTaskFinished(ATaskState.STATE_DOWNLOAD_FAIL, appTask, taskQueueName, STaskFinishType.FAIL(e))//onDownloadFail(appTask, exception)
+            onTaskFinished(ATaskState.STATE_DOWNLOAD_FAIL, appTask, taskNodeQueueName, STaskFinishType.FAIL(e))//onDownloadFail(appTask, exception)
         } catch (e: Exception) {
-            onTaskFinished(ATaskState.STATE_DOWNLOAD_FAIL, appTask, taskQueueName, STaskFinishType.FAIL(TaskException(e)))
+            onTaskFinished(ATaskState.STATE_DOWNLOAD_FAIL, appTask, taskNodeQueueName, STaskFinishType.FAIL(TaskException(e)))
         }
     }
 }

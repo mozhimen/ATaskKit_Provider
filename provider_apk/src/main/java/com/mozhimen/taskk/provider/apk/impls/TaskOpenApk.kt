@@ -6,7 +6,7 @@ import com.mozhimen.kotlin.utilk.android.app.UtilKApplicationWrapper
 import com.mozhimen.kotlin.utilk.android.content.UtilKContextStart
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.taskk.provider.apk.cons.CExt
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskOpen
 import com.mozhimen.taskk.provider.basic.db.AppTask
@@ -27,7 +27,7 @@ class TaskOpenApk(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle) : AT
 
     @SuppressLint("MissingSuperCall")
     @OptIn(OPermission_QUERY_ALL_PACKAGES::class)
-    override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    override fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         try {
             val boolean = UtilKContextStart.startContext_ofPackageName(UtilKApplicationWrapper.instance.get(), appTask.apkPackageName)
             if (boolean) {

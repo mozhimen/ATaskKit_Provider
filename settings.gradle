@@ -33,6 +33,8 @@ include ':install_splits_ackpine'
 include ':unzip'
 include ':verify'
 include ':support_compose'
+include ':delete'
+include ':close'
 //SwiftKit
 include ':SwiftKit'
 project(':SwiftKit').projectDir = new File("D:\\WorkSpace\\GitHub\\SwiftKit")
@@ -92,10 +94,9 @@ include(':AStackKit')
 project(':AStackKit').projectDir = new File("D:\\WorkSpace\\GitHub\\AStackKit")
 include(':AStackKit:stackk')
 include(':AStackKit:stackk_callback')
-include(':AStackKit:basic')
+include(':AStackKit:stackk_basic')
 //ATaskKit
 include(':ATaskKit')
 project(':ATaskKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ATaskKit")
 include(':ATaskKit:taskk_executor')
-include ':delete'
-include ':close'
+

@@ -1,6 +1,6 @@
 package com.mozhimen.taskk.provider.basic.commons
 
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 
@@ -12,7 +12,7 @@ import com.mozhimen.taskk.provider.basic.db.AppTask
  * @Version 1.0
  */
 interface ITaskLifecycle {
-    fun onTaskStarted(taskState: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String)
-    fun onTaskPaused(taskState: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String)
-    fun onTaskFinished(taskState: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String, finishType: STaskFinishType)
+    fun onTaskStarted(taskState: Int, appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String)
+    fun onTaskPaused(taskState: Int, appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String)
+    fun onTaskFinished(taskState: Int, appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String, finishType: STaskFinishType)
 }

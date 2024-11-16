@@ -18,12 +18,14 @@ import androidx.annotation.StringDef
     ATaskName.TASK_CLOSE,
     ATaskName.TASK_UNINSTALL,
     ATaskName.TASK_DELETE,
-    ATaskQueueName.TASK_RESTART
+    ATaskNodeQueueName.TASK_RESTART,
+    ATaskNodeQueueName.TASK_BLOCKER
 )
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION)
-annotation class ATaskQueueName{
+annotation class ATaskNodeQueueName{
     companion object{
-        const val TASK_RESTART = "TASK_RESTART"
+        const val TASK_RESTART = "TASK_RESTART"//重启标志位, 一般用来重新任务
+        const val TASK_BLOCKER = "TASK_BLOCKER"//拦截标志位, 一般用来阻塞任务
     }
 }

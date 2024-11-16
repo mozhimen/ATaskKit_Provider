@@ -11,8 +11,8 @@ import com.mozhimen.taskk.provider.basic.annors.ATaskName.Companion.TASK_OPEN
 import com.mozhimen.taskk.provider.basic.annors.ATaskName.Companion.TASK_UNINSTALL
 import com.mozhimen.taskk.provider.basic.annors.ATaskName.Companion.TASK_UNZIP
 import com.mozhimen.taskk.provider.basic.annors.ATaskName.Companion.TASK_VERIFY
-import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
+import com.mozhimen.taskk.provider.basic.cons.STaskNode
 
 /**
  * @ClassName ATaskState
@@ -98,6 +98,20 @@ annotation class ATaskState {
             }).also { Log.d("ATaskState>>>>>", "taskState2taskName: $it") }
         }
 
+        fun taskState2taskNode(@ATaskState taskState: Int):STaskNode?{
+            return (when (taskState) {
+                STATE_DOWNLOAD_CREATE  -> STaskNode.TaskNodeDownload
+                STATE_VERIFY_CREATE  -> STaskNode.TaskNodeVerify
+                STATE_UNZIP_CREATE  -> STaskNode.TaskNodeUnzip
+                STATE_INSTALL_CREATE  -> STaskNode.TaskNodeInstall
+                STATE_OPEN_CREATE  -> STaskNode.TaskNodeOpen
+                STATE_CLOSE_CREATE  -> STaskNode.TaskNodeClose
+                STATE_UNINSTALL_CREATE  -> STaskNode.TaskNodeUninstall
+                STATE_DELETE_CREATE  -> STaskNode.TaskNodeDelete
+                else -> null
+            }).also { Log.d("ATaskState>>>>>", "taskState2taskName: $it") }
+        }
+
         fun intTaskState2strTaskState(state: Int): String =
             when (state) {
 //            CNetKAppState.STATE_DOWNLOAD_WAIT -> "下载等待"
@@ -165,12 +179,12 @@ annotation class ATaskState {
             @ATaskState taskState: Int,
             taskManager: ATaskManager,
             @AFileExt fileExt: String,
-            @ATaskQueueName taskQueueName: String,
+            taskNodeQueueName: String,
             @ATaskState currentTaskCode: Int,
             @ATaskState prevTaskCode: Int? = null,
         ): Boolean {
             val preTaskCode =
-                taskManager.getPrevTaskName_ofTaskQueue(fileExt, taskQueueName, getTaskCode(taskState).taskState2taskName())?.taskName2taskState() ?: prevTaskCode?.let { getTaskCode(it) }
+                taskManager.getPrevTaskNode_ofTaskNodeQueue(fileExt, taskNodeQueueName, getTaskCode(taskState).taskState2taskNode())?.taskNode2taskState() ?: prevTaskCode?.let { getTaskCode(it) }
             return (preTaskCode?.let {
                 AState.canTaskExecute(taskState, currentTaskCode, it)
             } ?: run {
@@ -196,8 +210,8 @@ annotation class ATaskState {
         const val STATE_DOWNLOAD_FAIL = STATE_DOWNLOAD_CREATE + AState.STATE_TASK_FAIL//19//STATE_DOWNLOAD_FAILED = 10//下载失败
 
         @OptIn(OApiInit_InApplication::class)
-        fun canTaskDownload(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
-            canTaskExecute(taskState, taskManager, fileExt, taskQueueName, STATE_DOWNLOAD_CREATE)
+        fun canTaskDownload(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+            canTaskExecute(taskState, taskManager, fileExt, taskNodeQueueName, STATE_DOWNLOAD_CREATE)
 
         fun atTaskDownload(taskState: Int): Boolean =
             taskState in STATE_DOWNLOAD_CREATE..STATE_DOWNLOAD_FAIL
@@ -221,8 +235,8 @@ annotation class ATaskState {
         const val STATE_VERIFY_FAIL = STATE_VERIFY_CREATE + AState.STATE_TASK_FAIL//29//STATE_CHECKING_FAILURE = 16//校验失败
 
         @OptIn(OApiInit_InApplication::class)
-        fun canTaskVerify(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
-            canTaskExecute(taskState, taskManager, fileExt, taskQueueName, STATE_VERIFY_CREATE)
+        fun canTaskVerify(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+            canTaskExecute(taskState, taskManager, fileExt, taskNodeQueueName, STATE_VERIFY_CREATE)
         //taskState in STATE_DOWNLOAD_SUCCESS..STATE_VERIFY_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE
 
         fun atTaskVerify(taskState: Int): Boolean =
@@ -247,8 +261,8 @@ annotation class ATaskState {
         const val STATE_UNZIP_FAIL = STATE_UNZIP_CREATE + AState.STATE_TASK_FAIL//39//STATE_UNPACKING_FAILED = 13//解压失败
 
         @OptIn(OApiInit_InApplication::class)
-        fun canTaskUnzip(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
-            canTaskExecute(taskState, taskManager, fileExt, taskQueueName, STATE_UNZIP_CREATE)
+        fun canTaskUnzip(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+            canTaskExecute(taskState, taskManager, fileExt, taskNodeQueueName, STATE_UNZIP_CREATE)
         //taskState in STATE_VERIFY_SUCCESS..STATE_UNZIP_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE
 
         fun atTaskUnzip(taskState: Int): Boolean =
@@ -273,8 +287,8 @@ annotation class ATaskState {
         const val STATE_INSTALL_FAIL = STATE_INSTALL_CREATE + AState.STATE_TASK_FAIL//49//STATE_INSTALLED = 2//已安装
 
         @OptIn(OApiInit_InApplication::class)
-        fun canTaskInstall(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
-            canTaskExecute(taskState, taskManager, fileExt, taskQueueName, STATE_INSTALL_CREATE)
+        fun canTaskInstall(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+            canTaskExecute(taskState, taskManager, fileExt, taskNodeQueueName, STATE_INSTALL_CREATE)
 //            taskState in STATE_UNZIP_SUCCESS..STATE_INSTALL_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE
 
         fun atTaskInstall(taskState: Int): Boolean =
@@ -300,8 +314,8 @@ annotation class ATaskState {
         const val STATE_OPEN_FAIL = STATE_OPEN_CREATE + AState.STATE_TASK_FAIL//59
 
         @OptIn(OApiInit_InApplication::class)
-        fun canTaskOpen(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
-            canTaskExecute(taskState, taskManager, fileExt, taskQueueName, STATE_OPEN_CREATE)
+        fun canTaskOpen(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+            canTaskExecute(taskState, taskManager, fileExt, taskNodeQueueName, STATE_OPEN_CREATE)
 //            taskState in STATE_INSTALL_SUCCESS..STATE_OPEN_PAUSE || taskState in AState.STATE_TASK_CREATE..AState.STATE_TASK_UPDATE
 
         fun atTaskOpen(taskState: Int): Boolean =
@@ -327,8 +341,8 @@ annotation class ATaskState {
         const val STATE_CLOSE_FAIL = STATE_CLOSE_CREATE + AState.STATE_TASK_FAIL//59
 
         @OptIn(OApiInit_InApplication::class)
-        fun canTaskClose(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
-            canTaskExecute(taskState, taskManager, fileExt, taskQueueName, STATE_CLOSE_CREATE, STATE_OPEN_CREATE) || AState.canTaskStart(taskState) || AState.canTaskFinish(taskState)
+        fun canTaskClose(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+            canTaskExecute(taskState, taskManager, fileExt, taskNodeQueueName, STATE_CLOSE_CREATE, STATE_OPEN_CREATE) || AState.canTaskStart(taskState) || AState.canTaskFinish(taskState)
 
         fun atTaskClose(taskState: Int): Boolean =
             taskState in STATE_CLOSE_CREATE..STATE_CLOSE_FAIL
@@ -353,8 +367,8 @@ annotation class ATaskState {
         const val STATE_UNINSTALL_FAIL = STATE_UNINSTALL_CREATE + AState.STATE_TASK_FAIL//59
 
         @OptIn(OApiInit_InApplication::class)
-        fun canTaskUninstall(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
-            canTaskExecute(taskState, taskManager, fileExt, taskQueueName, STATE_UNINSTALL_CREATE, STATE_INSTALL_CREATE) || AState.canTaskStart(taskState) || AState.canTaskFinish(taskState)
+        fun canTaskUninstall(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+            canTaskExecute(taskState, taskManager, fileExt, taskNodeQueueName, STATE_UNINSTALL_CREATE, STATE_INSTALL_CREATE) || AState.canTaskStart(taskState) || AState.canTaskFinish(taskState)
 
         fun atTaskUninstall(taskState: Int): Boolean =
             taskState in STATE_UNINSTALL_CREATE..STATE_UNINSTALL_FAIL
@@ -379,12 +393,12 @@ annotation class ATaskState {
         const val STATE_DELETE_FAIL = STATE_DELETE_CREATE + AState.STATE_TASK_FAIL//99
 
         @OptIn(OApiInit_InApplication::class)
-        fun canTaskDelete(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskQueueName taskQueueName: String): Boolean =
+        fun canTaskDelete(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
             canTaskExecute(
                 taskState,
                 taskManager,
                 fileExt,
-                taskQueueName,
+                taskNodeQueueName,
                 STATE_DELETE_CREATE,
                 STATE_DOWNLOAD_CREATE
             )/*taskState in STATE_DOWNLOAD_SUCCESS..STATE_DELETE_PAUSE*/ || AState.canTaskStart(taskState) || AState.canTaskFinish(taskState)
@@ -412,9 +426,12 @@ annotation class ATaskState {
 fun @ATaskState Int.taskState2taskName(): @ATaskName String? =
     ATaskState.taskState2taskName(this)
 
+fun @ATaskState Int.taskState2taskNode():STaskNode? =
+    ATaskState.taskState2taskNode(this)
+
 fun @ATaskState Int.getTaskCode(): Int =
     ATaskState.getTaskCode(this)
 
-fun main() {
-    println(48/10*10)
-}
+//fun main() {
+//    println(48/10*10)
+//}

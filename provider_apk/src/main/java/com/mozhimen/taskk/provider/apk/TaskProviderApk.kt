@@ -10,7 +10,6 @@ import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.kotlin.utilk.android.content.UtilKPackage
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.installk.manager.commons.IPackagesChangeListener
-import com.mozhimen.taskk.provider.apk.cons.CExt
 import com.mozhimen.taskk.provider.apk.impls.TaskDeleteApk
 import com.mozhimen.taskk.provider.apk.impls.TaskDownloadOkDownloadApk
 import com.mozhimen.taskk.provider.apk.impls.TaskInstallApk
@@ -19,7 +18,7 @@ import com.mozhimen.taskk.provider.apk.impls.TaskUninstallApk
 import com.mozhimen.taskk.provider.apk.impls.TaskUnzipApk
 import com.mozhimen.taskk.provider.apk.impls.TaskVerifyApk
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.ATaskProvider
@@ -34,6 +33,7 @@ import com.mozhimen.taskk.provider.basic.bases.providers.ATaskVerify
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTaskDaoManager
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
+import com.mozhimen.taskk.provider.basic.cons.STaskNode
 
 /**
  * @ClassName TaskProviderSetsApk
@@ -140,11 +140,11 @@ open class TaskProviderApk(
 
     ////////////////////////////////////////////////////////////////////
 
-    override fun getTaskQueue(): Map<String, List<String>> {
+    override fun getTaskNodeQueues(): Map<String, List<STaskNode>> {
         return mapOf(
-            ATaskName.TASK_INSTALL to listOf(ATaskName.TASK_DOWNLOAD, ATaskName.TASK_VERIFY, ATaskName.TASK_UNZIP, ATaskName.TASK_INSTALL),
-            ATaskName.TASK_OPEN to listOf(ATaskName.TASK_OPEN),
-            ATaskName.TASK_UNINSTALL to listOf(ATaskName.TASK_UNINSTALL, ATaskName.TASK_DELETE, ATaskQueueName.TASK_RESTART)
+            ATaskName.TASK_INSTALL to listOf(STaskNode.TaskNodeDownload, STaskNode.TaskNodeVerify, STaskNode.TaskNodeUnzip, STaskNode.TaskNodeInstall),
+            ATaskName.TASK_OPEN to listOf(STaskNode.TaskNodeOpen),
+            ATaskName.TASK_UNINSTALL to listOf(STaskNode.TaskNodeUninstall, STaskNode.TaskNodeDelete, STaskNode.TaskNodeRestart)
         )
     }
 

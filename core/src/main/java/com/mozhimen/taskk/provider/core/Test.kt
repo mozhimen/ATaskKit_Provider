@@ -12,7 +12,7 @@ import com.mozhimen.taskk.provider.basic.annors.ATaskName
 fun main() {
     val taskProviderApk = TaskProviderApk()
     val taskProviderMod = TaskProviderMod()
-    val a : Map<String, Map<String, List<String>>> = listOf(taskProviderApk, taskProviderMod).map { provider -> (provider.getSupportFileExtensions().associateWith { provider.getTaskQueue() }).toMutableMap() }
+    val a : Map<String, Map<String, List<String>>> = listOf(taskProviderApk, taskProviderMod).map { provider -> (provider.getSupportFileExtensions().associateWith { provider.getTaskNodeQueues() }).toMutableMap() }
         .fold(emptyMap()) { acc, nex -> acc + nex }
     println(a)
 }
@@ -22,7 +22,7 @@ class TaskProviderApk : ATaskProvider() {
         return listOf("apk", "xapk")
     }
 
-    override fun getTaskQueue(): Map<String, List<String>> {
+    override fun getTaskNodeQueues(): Map<String, List<String>> {
         return mapOf(
             ATaskName.TASK_INSTALL to listOf(ATaskName.TASK_DOWNLOAD, ATaskName.TASK_VERIFY, ATaskName.TASK_UNZIP, ATaskName.TASK_INSTALL),
             ATaskName.TASK_OPEN to listOf(ATaskName.TASK_OPEN),
@@ -37,7 +37,7 @@ class TaskProviderMod : ATaskProvider() {
         return listOf("zip")
     }
 
-    override fun getTaskQueue(): Map<String, List<String>> {
+    override fun getTaskNodeQueues(): Map<String, List<String>> {
         return mapOf(
             ATaskName.TASK_DOWNLOAD to listOf(ATaskName.TASK_DOWNLOAD),
             ATaskName.TASK_INSTALL to listOf(ATaskName.TASK_INSTALL),
@@ -49,5 +49,5 @@ class TaskProviderMod : ATaskProvider() {
 
 abstract class ATaskProvider {
     abstract fun getSupportFileExtensions(): List<String>
-    abstract fun getTaskQueue(): Map<String, List<String>>
+    abstract fun getTaskNodeQueues(): Map<String, List<String>>
 }

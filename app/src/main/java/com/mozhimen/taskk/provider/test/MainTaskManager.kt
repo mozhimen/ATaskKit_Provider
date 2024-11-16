@@ -13,11 +13,12 @@ import com.mozhimen.manifestk.xxpermissions.XXPermissionsRequestUtil
 import com.mozhimen.stackk.callback.StackKCb
 import com.mozhimen.taskk.provider.apk.TaskProviderApk
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.ATaskProvider
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
+import com.mozhimen.taskk.provider.basic.cons.STaskNode
 import com.mozhimen.taskk.provider.core.TaskManager
 import com.mozhimen.taskk.provider.install.splits.ackpine.TaskInstallSplitsAckpine
 
@@ -35,11 +36,11 @@ object MainTaskManager : TaskManager() {
         iTaskLifecycle: ITaskLifecycle,
         taskManager: ATaskManager,
     ) : TaskProviderApk(iTaskLifecycle, taskManager) {
-        override fun getTaskQueue(): Map<String, List<String>> {
+        override fun getTaskNodeQueues(): Map<String, List<STaskNode>> {
             return mapOf(
-                ATaskName.TASK_INSTALL to listOf(ATaskName.TASK_DOWNLOAD, ATaskName.TASK_VERIFY, ATaskName.TASK_INSTALL),
-                ATaskName.TASK_OPEN to listOf(ATaskName.TASK_OPEN),
-                ATaskName.TASK_UNINSTALL to listOf(ATaskName.TASK_UNINSTALL, ATaskName.TASK_DELETE, ATaskQueueName.TASK_RESTART)
+                ATaskName.TASK_INSTALL to listOf(STaskNode.TaskNodeDownload, STaskNode.TaskNodeVerify, STaskNode.TaskNodeInstall),
+                ATaskName.TASK_OPEN to listOf(STaskNode.TaskNodeOpen),
+                ATaskName.TASK_UNINSTALL to listOf(STaskNode.TaskNodeUninstall, STaskNode.TaskNodeDelete, STaskNode.TaskNodeRestart)
             )
         }
     }

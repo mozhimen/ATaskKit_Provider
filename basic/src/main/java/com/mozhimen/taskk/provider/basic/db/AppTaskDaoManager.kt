@@ -6,7 +6,7 @@ import androidx.annotation.WorkerThread
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.taskk.executor.TaskKExecutor
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.Exception
@@ -90,8 +90,8 @@ object AppTaskDaoManager : IUtilK {
 
     @OptIn(OApiInit_InApplication::class)
     @JvmStatic
-    fun gets_ofIsTaskProcess(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): List<AppTask> {
-        return _appTasks.filter { it.value.isTaskProcess(taskManager, taskQueueName) }.values.toList()
+    fun gets_ofIsTaskProcess(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskProcess(taskManager, taskNodeQueueName) }.values.toList()
     }
 
     @OptIn(OApiInit_InApplication::class)
@@ -127,8 +127,8 @@ object AppTaskDaoManager : IUtilK {
 
     @OptIn(OApiInit_InApplication::class)
     @JvmStatic
-    fun gets_ofIsTaskSuccess(taskManager: ATaskManager,@ATaskQueueName taskQueueName: String): List<AppTask> {
-        return _appTasks.filter { it.value.isTaskSuccess(taskManager, taskQueueName) }.values.toList()
+    fun gets_ofIsTaskSuccess(taskManager: ATaskManager,@ATaskNodeQueueName taskNodeQueueName: String): List<AppTask> {
+        return _appTasks.filter { it.value.isTaskSuccess(taskManager, taskNodeQueueName) }.values.toList()
     }
 
     @JvmStatic

@@ -23,7 +23,7 @@ import com.mozhimen.kotlin.utilk.kotlin.strFilePath2file
 import com.mozhimen.taskk.executor.TaskKExecutor
 import com.mozhimen.taskk.provider.apk.cons.CExt
 import com.mozhimen.taskk.provider.apk.impls.interceptors.TaskInterceptorApk
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUnzip
@@ -61,8 +61,8 @@ open class TaskUnzipApk(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle
     //////////////////////////////////////////////////////////////////
 
     @OptIn(OApiInit_InApplication::class)
-    override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        if (!appTask.canTaskUnzip(_taskManager, taskQueueName)) {
+    override fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
+        if (!appTask.canTaskUnzip(_taskManager, taskNodeQueueName)) {
             UtilKLogWrapper.e(TAG, "install: the task hasn't verify success")
             return
         }
@@ -70,31 +70,31 @@ open class TaskUnzipApk(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle
             UtilKLogWrapper.e(TAG, "install: the task is already unziping")
             return
         }
-        super.taskStart(appTask, taskQueueName)
+        super.taskStart(appTask, taskNodeQueueName)
         if (appTask.taskUnzipEnable) {
-            startUnzip(appTask, taskQueueName)
+            startUnzip(appTask, taskNodeQueueName)
         } else {
-            onTaskFinished(ATaskState.STATE_UNZIP_SUCCESS, appTask, taskQueueName, STaskFinishType.SUCCESS)
+            onTaskFinished(ATaskState.STATE_UNZIP_SUCCESS, appTask, taskNodeQueueName, STaskFinishType.SUCCESS)
         }
     }
 
-    override fun taskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    override fun taskCancel(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         if (appTask.isTaskUnzipSuccess()) {
             TaskInterceptorApk.deleteOrgFiles(appTask)
-            onTaskFinished(ATaskState.STATE_UNZIP_CANCEL, appTask, taskQueueName, STaskFinishType.CANCEL)
+            onTaskFinished(ATaskState.STATE_UNZIP_CANCEL, appTask, taskNodeQueueName, STaskFinishType.CANCEL)
         }
     }
 
-    override fun canTaskCancel(appTask: AppTask, taskQueueName: String): Boolean {
+    override fun canTaskCancel(appTask: AppTask, taskNodeQueueName: String): Boolean {
         return true
     }
 
     //////////////////////////////////////////////////////////////////
 
-    protected fun startUnzip(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    protected fun startUnzip(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         TaskKExecutor.execute(TAG + getTaskName()) {
             try {
-                val strApkFilePathNameUnzip = startUnzipOnBack(appTask, taskQueueName)
+                val strApkFilePathNameUnzip = startUnzipOnBack(appTask, taskNodeQueueName)
                 UtilKLogWrapper.d(TAG, "unzip: strFilePathUnzip $strApkFilePathNameUnzip")
 
                 if (strApkFilePathNameUnzip.isEmpty())
@@ -110,25 +110,25 @@ open class TaskUnzipApk(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle
                         appTask.apply {
                             taskUnzipFilePath = strApkFilePathNameUnzip
                         },
-                        taskQueueName,
+                        taskNodeQueueName,
                         STaskFinishType.SUCCESS
                     )
                 }
             } catch (e: TaskException) {
                 UtilKHandlerWrapper.post {
-                    onTaskFinished(ATaskState.STATE_UNZIP_FAIL, appTask, taskQueueName, STaskFinishType.FAIL(e))
+                    onTaskFinished(ATaskState.STATE_UNZIP_FAIL, appTask, taskNodeQueueName, STaskFinishType.FAIL(e))
                 }
             }
         }
     }
 
     @WorkerThread
-    protected fun startUnzipOnBack(appTask: AppTask, @ATaskQueueName taskQueueName: String): String {
+    protected fun startUnzipOnBack(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): String {
         val dir = _unzipDir ?: throw CErrorCode.CODE_TASK_UNZIP_DIR_NULL.intErrorCode2taskException()
         if (appTask.filePathNameExt.isEmpty())
             throw CErrorCode.CODE_TASK_UNZIP_DIR_NULL.intErrorCode2taskException()
         val fileSource = appTask.filePathNameExt.strFilePath2file()
-        val strFilePathNameApk = startUnzipOnBack(fileSource, dir.absolutePath, appTask, taskQueueName)
+        val strFilePathNameApk = startUnzipOnBack(fileSource, dir.absolutePath, appTask, taskNodeQueueName)
         UtilKLogWrapper.d(TAG, "unzipOnBack: fileSource ${fileSource.absolutePath} strFilePathNameApk $strFilePathNameApk")
         return strFilePathNameApk
     }
@@ -139,7 +139,7 @@ open class TaskUnzipApk(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle
      * @param strFilePathDest String ///storage/emulated/0/Android/data/com.mozhimen.basicktest/files/Download/
      */
     @WorkerThread
-    protected open fun startUnzipOnBack(fileSource: File, strFilePathDest: String, appTask: AppTask, @ATaskQueueName taskQueueName: String): String {
+    protected open fun startUnzipOnBack(fileSource: File, strFilePathDest: String, appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): String {
         // gameName
         val strFileNameReal = fileSource.name.getSplitLastIndexToStart(".", false)//name.subSequence(0, name.lastIndexOf("."))
         // /storage/emulated/0/Android/data/com.mozhimen.basicktest/files/Download/gameName
@@ -216,7 +216,7 @@ open class TaskUnzipApk(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle
                                 taskDownloadFileSpeed = ioSpeedPerSeconds
                                 taskDownloadFileSizeOffset = ioOffset
                                 taskDownloadProgress = ioProgress.toInt()
-                            }, taskQueueName)
+                            }, taskNodeQueueName)
                         }
                     }
                 })

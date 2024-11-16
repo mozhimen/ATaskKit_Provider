@@ -11,10 +11,10 @@ import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.kotlin.utilk.kotlin.getSplitFirstIndexToEnd
 import com.mozhimen.kotlin.utilk.kotlin.getSplitFirstIndexToStart
 import com.mozhimen.taskk.provider.basic.annors.AState
-import com.mozhimen.taskk.provider.basic.annors.ATaskName
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
+import com.mozhimen.taskk.provider.basic.cons.STaskNode
 
 /**
  * @ClassName AppFileParam
@@ -207,27 +207,23 @@ data class AppTask constructor(
         ATaskState.intTaskState2strTaskState(taskState)
 
     @OptIn(OApiInit_InApplication::class)
-    fun getCurrentTaskName(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String, @ATaskName firstTaskName_ofTaskQueue: String = ""): @ATaskName String? {
+    fun getCurrentTaskNode(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String, firstTaskNode_ofTaskNodeQueue: STaskNode? = null): STaskNode? {
         val taskCode: Int = getTaskCode()//->哪个环节
         val stateCode: Int = getStateCode()//->哪个状态
-        if (isTaskSuccess(taskManager, taskQueueName)) {
+        if (isTaskSuccess(taskManager, taskNodeQueueName)) {
             UtilKLogWrapper.d(TAG, "getCurrentTaskName: task $taskCode state $stateCode taskName null STATE_TASK_SUCCESS")
             return null
         }
         return when (taskCode) {
-            AState.STATE_TASK_CREATE -> firstTaskName_ofTaskQueue.ifEmpty {
-                Log.e(TAG, "getCurrentTaskName: firstTaskName ifEmpty")
-                null
-            }
-
-            ATaskState.STATE_DOWNLOAD_CREATE -> ATaskName.TASK_DOWNLOAD//1
-            ATaskState.STATE_VERIFY_CREATE -> ATaskName.TASK_VERIFY
-            ATaskState.STATE_UNZIP_CREATE -> ATaskName.TASK_UNZIP
-            ATaskState.STATE_INSTALL_CREATE -> ATaskName.TASK_INSTALL
-            ATaskState.STATE_OPEN_CREATE -> ATaskName.TASK_OPEN
-            ATaskState.STATE_CLOSE_CREATE -> ATaskName.TASK_CLOSE
-            ATaskState.STATE_UNINSTALL_CREATE -> ATaskName.TASK_UNINSTALL
-            ATaskState.STATE_DELETE_CREATE -> ATaskName.TASK_DELETE
+            AState.STATE_TASK_CREATE -> firstTaskNode_ofTaskNodeQueue.also { if (it == null) Log.e(TAG, "getCurrentTaskName: firstTaskName ifEmpty") }
+            ATaskState.STATE_DOWNLOAD_CREATE -> STaskNode.TaskNodeDownload//ATaskName.TASK_DOWNLOAD//1
+            ATaskState.STATE_VERIFY_CREATE -> STaskNode.TaskNodeVerify//ATaskName.TASK_VERIFY
+            ATaskState.STATE_UNZIP_CREATE -> STaskNode.TaskNodeUnzip//ATaskName.TASK_UNZIP
+            ATaskState.STATE_INSTALL_CREATE -> STaskNode.TaskNodeInstall//ATaskName.TASK_INSTALL
+            ATaskState.STATE_OPEN_CREATE -> STaskNode.TaskNodeOpen//ATaskName.TASK_OPEN
+            ATaskState.STATE_CLOSE_CREATE -> STaskNode.TaskNodeClose//ATaskName.TASK_CLOSE
+            ATaskState.STATE_UNINSTALL_CREATE -> STaskNode.TaskNodeUninstall//ATaskName.TASK_UNINSTALL
+            ATaskState.STATE_DELETE_CREATE -> STaskNode.TaskNodeDelete//ATaskName.TASK_DELETE
             else -> null
         }.also { UtilKLogWrapper.d(TAG, "getCurrentTaskName: task $taskCode state $stateCode taskName $it") }
     }
@@ -243,30 +239,30 @@ data class AppTask constructor(
     ////////////////////////////////////////////////////////////////
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskStart(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean {
-        return taskManager.canTaskStart(this, taskQueueName)
+    fun canTaskStart(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
+        return taskManager.canTaskStart(this, taskNodeQueueName)
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskResume(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean {
-        return taskManager.canTaskResume(this, taskQueueName)
+    fun canTaskResume(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
+        return taskManager.canTaskResume(this, taskNodeQueueName)
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskPause(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean {
-        return taskManager.canTaskPause(this, taskQueueName)
+    fun canTaskPause(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
+        return taskManager.canTaskPause(this, taskNodeQueueName)
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskCancel(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean {
-        return taskManager.canTaskCancel(this, taskQueueName)
+    fun canTaskCancel(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
+        return taskManager.canTaskCancel(this, taskNodeQueueName)
     }
 
     ////////////////////////////////////////////////////////////
 
     @OptIn(OApiInit_InApplication::class)
-    fun isTaskProcess(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
-        AState.isTaskProcess(taskState, taskManager, fileExt, taskQueueName)
+    fun isTaskProcess(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+        AState.isTaskProcess(taskState, taskManager, fileExt, taskNodeQueueName)
 
     fun isTaskProcess(): Boolean =
         AState.isTaskProcess(taskState)
@@ -287,8 +283,8 @@ data class AppTask constructor(
         AState.isTaskCancel(taskState)
 
     @OptIn(OApiInit_InApplication::class)
-    fun isTaskSuccess(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
-        AState.isTaskSuccess(taskState, taskManager, fileExt, taskQueueName)
+    fun isTaskSuccess(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+        AState.isTaskSuccess(taskState, taskManager, fileExt, taskNodeQueueName)
 
     fun isTaskSuccess(): Boolean =
         AState.isTaskSuccess(taskState)
@@ -319,36 +315,36 @@ data class AppTask constructor(
     ////////////////////////////////////////////////////////////
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskDownload(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
-        ATaskState.canTaskDownload(taskState, taskManager, fileExt, taskQueueName)
+    fun canTaskDownload(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+        ATaskState.canTaskDownload(taskState, taskManager, fileExt, taskNodeQueueName)
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskVerify(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
-        ATaskState.canTaskVerify(taskState, taskManager, fileExt, taskQueueName)
+    fun canTaskVerify(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+        ATaskState.canTaskVerify(taskState, taskManager, fileExt, taskNodeQueueName)
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskUnzip(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
-        ATaskState.canTaskUnzip(taskState, taskManager, fileExt, taskQueueName)
+    fun canTaskUnzip(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+        ATaskState.canTaskUnzip(taskState, taskManager, fileExt, taskNodeQueueName)
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskInstall(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
-        ATaskState.canTaskInstall(taskState, taskManager, fileExt, taskQueueName)
+    fun canTaskInstall(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+        ATaskState.canTaskInstall(taskState, taskManager, fileExt, taskNodeQueueName)
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskOpen(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
-        ATaskState.canTaskOpen(taskState, taskManager, fileExt, taskQueueName)
+    fun canTaskOpen(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+        ATaskState.canTaskOpen(taskState, taskManager, fileExt, taskNodeQueueName)
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskClose(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
-        ATaskState.canTaskClose(taskState, taskManager, fileExt, taskQueueName)
+    fun canTaskClose(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+        ATaskState.canTaskClose(taskState, taskManager, fileExt, taskNodeQueueName)
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskUninstall(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
-        ATaskState.canTaskUninstall(taskState, taskManager, fileExt, taskQueueName)
+    fun canTaskUninstall(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+        ATaskState.canTaskUninstall(taskState, taskManager, fileExt, taskNodeQueueName)
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskDelete(taskManager: ATaskManager, @ATaskQueueName taskQueueName: String): Boolean =
-        ATaskState.canTaskDelete(taskState, taskManager, fileExt, taskQueueName)
+    fun canTaskDelete(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+        ATaskState.canTaskDelete(taskState, taskManager, fileExt, taskNodeQueueName)
 
     ////////////////////////////////////////////////////////////
 

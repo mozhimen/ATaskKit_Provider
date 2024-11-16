@@ -2,7 +2,7 @@ package com.mozhimen.taskk.provider.basic.bases.sets
 
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.ATaskSet
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
@@ -23,12 +23,12 @@ abstract class ATaskSetDownload(taskManager: ATaskManager) : ATaskSet<ATaskDownl
     fun getDownloadPaths(): List<String> =
         getDownloadDirs().map { it.absolutePath }
 
-    fun taskPauseAll(fileExt: String, @ATaskQueueName taskQueueName: String) {
-        getProvider(fileExt)?.taskPauseAll(taskQueueName)
+    fun taskPauseAll(fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String) {
+        getProvider(fileExt)?.taskPauseAll(taskNodeQueueName)
     }
 
-    fun taskResumeAll(fileExt: String, @ATaskQueueName taskQueueName: String) {
-        getProvider(fileExt)?.taskResumeAll(taskQueueName)
+    fun taskResumeAll(fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String) {
+        getProvider(fileExt)?.taskResumeAll(taskNodeQueueName)
     }
 
     override fun getTaskName(): String {

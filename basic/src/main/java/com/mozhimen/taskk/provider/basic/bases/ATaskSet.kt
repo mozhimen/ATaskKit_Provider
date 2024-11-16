@@ -3,9 +3,8 @@ package com.mozhimen.taskk.provider.basic.bases
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.annotation.CallSuper
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import java.util.concurrent.ConcurrentHashMap
@@ -61,62 +60,62 @@ abstract class ATaskSet<T : ATask>(taskManager: ATaskManager) : ATask(taskManage
     ////////////////////////////////////////////////////////////////////
 
     @CallSuper
-    override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    override fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         UtilKLogWrapper.d(TAG, "taskStart: ")
-        getProvider(appTask.fileExt)?.taskStart(appTask, taskQueueName) ?: run { UtilKLogWrapper.e(TAG, "taskStart no provider") }
+        getProvider(appTask.fileExt)?.taskStart(appTask, taskNodeQueueName) ?: run { UtilKLogWrapper.e(TAG, "taskStart no provider") }
     }
 
     @CallSuper
-    override fun taskPause(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    override fun taskPause(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         UtilKLogWrapper.d(TAG, "taskPause: ")
-        getProvider(appTask.fileExt)?.taskPause(appTask, taskQueueName) ?: run { UtilKLogWrapper.e(TAG, "taskPause no provider") }
+        getProvider(appTask.fileExt)?.taskPause(appTask, taskNodeQueueName) ?: run { UtilKLogWrapper.e(TAG, "taskPause no provider") }
     }
 
     @CallSuper
-    override fun taskResume(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    override fun taskResume(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         UtilKLogWrapper.d(TAG, "taskResume: ")
-        getProvider(appTask.fileExt)?.taskResume(appTask, taskQueueName) ?: run { UtilKLogWrapper.e(TAG, "taskResume no provider") }
+        getProvider(appTask.fileExt)?.taskResume(appTask, taskNodeQueueName) ?: run { UtilKLogWrapper.e(TAG, "taskResume no provider") }
     }
 
     @CallSuper
-    override fun taskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    override fun taskCancel(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         UtilKLogWrapper.d(TAG, "taskCancel: ")
-        getProvider(appTask.fileExt)?.taskCancel(appTask, taskQueueName) ?: run { UtilKLogWrapper.e(TAG, "taskCancel no provider") }
+        getProvider(appTask.fileExt)?.taskCancel(appTask, taskNodeQueueName) ?: run { UtilKLogWrapper.e(TAG, "taskCancel no provider") }
     }
 
-    override fun canTaskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean {
-        return (getProvider(appTask.fileExt)?.canTaskStart(appTask, taskQueueName) ?: false).also { UtilKLogWrapper.d(TAG, "canTaskStart $it") }
+    override fun canTaskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
+        return (getProvider(appTask.fileExt)?.canTaskStart(appTask, taskNodeQueueName) ?: false).also { UtilKLogWrapper.d(TAG, "canTaskStart $it") }
     }
 
-    override fun canTaskResume(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean {
-        return (getProvider(appTask.fileExt)?.canTaskResume(appTask, taskQueueName) ?: false).also { UtilKLogWrapper.d(TAG, "canTaskResume $it") }
+    override fun canTaskResume(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
+        return (getProvider(appTask.fileExt)?.canTaskResume(appTask, taskNodeQueueName) ?: false).also { UtilKLogWrapper.d(TAG, "canTaskResume $it") }
     }
 
-    override fun canTaskPause(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean {
-        return (getProvider(appTask.fileExt)?.canTaskPause(appTask, taskQueueName) ?: false).also { UtilKLogWrapper.d(TAG, "canTaskPause $it") }
+    override fun canTaskPause(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
+        return (getProvider(appTask.fileExt)?.canTaskPause(appTask, taskNodeQueueName) ?: false).also { UtilKLogWrapper.d(TAG, "canTaskPause $it") }
     }
 
-    override fun canTaskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean {
-        return (getProvider(appTask.fileExt)?.canTaskCancel(appTask, taskQueueName) ?: false).also { UtilKLogWrapper.d(TAG, "canTaskCancel $it") }
+    override fun canTaskCancel(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
+        return (getProvider(appTask.fileExt)?.canTaskCancel(appTask, taskNodeQueueName) ?: false).also { UtilKLogWrapper.d(TAG, "canTaskCancel $it") }
     }
 
     ////////////////////////////////////////////////////////////////////
 
     @SuppressLint("MissingSuperCall")
     @CallSuper
-    override fun onTaskStarted(taskState: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        getProvider(appTask.fileExt)?.onTaskStarted(taskState, appTask, taskQueueName)
+    override fun onTaskStarted(taskState: Int, appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
+        getProvider(appTask.fileExt)?.onTaskStarted(taskState, appTask, taskNodeQueueName)
     }
 
     @SuppressLint("MissingSuperCall")
     @CallSuper
-    override fun onTaskPaused(taskState: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        getProvider(appTask.fileExt)?.onTaskPaused(taskState, appTask, taskQueueName)
+    override fun onTaskPaused(taskState: Int, appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
+        getProvider(appTask.fileExt)?.onTaskPaused(taskState, appTask, taskNodeQueueName)
     }
 
     @SuppressLint("MissingSuperCall")
     @CallSuper
-    override fun onTaskFinished(taskState: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String, finishType: STaskFinishType) {
-        getProvider(appTask.fileExt)?.onTaskFinished(taskState, appTask, taskQueueName, finishType)
+    override fun onTaskFinished(taskState: Int, appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String, finishType: STaskFinishType) {
+        getProvider(appTask.fileExt)?.onTaskFinished(taskState, appTask, taskNodeQueueName, finishType)
     }
 }

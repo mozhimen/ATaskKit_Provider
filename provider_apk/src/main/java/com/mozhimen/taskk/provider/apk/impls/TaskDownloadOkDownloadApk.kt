@@ -5,7 +5,7 @@ import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.taskk.provider.apk.cons.CExt
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
@@ -28,12 +28,12 @@ class TaskDownloadOkDownloadApk(taskManager: ATaskManager,iTaskLifecycle: ITaskL
     }
 
     @OptIn(OApiInit_InApplication::class)
-    override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    override fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         if (InstallKManager.hasPackageName_lessThanInstalledVersionCode(appTask.apkPackageName, appTask.apkVersionCode)) {
             UtilKLogWrapper.d(TAG, "taskStart: hasPackageNameAndSatisfyVersion")
-            onTaskFinished(ATaskState.STATE_DOWNLOAD_SUCCESS, appTask, taskQueueName, STaskFinishType.SUCCESS)//onInstallSuccess(appTask)
+            onTaskFinished(ATaskState.STATE_DOWNLOAD_SUCCESS, appTask, taskNodeQueueName, STaskFinishType.SUCCESS)//onInstallSuccess(appTask)
             return
         }
-        super.taskStart(appTask, taskQueueName)
+        super.taskStart(appTask, taskNodeQueueName)
     }
 }

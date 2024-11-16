@@ -9,9 +9,7 @@ import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.wrapper.UtilKAppInstall
 import com.mozhimen.taskk.provider.apk.cons.CExt
 import com.mozhimen.taskk.provider.apk.impls.interceptors.TaskInterceptorApk
-import com.mozhimen.taskk.provider.basic.annors.AState
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
-import com.mozhimen.taskk.provider.basic.annors.ATaskState
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
 import com.mozhimen.taskk.provider.basic.db.AppTask
@@ -44,8 +42,8 @@ class TaskInstallApk(
     @OptIn(OApiInit_InApplication::class)
     @SuppressLint("MissingSuperCall")
     @OPermission_REQUEST_INSTALL_PACKAGES
-    override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        if (!appTask.canTaskInstall(_taskManager, taskQueueName)) {
+    override fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
+        if (!appTask.canTaskInstall(_taskManager, taskNodeQueueName)) {
             UtilKLogWrapper.e(TAG, "install: the task hasn't unzip or verify success")
 //            onTaskFinished(ATaskState.STATE_INSTALL_FAIL, STaskFinishType.FAIL(CErrorCode.CODE_TASK_INSTALL_HAST_VERIFY_OR_UNZIP.intErrorCode2taskException()), appTask)
             return
@@ -63,13 +61,13 @@ class TaskInstallApk(
         }
     }
 
-    override fun onTaskFinished(taskState: Int, appTask: AppTask, taskQueueName: String, finishType: STaskFinishType) {
-        Log.d(TAG, "onTaskFinished: taskState $taskState taskQueueName $taskQueueName appTask $appTask ")
+    override fun onTaskFinished(taskState: Int, appTask: AppTask, taskNodeQueueName: String, finishType: STaskFinishType) {
+        Log.d(TAG, "onTaskFinished: taskState $taskState taskNodeQueueName $taskNodeQueueName appTask $appTask ")
         if (finishType is STaskFinishType.SUCCESS) {
             if (TaskInterceptorApk.isAutoDeleteOrgFiles()) {
                 TaskInterceptorApk.deleteOrgFiles(appTask)
             }
         }
-        super.onTaskFinished(taskState, appTask, taskQueueName, finishType)
+        super.onTaskFinished(taskState, appTask, taskNodeQueueName, finishType)
     }
 }

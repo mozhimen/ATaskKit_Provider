@@ -1,6 +1,6 @@
 package com.mozhimen.taskk.provider.basic.commons
 
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.db.AppTask
 
 /**
@@ -11,13 +11,13 @@ import com.mozhimen.taskk.provider.basic.db.AppTask
  * @Version 1.0
  */
 interface ITaskEvent {
-    fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String)
-    fun taskResume(appTask: AppTask, @ATaskQueueName taskQueueName: String)
-    fun taskPause(appTask: AppTask, @ATaskQueueName taskQueueName: String)
-    fun taskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String)
+    fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String)
+    fun taskResume(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String)
+    fun taskPause(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String)
+    fun taskCancel(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String)
 
-    fun canTaskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean
-    fun canTaskResume(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean
-    fun canTaskPause(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean
-    fun canTaskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean
+    fun canTaskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean
+    fun canTaskResume(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean
+    fun canTaskPause(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean
+    fun canTaskCancel(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean
 }

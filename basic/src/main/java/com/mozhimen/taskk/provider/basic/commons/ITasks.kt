@@ -1,6 +1,6 @@
 package com.mozhimen.taskk.provider.basic.commons
 
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.impls.TaskException
@@ -77,9 +77,9 @@ interface ITaskDelete {
 }
 
 interface ITask {
-    fun onTaskCreate(appTask: AppTask, @ATaskQueueName taskQueueName: String, isUpdate: Boolean) {}
-    fun onTaskUnavailable(appTask: AppTask, @ATaskQueueName taskQueueName: String) {}
-    fun onTaskFinish(appTask: AppTask, @ATaskQueueName taskQueueName: String, finishType: STaskFinishType) {}
+    fun onTaskCreate(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String, isUpdate: Boolean) {}
+    fun onTaskUnavailable(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {}
+    fun onTaskFinish(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String, finishType: STaskFinishType) {}
 }
 
 interface ITasks : ITaskDownload, ITaskVerify, ITaskUnzip, ITaskInstall, ITaskOpen, ITaskClose, ITaskUninstall, ITaskDelete, ITask

@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.annotation.CallSuper
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.commons.IUtilK
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.commons.ITaskEvent
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
@@ -50,20 +50,20 @@ abstract class ATask(protected val _taskManager: ATaskManager, protected val _iT
     //////////////////////////////////////////////////////
 
     @CallSuper
-    override fun onTaskStarted(taskState: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    override fun onTaskStarted(taskState: Int, appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         appTask.toTaskStateNew(taskState)
-        _iTaskLifecycle?.onTaskStarted(taskState, appTask, taskQueueName)
+        _iTaskLifecycle?.onTaskStarted(taskState, appTask, taskNodeQueueName)
     }
 
     @CallSuper
-    override fun onTaskPaused(taskState: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    override fun onTaskPaused(taskState: Int, appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         appTask.toTaskStateNew(taskState)
-        _iTaskLifecycle?.onTaskPaused(taskState, appTask, taskQueueName)
+        _iTaskLifecycle?.onTaskPaused(taskState, appTask, taskNodeQueueName)
     }
 
     @CallSuper
-    override fun onTaskFinished(taskState: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String, finishType: STaskFinishType) {
+    override fun onTaskFinished(taskState: Int, appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String, finishType: STaskFinishType) {
         appTask.toTaskStateNew(taskState)
-        _iTaskLifecycle?.onTaskFinished(taskState, appTask, taskQueueName, finishType)
+        _iTaskLifecycle?.onTaskFinished(taskState, appTask, taskNodeQueueName, finishType)
     }
 }

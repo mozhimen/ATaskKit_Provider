@@ -1,6 +1,6 @@
 package com.mozhimen.taskk.provider.basic.commons
 
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.impls.TaskException
 
@@ -12,11 +12,11 @@ import com.mozhimen.taskk.provider.basic.impls.TaskException
  * @Version 1.0
  */
 interface ITask2 {
-    fun onTasking(appTask: AppTask, @ATaskQueueName taskQueueName: String,  progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long)
-    fun onTaskPause(appTask: AppTask, @ATaskQueueName taskQueueName: String)
-    fun onTaskSuccess(appTask: AppTask, @ATaskQueueName taskQueueName: String)
-    fun onTaskFail(appTask: AppTask, @ATaskQueueName taskQueueName: String, exception: TaskException)
-    fun onTaskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String)
+    fun onTasking(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String, progress: Int, currentIndex: Long, totalIndex: Long, offsetIndexPerSeconds: Long)
+    fun onTaskPause(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String)
+    fun onTaskSuccess(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String)
+    fun onTaskFail(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String, exception: TaskException)
+    fun onTaskCancel(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String)
 }
 
 interface ITasks2 : ITask, ITask2

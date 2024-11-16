@@ -14,7 +14,7 @@ import com.mozhimen.kotlin.utilk.kotlin.strFilePath2file
 import com.mozhimen.kotlin.utilk.wrapper.UtilKPermission
 import com.mozhimen.installk.splits.ackpine.InstallKSplitsAckpine
 import com.mozhimen.installk.splits.ackpine.cons.SInstallState
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
 import com.mozhimen.taskk.provider.basic.db.AppTask
@@ -42,8 +42,8 @@ class TaskInstallSplitsAckpine constructor(
     }
 
     @SuppressLint("MissingSuperCall")
-    override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-//        super.taskStart(appTask, taskQueueName)
+    override fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
+//        super.taskStart(appTask, taskNodeQueueName)
         val file = if (appTask.taskUnzipEnable) {
             appTask.taskUnzipFilePath.strFilePath2file()
         } else {

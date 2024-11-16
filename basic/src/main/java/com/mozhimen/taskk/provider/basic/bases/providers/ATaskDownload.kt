@@ -3,7 +3,7 @@ package com.mozhimen.taskk.provider.basic.bases.providers
 import androidx.annotation.CallSuper
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATask
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
@@ -22,10 +22,10 @@ import java.io.File
 @OPermission_INTERNET
 abstract class ATaskDownload(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle?) : ATask(taskManager,iTaskLifecycle) {
     protected abstract var _downloadDir: File?
-    protected abstract var _taskQueueName_ofDownload: String?
+    protected abstract var _taskNodeQueueName_ofDownload: String?
 
-    abstract fun taskResumeAll(@ATaskQueueName taskQueueName: String)
-    abstract fun taskPauseAll(@ATaskQueueName taskQueueName: String)
+    abstract fun taskResumeAll(@ATaskNodeQueueName taskNodeQueueName: String)
+    abstract fun taskPauseAll(@ATaskNodeQueueName taskNodeQueueName: String)
 
     fun getDownloadDir(): File? =
         _downloadDir
@@ -35,44 +35,44 @@ abstract class ATaskDownload(taskManager: ATaskManager,iTaskLifecycle: ITaskLife
     }
 
     @CallSuper
-    override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        onTaskStarted(ATaskState.STATE_DOWNLOADING, appTask, taskQueueName)
+    override fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
+        onTaskStarted(ATaskState.STATE_DOWNLOADING, appTask, taskNodeQueueName)
     }
 
     @CallSuper
-    override fun taskResume(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        onTaskStarted(ATaskState.STATE_DOWNLOADING, appTask, taskQueueName)
+    override fun taskResume(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
+        onTaskStarted(ATaskState.STATE_DOWNLOADING, appTask, taskNodeQueueName)
     }
 
     @CallSuper
-    override fun taskPause(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        onTaskPaused(ATaskState.STATE_DOWNLOAD_PAUSE, appTask, taskQueueName)
+    override fun taskPause(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
+        onTaskPaused(ATaskState.STATE_DOWNLOAD_PAUSE, appTask, taskNodeQueueName)
     }
 
     @CallSuper
-    override fun taskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
-        onTaskFinished(ATaskState.STATE_DOWNLOAD_CANCEL, appTask, taskQueueName, STaskFinishType.CANCEL)
+    override fun taskCancel(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
+        onTaskFinished(ATaskState.STATE_DOWNLOAD_CANCEL, appTask, taskNodeQueueName, STaskFinishType.CANCEL)
     }
 
-    override fun canTaskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean {
+    override fun canTaskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
         return true
     }
 
-    override fun canTaskResume(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean {
+    override fun canTaskResume(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
         return true
     }
 
-    override fun canTaskPause(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean {
+    override fun canTaskPause(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
         return true
     }
 
-    override fun canTaskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String): Boolean {
+    override fun canTaskCancel(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
         return true
     }
 
     @CallSuper
-    override fun onTaskFinished(taskState: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String, finishType: STaskFinishType) {
+    override fun onTaskFinished(taskState: Int, appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String, finishType: STaskFinishType) {
         appTask.taskDownloadReset()
-        super.onTaskFinished(taskState, appTask, taskQueueName, finishType)
+        super.onTaskFinished(taskState, appTask, taskNodeQueueName, finishType)
     }
 }

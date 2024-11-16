@@ -1,6 +1,7 @@
 package com.mozhimen.taskk.provider.basic.annors
 
 import androidx.annotation.StringDef
+import com.mozhimen.taskk.provider.basic.cons.STaskNode
 
 /**
  * @ClassName ATaskName
@@ -45,8 +46,15 @@ annotation class ATaskName {
                 else -> AState.STATE_TASK_CREATE
             }
         }
+
+        fun taskNode2taskState(taskNode: STaskNode): @ATaskState Int {
+            return taskNode.taskName.taskName2taskState()
+        }
     }
 }
 
 fun @ATaskName String.taskName2taskState(): @ATaskState Int =
     ATaskName.taskName2taskState(this)
+
+fun STaskNode.taskNode2taskState(): @ATaskState Int =
+    ATaskName.taskNode2taskState(this)

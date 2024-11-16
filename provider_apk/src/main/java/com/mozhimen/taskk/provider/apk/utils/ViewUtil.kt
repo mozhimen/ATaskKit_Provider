@@ -5,7 +5,7 @@ import android.view.View
 import com.mozhimen.kotlin.elemk.commons.IAB_Listener
 import com.mozhimen.kotlin.elemk.commons.I_AListener
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.db.AppTask
 
@@ -19,30 +19,10 @@ import com.mozhimen.taskk.provider.basic.db.AppTask
 object ViewUtil {
     @OptIn(OApiInit_InApplication::class)
     @JvmStatic
-    fun generateViewLongClickOfAppTask(
-        view: View,
-        taskManager: ATaskManager,
-        @ATaskQueueName taskQueueName_process: String,
-        @ATaskQueueName taskQueueName_success: String,
-        onGetAppTask: I_AListener<AppTask>,
-        onTaskCancel: IAB_Listener<Context, AppTask>,
-    ) {
-        view.setOnLongClickListener {
-            val appTask = onGetAppTask.invoke()
-            if (appTask.canTaskCancel(taskManager, taskQueueName_process)) {
-                onTaskCancel.invoke(it.context, appTask)
-            }
-            true
-        }
-    }
-
-    @OptIn(OApiInit_InApplication::class)
-    @JvmStatic
     fun generateViewClickOfAppTask(
         view: View,
         taskManager: ATaskManager,
-        @ATaskQueueName taskQueueName_process: String,
-        @ATaskQueueName taskQueueName_success: String,
+        @ATaskNodeQueueName taskNodeQueueName: String,
         onGetAppTask: I_AListener<AppTask>,
         onTaskStart: IAB_Listener<Context, AppTask>,
         onTaskOpen: IAB_Listener<Context, AppTask>,
@@ -58,7 +38,7 @@ object ViewUtil {
                     onTaskStart.invoke(it.context, appTask)
                 }
 
-                appTask.isTaskSuccess(taskManager, taskQueueName_success) -> {
+                appTask.isTaskSuccess(taskManager, taskNodeQueueName) -> {
                     onTaskOpen.invoke(it.context, appTask)
                 }
 
@@ -70,7 +50,7 @@ object ViewUtil {
                     onTaskResume.invoke(it.context, appTask)
                 }
 
-                appTask.isTaskSuccess(taskManager, taskQueueName_process)/*ATaskState.STATE_UNZIP_SUCCESS, ATaskState.STATE_INSTALLING*/ -> {
+                appTask.canTaskInstall(taskManager,taskNodeQueueName)/*ATaskState.STATE_UNZIP_SUCCESS, ATaskState.STATE_INSTALLING*/ -> {
                     onTaskInstall.invoke(it.context, appTask)
                 }
 
@@ -81,10 +61,27 @@ object ViewUtil {
         generateViewLongClickOfAppTask(
             view,
             taskManager,
-            taskQueueName_process,
-            taskQueueName_success,
+            taskNodeQueueName,
             onGetAppTask,
             onTaskCancel
         )
+    }
+
+    @OptIn(OApiInit_InApplication::class)
+    @JvmStatic
+    fun generateViewLongClickOfAppTask(
+        view: View,
+        taskManager: ATaskManager,
+        @ATaskNodeQueueName taskNodeQueueName: String,
+        onGetAppTask: I_AListener<AppTask>,
+        onTaskCancel: IAB_Listener<Context, AppTask>,
+    ) {
+        view.setOnLongClickListener {
+            val appTask = onGetAppTask.invoke()
+            if (appTask.canTaskCancel(taskManager, taskNodeQueueName)) {
+                onTaskCancel.invoke(it.context, appTask)
+            }
+            true
+        }
     }
 }

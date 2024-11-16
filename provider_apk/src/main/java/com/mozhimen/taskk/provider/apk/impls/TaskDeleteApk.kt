@@ -26,23 +26,23 @@ class TaskDeleteApk(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle?) :
     }
 
     @OptIn(OApiInit_InApplication::class)
-    override fun taskStart(appTask: AppTask, taskQueueName: String) {
-        if (!appTask.canTaskDelete(_taskManager,taskQueueName)) {
+    override fun taskStart(appTask: AppTask, taskNodeQueueName: String) {
+        if (!appTask.canTaskDelete(_taskManager,taskNodeQueueName)) {
             UtilKLogWrapper.e(TAG, "install: the task hasn't download success appTask $appTask")
 //            onTaskFinished(ATaskState.STATE_INSTALL_FAIL, STaskFinishType.FAIL(CErrorCode.CODE_TASK_INSTALL_HAST_VERIFY_OR_UNZIP.intErrorCode2taskException()), appTask)
             return
         }
-        super.taskStart(appTask, taskQueueName)
-        startDelete(appTask, taskQueueName)
+        super.taskStart(appTask, taskNodeQueueName)
+        startDelete(appTask, taskNodeQueueName)
     }
 
-    private fun startDelete(appTask: AppTask, taskQueueName: String) {
+    private fun startDelete(appTask: AppTask, taskNodeQueueName: String) {
         //删除文件
         TaskInterceptorApk.deleteOrgFiles(appTask)
         //重置状态
         if (appTask.taskStateInit==AState.STATE_TASK_UPDATE){
             appTask.taskStateInit=AState.STATE_TASK_CREATE
         }
-        onTaskFinished(ATaskState.STATE_DELETE_SUCCESS, appTask, taskQueueName, STaskFinishType.SUCCESS)
+        onTaskFinished(ATaskState.STATE_DELETE_SUCCESS, appTask, taskNodeQueueName, STaskFinishType.SUCCESS)
     }
 }

@@ -22,7 +22,7 @@ import com.mozhimen.kotlin.utilk.java.io.createFolder
 import com.mozhimen.kotlin.utilk.javax.net.UtilKSSLSocketFactory
 import com.mozhimen.kotlin.utilk.kotlin.ranges.constraint
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
@@ -66,7 +66,7 @@ abstract class TaskDownloadOkDownload(taskManager: ATaskManager,iTaskLifecycle: 
         .hostnameVerifier { _, _ -> true }
 
     override var _downloadDir: File? = UtilKFileDir.External.getFilesDownloads()
-    override var _taskQueueName_ofDownload: String? = ATaskName.TASK_DOWNLOAD
+    override var _taskNodeQueueName_ofDownload: String? = ATaskName.TASK_DOWNLOAD
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -84,8 +84,8 @@ abstract class TaskDownloadOkDownload(taskManager: ATaskManager,iTaskLifecycle: 
                 DownloadDispatcher.setMaxParallelRunningCount(PARALLEL_RUNNING_COUNT)
 
                 AppTaskDaoManager.gets_ofIsTaskDownloading().forEach {
-                    if (it.isTaskDownloading() && _taskQueueName_ofDownload != null)
-                        taskPause(it, _taskQueueName_ofDownload!!)
+                    if (it.isTaskDownloading() && _taskNodeQueueName_ofDownload != null)
+                        taskPause(it, _taskNodeQueueName_ofDownload!!)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -103,8 +103,8 @@ abstract class TaskDownloadOkDownload(taskManager: ATaskManager,iTaskLifecycle: 
         return this
     }
 
-    fun setTaskQueueName_ofDownload(taskQueueName_ofDownload: String): TaskDownloadOkDownload {
-        _taskQueueName_ofDownload = taskQueueName_ofDownload
+    fun setTaskNodeQueueName_ofDownload(taskNodeQueueName_ofDownload: String): TaskDownloadOkDownload {
+        _taskNodeQueueName_ofDownload = taskNodeQueueName_ofDownload
         return this
     }
 
@@ -116,13 +116,13 @@ abstract class TaskDownloadOkDownload(taskManager: ATaskManager,iTaskLifecycle: 
     ///////////////////////////////////////////////////////////////////////////////////////
 
     @SuppressLint("MissingSuperCall")
-    override fun taskStart(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    override fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         Log.d(TAG, "taskStart: download")
-        download(appTask, taskQueueName)
+        download(appTask, taskNodeQueueName)
     }
 
     @SuppressLint("MissingSuperCall")
-    override fun taskCancel(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    override fun taskCancel(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         //downloadWaitCancel
         val downloadTask: DownloadTask? = getDownloadTask(appTask)?.apply {
             cancel()//然后取消任务
@@ -136,17 +136,17 @@ abstract class TaskDownloadOkDownload(taskManager: ATaskManager,iTaskLifecycle: 
         /**
          * [CNetKAppState.STATE_DOWNLOAD_CANCEL]
          */
-        onTaskFinished(ATaskState.STATE_DOWNLOAD_CANCEL, downloadTask?.id ?: appTask.taskDownloadId, appTask, taskQueueName, STaskFinishType.CANCEL)
+        onTaskFinished(ATaskState.STATE_DOWNLOAD_CANCEL, downloadTask?.id ?: appTask.taskDownloadId, appTask, taskNodeQueueName, STaskFinishType.CANCEL)
     }
 
-    override fun taskPauseAll(@ATaskQueueName taskQueueName: String) {
+    override fun taskPauseAll(@ATaskNodeQueueName taskNodeQueueName: String) {
         for ((_, value) in _downloadProgressBundles) {
-            taskPause(value.appTask, taskQueueName)
+            taskPause(value.appTask, taskNodeQueueName)
             UtilKLogWrapper.d(TAG, "downloadPauseAll: appTask ${value.appTask}")
         }
     }
 
-    override fun taskPause(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    override fun taskPause(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         val downloadTask = getDownloadTask(appTask) ?: run {
             UtilKLogWrapper.d(TAG, "downloadPause: get download task fail")
             return
@@ -158,47 +158,47 @@ abstract class TaskDownloadOkDownload(taskManager: ATaskManager,iTaskLifecycle: 
          */
         super.taskPause(appTask.apply {
             appTask.taskDownloadFileSpeed = 0
-        }, taskQueueName)
+        }, taskNodeQueueName)
     }
 
-    override fun taskResumeAll(@ATaskQueueName taskQueueName: String) {
+    override fun taskResumeAll(@ATaskNodeQueueName taskNodeQueueName: String) {
         for ((_, value) in _downloadProgressBundles.entries) {
             UtilKLogWrapper.d(TAG, "downloadResumeAll: appTask ${value.appTask}")
             if (value.appTask.isAnyTaskPause()) {
-                taskResume(value.appTask, taskQueueName)
+                taskResume(value.appTask, taskNodeQueueName)
                 UtilKLogWrapper.d(TAG, "downloadResumeAll: 恢复下载 appTask ${value.appTask}")
             }
         }
     }
 
     @SuppressLint("MissingSuperCall")
-    override fun taskResume(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    override fun taskResume(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         val downloadTask = getDownloadTask(appTask) ?: run {
             UtilKLogWrapper.d(TAG, "downloadResume: get download task fail")
             return
         }
         if (StatusUtil.getStatus(downloadTask) != StatusUtil.Status.RUNNING)
-            downloadTask.enqueue(InnerDownloadListener1(taskQueueName))
+            downloadTask.enqueue(InnerDownloadListener1(taskNodeQueueName))
 
         /**
          * [CNetKAppState.STATE_DOWNLOADING]
          */
         onTaskStarted(ATaskState.STATE_DOWNLOADING, downloadTask.id, appTask.apply {
             taskDownloadFileSpeed = BLOCK_SIZE_MIN
-        }, taskQueueName)
+        }, taskNodeQueueName)
     }
 
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    private fun onTaskStarted(taskState: Int, downloadId: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    private fun onTaskStarted(taskState: Int, downloadId: Int, appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         getDownloadProgressBundle(downloadId, appTask)
-        onTaskStarted(taskState, appTask, taskQueueName)
+        onTaskStarted(taskState, appTask, taskNodeQueueName)
     }
 
-    private fun onTaskFinished(taskState: Int, downloadId: Int, appTask: AppTask, @ATaskQueueName taskQueueName: String, finishType: STaskFinishType) {
+    private fun onTaskFinished(taskState: Int, downloadId: Int, appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String, finishType: STaskFinishType) {
         deleteDownloadProgressBundle(downloadId)
-        onTaskFinished(taskState, appTask, taskQueueName, finishType)
+        onTaskFinished(taskState, appTask, taskNodeQueueName, finishType)
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -251,7 +251,7 @@ abstract class TaskDownloadOkDownload(taskManager: ATaskManager,iTaskLifecycle: 
     ///////////////////////////////////////////////////////////////////////////////////////
 
     @Throws(TaskException::class)
-    fun download(appTask: AppTask, @ATaskQueueName taskQueueName: String) {
+    fun download(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         val dir = getAppTaskDownloadDir(appTask) ?: _downloadDir
         ?: throw CErrorCode.CODE_TASK_DOWNLOAD_PATH_NOT_EXIST.intErrorCode2taskException()
         val downloadTask = DownloadTask.Builder(appTask.taskDownloadUrlCurrent, dir, _breakpointCompare)//先构建一个Task 框架可以保证Id唯一
@@ -283,14 +283,14 @@ abstract class TaskDownloadOkDownload(taskManager: ATaskManager,iTaskLifecycle: 
 
             }
         }
-        downloadTask.enqueue(InnerDownloadListener1(taskQueueName))
+        downloadTask.enqueue(InnerDownloadListener1(taskNodeQueueName))
 
         /**
          * [CNetKAppState.STATE_DOWNLOADING]
          */
         onTaskStarted(ATaskState.STATE_DOWNLOADING, downloadTask.id, appTask.apply {
             taskDownloadFileSpeed = BLOCK_SIZE_MIN
-        }, taskQueueName)
+        }, taskNodeQueueName)
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -307,7 +307,7 @@ abstract class TaskDownloadOkDownload(taskManager: ATaskManager,iTaskLifecycle: 
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    inner class InnerDownloadListener1(@ATaskQueueName private val taskQueueName: String) : DownloadListener1() {
+    inner class InnerDownloadListener1(@ATaskNodeQueueName private val taskNodeQueueName: String) : DownloadListener1() {
         override fun taskStart(downloadTask: DownloadTask, model: Listener1Assist.Listener1Model) {
             UtilKLogWrapper.d(TAG, "taskStart: task $downloadTask")
             val appTask = AppTaskDaoManager.get_ofTaskDownloadUrlCurrent(downloadTask.url) ?: return
@@ -317,7 +317,7 @@ abstract class TaskDownloadOkDownload(taskManager: ATaskManager,iTaskLifecycle: 
              */
             onTaskStarted(ATaskState.STATE_DOWNLOADING, downloadTask.id, bundle.appTask.apply {
                 taskDownloadFileSpeed = BLOCK_SIZE_MIN
-            }, taskQueueName)
+            }, taskNodeQueueName)
         }
 
         override fun retry(downloadTask: DownloadTask, cause: ResumeFailedCause) {
@@ -354,7 +354,7 @@ abstract class TaskDownloadOkDownload(taskManager: ATaskManager,iTaskLifecycle: 
                 taskDownloadFileSizeOffset = currentOffset
                 taskDownloadFileSizeTotal = totalLength
                 taskDownloadProgress = progress
-            }, taskQueueName)
+            }, taskNodeQueueName)
         }
 
         override fun taskEnd(downloadTask: DownloadTask, cause: EndCause, realCause: Exception?, model: Listener1Assist.Listener1Model) {
@@ -370,10 +370,10 @@ abstract class TaskDownloadOkDownload(taskManager: ATaskManager,iTaskLifecycle: 
                             bundle.appTask.apply {
                                 filePathNameExt = filePathNameExtTemp
                             },
-                            taskQueueName, STaskFinishType.SUCCESS,
+                            taskNodeQueueName, STaskFinishType.SUCCESS,
                         )
                     } catch (e: TaskException) {
-                        onTaskFinished(ATaskState.STATE_DOWNLOAD_FAIL, downloadTask.id, bundle.appTask, taskQueueName, STaskFinishType.FAIL(e))
+                        onTaskFinished(ATaskState.STATE_DOWNLOAD_FAIL, downloadTask.id, bundle.appTask, taskNodeQueueName, STaskFinishType.FAIL(e))
                     }
                 }
 
@@ -382,13 +382,13 @@ abstract class TaskDownloadOkDownload(taskManager: ATaskManager,iTaskLifecycle: 
                         return
                     if (bundle.isRetry) {
                         bundle.isRetry = false
-                        download(bundle.appTask, taskQueueName)
+                        download(bundle.appTask, taskNodeQueueName)
                         return
                     }
                     /**
                      * [CNetKAppState.STATE_DOWNLOAD_CANCEL]
                      */
-                    taskCancel(bundle.appTask, taskQueueName)
+                    taskCancel(bundle.appTask, taskNodeQueueName)
                 }
 
                 else -> {
@@ -399,28 +399,28 @@ abstract class TaskDownloadOkDownload(taskManager: ATaskManager,iTaskLifecycle: 
                         try {
                             bundle.retryCount++
                             bundle.isRetry = true
-                            taskPause(bundle.appTask, taskQueueName)
-                            download(bundle.appTask, taskQueueName)
+                            taskPause(bundle.appTask, taskNodeQueueName)
+                            download(bundle.appTask, taskNodeQueueName)
                             UtilKLogWrapper.d(TAG, "taskEnd: MIN通信问题重试 ${bundle.retryCount}次 appTask ${bundle.appTask}")
                         } catch (e: TaskException) {
                             /**
                              * [CNetKAppState.STATE_DOWNLOAD_FAIL]
                              */
-                            onTaskFinished(ATaskState.STATE_DOWNLOAD_FAIL, downloadTask.id, bundle.appTask, taskQueueName, STaskFinishType.FAIL(e))
+                            onTaskFinished(ATaskState.STATE_DOWNLOAD_FAIL, downloadTask.id, bundle.appTask, taskNodeQueueName, STaskFinishType.FAIL(e))
                         }
                         return
                     } else if (realCause is StreamResetException) {
                         try {
                             bundle.retryCount++
                             bundle.isRetry = true
-                            taskCancel(bundle.appTask, taskQueueName)
-                            download(bundle.appTask, taskQueueName)
+                            taskCancel(bundle.appTask, taskNodeQueueName)
+                            download(bundle.appTask, taskNodeQueueName)
                             UtilKLogWrapper.d(TAG, "taskEnd: StreamResetException 重新开始下载")
                         } catch (e: TaskException) {
                             /**
                              * [CNetKAppState.STATE_DOWNLOAD_FAIL]
                              */
-                            onTaskFinished(ATaskState.STATE_DOWNLOAD_FAIL, downloadTask.id, bundle.appTask, taskQueueName, STaskFinishType.FAIL(e))
+                            onTaskFinished(ATaskState.STATE_DOWNLOAD_FAIL, downloadTask.id, bundle.appTask, taskNodeQueueName, STaskFinishType.FAIL(e))
                         }
                         return
                     }
@@ -429,7 +429,7 @@ abstract class TaskDownloadOkDownload(taskManager: ATaskManager,iTaskLifecycle: 
                      * [CNetKAppState.STATE_DOWNLOAD_FAIL]
                      */
 //                NetKApp.instance.onDownloadFail(bundle.appTask, realCause)
-                    onTaskFinished(ATaskState.STATE_DOWNLOAD_FAIL, downloadTask.id, bundle.appTask, taskQueueName, STaskFinishType.FAIL(TaskException(CErrorCode.CODE_TASK_DOWNLOAD_FAIL)))
+                    onTaskFinished(ATaskState.STATE_DOWNLOAD_FAIL, downloadTask.id, bundle.appTask, taskNodeQueueName, STaskFinishType.FAIL(TaskException(CErrorCode.CODE_TASK_DOWNLOAD_FAIL)))
                 }
             }
         }

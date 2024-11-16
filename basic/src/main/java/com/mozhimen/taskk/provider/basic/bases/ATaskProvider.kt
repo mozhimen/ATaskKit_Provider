@@ -13,6 +13,7 @@ import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUninstall
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUnzip
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskVerify
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
+import com.mozhimen.taskk.provider.basic.cons.STaskNode
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -47,7 +48,7 @@ abstract class ATaskProvider(
     abstract fun getTaskUninstall(): ATaskUninstall?
     abstract fun getTaskDelete(): ATaskDelete?
 
-    abstract fun getTaskQueue(): Map<String, List<String>>
+    abstract fun getTaskNodeQueues(): Map<String, List<STaskNode>>
 
     @OptIn(OPermission_INTERNET::class)
     fun getSupportFileExtensions(): List<String> {

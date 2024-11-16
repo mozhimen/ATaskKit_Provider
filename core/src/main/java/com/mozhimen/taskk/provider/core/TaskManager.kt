@@ -14,12 +14,7 @@ import com.mozhimen.taskk.provider.basic.bases.providers.ATaskOpen
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUninstall
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUnzip
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskVerify
-import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetDownload
-import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetInstall
-import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetOpen
-import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetUninstall
-import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetUnzip
-import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetVerify
+import com.mozhimen.taskk.provider.basic.cons.STaskNode
 import com.mozhimen.taskk.provider.close.TaskSetClose
 import com.mozhimen.taskk.provider.delete.TaskSetDelete
 import com.mozhimen.taskk.provider.download.TaskSetDownload
@@ -65,8 +60,8 @@ abstract class TaskManager : ATaskManager() {
 
     /////////////////////////////////////////////////////////////////
 
-    override fun getTaskQueues(): Map<String, Map<String, List<@ATaskName String>>> {
-        return getTaskProviders().map { provider -> (provider.getSupportFileExtensions().associateWith { provider.getTaskQueue() }).toMutableMap() }.fold(emptyMap()) { acc, nex -> acc + nex }
+    override fun getTaskNodeQueues(): Map<String, Map<String, List<STaskNode>>> {
+        return getTaskProviders().map { provider -> (provider.getSupportFileExtensions().associateWith { provider.getTaskNodeQueues() }).toMutableMap() }.fold(emptyMap()) { acc, nex -> acc + nex }
     }
 
     override fun getTaskSets(): List<ATaskSet<*>> {

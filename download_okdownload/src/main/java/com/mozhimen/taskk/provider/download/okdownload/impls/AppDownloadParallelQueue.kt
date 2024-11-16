@@ -33,7 +33,7 @@
 //
 //    private val pauseTaskList = arrayListOf<DownloadTask>()
 //    private val taskList: ArrayList<DownloadTask>
-//    private val runningTaskQueue: LinkedBlockingQueue<DownloadTask> = LinkedBlockingQueue<DownloadTask>(CAPACITY)
+//    private val runningDownloadTask: LinkedBlockingQueue<DownloadTask> = LinkedBlockingQueue<DownloadTask>(CAPACITY)
 //
 //    @Volatile
 //    var shutedDown = false
@@ -124,12 +124,12 @@
 ////        }
 ////        paused = true
 ////
-////        if (runningTaskQueue.isNotEmpty()) {
-////            for (runningTask in runningTaskQueue) {
+////        if (runningDownloadTask.isNotEmpty()) {
+////            for (runningTask in runningDownloadTask) {
 ////                runningTask.cancel()
 ////                pauseTaskList.add(0, runningTask)
 ////            }
-////            runningTaskQueue.clear()
+////            runningDownloadTask.clear()
 ////        }
 ////    }
 //
@@ -140,10 +140,10 @@
 ////            return
 ////        }
 //
-//        if (runningTaskQueue.contains(downloadTask)) {
+//        if (runningDownloadTask.contains(downloadTask)) {
 //            downloadTask.cancel()
 //            pauseTaskList.add(downloadTask)
-//            runningTaskQueue.remove(downloadTask)
+//            runningDownloadTask.remove(downloadTask)
 //        }
 //    }
 //
@@ -181,18 +181,18 @@
 //     * 返回正在工作的任务的标识，如果有任务正在工作，您将收到[.ID_INVALID]。@返回工作任务的标识
 //     */
 //    fun getWorkingTaskIds(): List<Int> {
-//        return runningTaskQueue.map { it.id }
+//        return runningDownloadTask.map { it.id }
 //    }
 //
 //    fun getWorkingTaskCount(): Int {
-//        return runningTaskQueue.size
+//        return runningDownloadTask.size
 //    }
 //
 //    /**
 //     * 获取正在此队列上等待的任务的计数。@返回此队列上等待任务的计数。
 //     */
 //    fun getWaitingTaskCount(): Int {
-//        return taskList.size - runningTaskQueue.size
+//        return taskList.size - runningDownloadTask.size
 //    }
 //
 //    fun getPauseTaskCount(): Int {
@@ -205,11 +205,11 @@
 //    @Synchronized
 //    fun shutdown(): Array<DownloadTask?> {
 //        shutedDown = true
-//        if (runningTaskQueue.isNotEmpty()) {
-//            for (runningTask in runningTaskQueue) {
+//        if (runningDownloadTask.isNotEmpty()) {
+//            for (runningTask in runningDownloadTask) {
 //                runningTask.cancel()
 //            }
-//            runningTaskQueue.clear()
+//            runningDownloadTask.clear()
 //        }
 //        val tasks = arrayOfNulls<DownloadTask>(taskList.size)
 //        taskList.toArray(tasks)

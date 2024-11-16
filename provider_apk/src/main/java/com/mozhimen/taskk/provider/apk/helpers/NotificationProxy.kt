@@ -22,7 +22,7 @@ import com.mozhimen.kotlin.utilk.android.content.UtilKApplicationInfo
 import com.mozhimen.taskk.provider.apk.utils.NotificationUtil
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.apk.R
-import com.mozhimen.taskk.provider.basic.annors.ATaskQueueName
+import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 
 /**
@@ -50,7 +50,7 @@ class NotificationProxy : BaseWakeBefDestroyLifecycleObserver() {
         title: String,
         appTask: AppTask,
         taskManager: ATaskManager,
-        @ATaskQueueName taskQueueName: String,
+        @ATaskNodeQueueName taskNodeQueueName: String,
         intent: Intent? = null,
         @DrawableRes notifierSmallIcon: Int = UtilKApplicationInfo.getIcon(_context)
     ) {
@@ -63,9 +63,9 @@ class NotificationProxy : BaseWakeBefDestroyLifecycleObserver() {
         builder.apply {
             setContentTitle(title)
             setAutoCancel(
-                !appTask.isTaskProcess(taskManager, taskQueueName) || appTask.isTaskUnzipSuccess()
+                !appTask.isTaskProcess(taskManager, taskNodeQueueName) || appTask.isTaskUnzipSuccess()
             ) // canceled when it is clicked by the user.
-            setOngoing(appTask.isTaskProcess(taskManager, taskQueueName))
+            setOngoing(appTask.isTaskProcess(taskManager, taskNodeQueueName))
         }
         //子标题
         if (appTask.taskDownloadProgress in 1..99) {// don't use setContentInfo(deprecated in API level 24)
@@ -74,7 +74,7 @@ class NotificationProxy : BaseWakeBefDestroyLifecycleObserver() {
             builder.setSubText("")
         }
         when {
-            appTask.isTaskSuccess(taskManager, taskQueueName) -> {
+            appTask.isTaskSuccess(taskManager, taskNodeQueueName) -> {
                 intent?.let {
                     builder.setContentIntent(UtilKPendingIntentWrapper.get_ofActivity_IMMUTABLE(0, it))
                 }
