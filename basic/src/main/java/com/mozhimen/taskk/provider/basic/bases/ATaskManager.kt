@@ -144,14 +144,46 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
         return _taskNodeQuenes.get(fileExt)?.get(taskNodeQueueName)
     }
 
-    fun getCurrTaskNode_ofTaskNodeQueue(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String, firstTaskNode_ofTaskNodeQueue: STaskNode? = null): STaskNode? {
+    fun getCurrTaskNode_ofTaskSet(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String, firstTaskNode_ofTaskNodeQueue: STaskNode? = null): STaskNode? {
         return appTask.getCurrentTaskNode(this, taskNodeQueueName, firstTaskNode_ofTaskNodeQueue)
+    }
+
+    fun getCurrTaskNode_ofTaskNodeQueue(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String, firstTaskNode_ofTaskNodeQueue: STaskNode? = null): STaskNode? {
+        val realTaskNode = getCurrTaskNode_ofTaskSet(appTask, taskNodeQueueName, firstTaskNode_ofTaskNodeQueue)
+        val taskNodeQueue = getTaskNodeQueue(appTask.fileExt, taskNodeQueueName) ?: return null
+        if (taskNodeQueue.contains(realTaskNode)) {
+            return realTaskNode
+        } else {
+            taskNodeQueue.forEachIndexed { index, sTaskNode ->
+                if (sTaskNode == realTaskNode) {
+                    return realTaskNode
+                } else if (sTaskNode is STaskNode.TaskNodeMulti && sTaskNode.taskNodes.contains(realTaskNode)) {
+                    return sTaskNode
+                }
+            }
+            return realTaskNode
+        }
     }
 
     fun getNextTaskNode_ofTaskNodeQueue(@AFileExt fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String, currTaskNode: STaskNode): STaskNode? {
         val taskNodeQueue = getTaskNodeQueue(fileExt, taskNodeQueueName) ?: return null
-        val currentIndex = taskNodeQueue.indexOf(currTaskNode)
-        if (currentIndex < 0) return null
+        UtilKLogWrapper.d(TAG, "getNextTaskNode_ofTaskNodeQueue: taskNodeQueue $taskNodeQueue currTaskNode $currTaskNode")
+        var currentIndex = -1//taskNodeQueue.indexOf(currTaskNode)
+        run loop@{
+            taskNodeQueue.forEachIndexed { index, sTaskNode ->
+                if (sTaskNode == currTaskNode) {
+                    currentIndex = index
+                    return@loop
+                } else if (sTaskNode is STaskNode.TaskNodeMulti && sTaskNode.taskNodes.contains(currTaskNode)) {
+                    currentIndex = index
+                    return@loop
+                }
+            }
+        }
+        if (currentIndex < 0) {
+            UtilKLogWrapper.d(TAG, "getNextTaskNode_ofTaskNodeQueue: currentIndex $currentIndex")
+            return null
+        }
         val nextIndex = currentIndex + 1
         return (if (nextIndex in taskNodeQueue.indices) {
             taskNodeQueue[nextIndex]
@@ -440,7 +472,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
         UtilKLogWrapper.d(TAG, "taskStart: appTask $appTask")
         val currTaskNode = getCurrTaskNode_ofTaskNodeQueue(appTask, taskNodeQueueName, getFirstTaskNode_ofTaskNodeQueue(appTask.fileExt, taskNodeQueueName) ?: return) ?: return
         var nextTaskNode = getNextTaskNode_ofTaskNodeQueue(appTask.fileExt, taskNodeQueueName, currTaskNode)
-        UtilKLogWrapper.d(TAG, "taskStart: currTaskName $currTaskNode nextTaskName $nextTaskNode")
+        UtilKLogWrapper.d(TAG, "taskStart: currTaskNode $currTaskNode nextTaskNode $nextTaskNode")
         if (appTask.isAnyTaskSuccess() || appTask.isAnyTasking() || appTask.isAnyTaskPause()) {
             UtilKLogWrapper.d(TAG, "taskStart: getNextTaskSet")
             if (nextTaskNode != null && (nextTaskNode != STaskNode.TaskNodeRestart)) {//继续下一个任务
@@ -466,21 +498,21 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
         if (!canTaskResume(appTask, taskNodeQueueName))
             return
         UtilKLogWrapper.d(TAG, "taskResume: appTask $appTask")
-        getTaskSet(getCurrTaskNode_ofTaskNodeQueue(appTask, taskNodeQueueName)?.taskName ?: return)?.taskResume(appTask, taskNodeQueueName)
+        getTaskSet(getCurrTaskNode_ofTaskSet(appTask, taskNodeQueueName)?.taskName ?: return)?.taskResume(appTask, taskNodeQueueName)
     }
 
     override fun taskPause(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         if (!canTaskPause(appTask, taskNodeQueueName))
             return
         UtilKLogWrapper.d(TAG, "taskPause: appTask $appTask")
-        getTaskSet(getCurrTaskNode_ofTaskNodeQueue(appTask, taskNodeQueueName)?.taskName ?: return)?.taskPause(appTask, taskNodeQueueName)
+        getTaskSet(getCurrTaskNode_ofTaskSet(appTask, taskNodeQueueName)?.taskName ?: return)?.taskPause(appTask, taskNodeQueueName)
     }
 
     override fun taskCancel(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         if (!canTaskCancel(appTask, taskNodeQueueName))
             return
         UtilKLogWrapper.d(TAG, "taskCancel: appTask $appTask")
-        getTaskSet(getCurrTaskNode_ofTaskNodeQueue(appTask, taskNodeQueueName)?.taskName ?: return)?.taskCancel(appTask, taskNodeQueueName)
+        getTaskSet(getCurrTaskNode_ofTaskSet(appTask, taskNodeQueueName)?.taskName ?: return)?.taskCancel(appTask, taskNodeQueueName)
     }
 
     /////////////////////////////////////////////////////////////////
@@ -511,7 +543,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             UtilKLogWrapper.d(TAG, "taskResume: task is not pause")
             return false
         }
-        return getTaskSet(getCurrTaskNode_ofTaskNodeQueue(appTask, taskNodeQueueName)?.taskName ?: return false)?.canTaskResume(appTask, taskNodeQueueName) ?: false
+        return getTaskSet(getCurrTaskNode_ofTaskSet(appTask, taskNodeQueueName)?.taskName ?: return false)?.canTaskResume(appTask, taskNodeQueueName) ?: false
     }
 
     override fun canTaskPause(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
@@ -523,7 +555,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             UtilKLogWrapper.d(TAG, "taskPause: already pause")
             return false
         }
-        return getTaskSet(getCurrTaskNode_ofTaskNodeQueue(appTask, taskNodeQueueName)?.taskName ?: return false)?.canTaskPause(appTask, taskNodeQueueName) ?: false
+        return getTaskSet(getCurrTaskNode_ofTaskSet(appTask, taskNodeQueueName)?.taskName ?: return false)?.canTaskPause(appTask, taskNodeQueueName) ?: false
     }
 
     override fun canTaskCancel(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
@@ -535,7 +567,7 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
             UtilKLogWrapper.d(TAG, "canTaskCancel: task is not process")
             return false
         }
-        return getTaskSet(getCurrTaskNode_ofTaskNodeQueue(appTask, taskNodeQueueName)?.taskName ?: return false)?.canTaskCancel(appTask, taskNodeQueueName) ?: false
+        return getTaskSet(getCurrTaskNode_ofTaskSet(appTask, taskNodeQueueName)?.taskName ?: return false)?.canTaskCancel(appTask, taskNodeQueueName) ?: false
     }
 
     /////////////////////////////////////////////////////////////////
@@ -565,7 +597,9 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
     override fun onTaskFinish(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String, finishType: STaskFinishType) {
         appTask.toTaskStateNew(
             when (finishType) {
-                STaskFinishType.SUCCESS -> getLastTaskNode_ofTaskNodeQueue(appTask.fileExt, taskNodeQueueName)?.taskName?.taskName2taskState()?.plus(AState.STATE_TASK_SUCCESS) ?: AState.STATE_TASK_SUCCESS
+                STaskFinishType.SUCCESS -> getLastTaskNode_ofTaskNodeQueue(appTask.fileExt, taskNodeQueueName)?.taskName?.taskName2taskState()?.plus(AState.STATE_TASK_SUCCESS)
+                    ?: AState.STATE_TASK_SUCCESS
+
                 STaskFinishType.CANCEL -> AState.STATE_TASK_CANCEL
                 is STaskFinishType.FAIL -> AState.STATE_TASK_FAIL
             }
@@ -680,10 +714,38 @@ abstract class ATaskManager : BaseUtilK(), ITask, ITaskEvent {
 
         //next
         if (appTask.isAnyTaskSuccess()) {
-            val currTaskNode = getCurrTaskNode_ofTaskNodeQueue(appTask, taskNodeQueueName) ?: return
-            val nextTaskNode = getNextTaskNode_ofTaskNodeQueue(appTask.fileExt, taskNodeQueueName, currTaskNode)
+            var currTaskNode = getCurrTaskNode_ofTaskNodeQueue(appTask, taskNodeQueueName) ?: return
+            var nextTaskNode = getNextTaskNode_ofTaskNodeQueue(appTask.fileExt, taskNodeQueueName, currTaskNode)
+            Log.d(TAG, "onTask_ofOther: currTaskNode $currTaskNode nextTaskNode $nextTaskNode")
             if (nextTaskNode != null && nextTaskNode != STaskNode.TaskNodeRestart) {
-                getTaskSet(nextTaskNode.taskName)?.taskStart(appTask, taskNodeQueueName)
+                if (currTaskNode is STaskNode.TaskNodeMulti && nextTaskNode is STaskNode.TaskNodeMulti) {
+                    Log.d(TAG, "onTask_ofOther: currTaskNode is STaskNode.TaskNodeMulti && nextTaskNode is STaskNode.TaskNodeMulti")
+                    if (currTaskNode.taskNodes.contains(STaskNode.TaskNodeBlocker)) {
+                        UtilKLogWrapper.d(TAG, "onTask_ofOther: currTaskNode.taskNodes.contains(STaskNode.TaskNodeBlocker)")
+                        return
+                    }
+                    if (nextTaskNode.taskNodes.isNotEmpty() && nextTaskNode.taskNodes.firstOrNull() != null) {
+                        getTaskSet(nextTaskNode.taskNodes.first().taskName)?.taskStart(appTask, taskNodeQueueName)
+                    }
+                } else if (currTaskNode is STaskNode.TaskNodeMulti && nextTaskNode !is STaskNode.TaskNodeMulti) {
+                    Log.d(TAG, "onTask_ofOther: currTaskNode is STaskNode.TaskNodeMulti && nextTaskNode !is STaskNode.TaskNodeMulti")
+
+                    if (currTaskNode.taskNodes.contains(STaskNode.TaskNodeBlocker)) {
+                        UtilKLogWrapper.d(TAG, "onTask_ofOther: currTaskNode.taskNodes.contains(STaskNode.TaskNodeBlocker)")
+                        return
+                    }
+                    getTaskSet(nextTaskNode.taskName)?.taskStart(appTask, taskNodeQueueName)
+                } else if (currTaskNode !is STaskNode.TaskNodeMulti && nextTaskNode is STaskNode.TaskNodeMulti) {
+                    Log.d(TAG, "onTask_ofOther: currTaskNode !is STaskNode.TaskNodeMulti && nextTaskNode is STaskNode.TaskNodeMulti")
+
+                    if (nextTaskNode.taskNodes.isNotEmpty() && nextTaskNode.taskNodes.firstOrNull() != null) {
+                        getTaskSet(nextTaskNode.taskNodes.first().taskName)?.taskStart(appTask, taskNodeQueueName)
+                    }
+                } else {
+                    Log.d(TAG, "onTask_ofOther: else")
+
+                    getTaskSet(nextTaskNode.taskName)?.taskStart(appTask, taskNodeQueueName)
+                }
             } else if (nextTaskNode == STaskNode.TaskNodeRestart) {
                 onTaskCreate(appTask, taskNodeQueueName, appTask.taskStateInit == AState.STATE_TASK_UPDATE)
             }

@@ -84,19 +84,19 @@ abstract class ATaskSet<T : ATask>(taskManager: ATaskManager) : ATask(taskManage
     }
 
     override fun canTaskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
-        return (getProvider(appTask.fileExt)?.canTaskStart(appTask, taskNodeQueueName) ?: false).also { UtilKLogWrapper.d(TAG, "canTaskStart $it") }
+        return (getProvider(appTask.fileExt)?.canTaskStart(appTask, taskNodeQueueName) ?: false).also { UtilKLogWrapper.d(TAG, "canTaskStart: $it") }
     }
 
     override fun canTaskResume(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
-        return (getProvider(appTask.fileExt)?.canTaskResume(appTask, taskNodeQueueName) ?: false).also { UtilKLogWrapper.d(TAG, "canTaskResume $it") }
+        return (getProvider(appTask.fileExt)?.canTaskResume(appTask, taskNodeQueueName) ?: false).also { UtilKLogWrapper.d(TAG, "canTaskResume: $it") }
     }
 
     override fun canTaskPause(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
-        return (getProvider(appTask.fileExt)?.canTaskPause(appTask, taskNodeQueueName) ?: false).also { UtilKLogWrapper.d(TAG, "canTaskPause $it") }
+        return (getProvider(appTask.fileExt)?.canTaskPause(appTask, taskNodeQueueName) ?: false).also { UtilKLogWrapper.d(TAG, "canTaskPause: $it") }
     }
 
     override fun canTaskCancel(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
-        return (getProvider(appTask.fileExt)?.canTaskCancel(appTask, taskNodeQueueName) ?: false).also { UtilKLogWrapper.d(TAG, "canTaskCancel $it") }
+        return (getProvider(appTask.fileExt)?.canTaskCancel(appTask, taskNodeQueueName) ?: false).also { UtilKLogWrapper.d(TAG, "canTaskCancel: $it") }
     }
 
     ////////////////////////////////////////////////////////////////////

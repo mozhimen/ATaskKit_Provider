@@ -2,7 +2,7 @@ package com.mozhimen.taskk.provider.basic.cons
 
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
-import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDelete
+import com.mozhimen.taskk.provider.basic.cons.STaskNode.TaskNodeMulti
 
 /**
  * @ClassName STaskNode
@@ -22,4 +22,13 @@ sealed class STaskNode(@ATaskName val taskName: String) {
     object TaskNodeDelete : STaskNode(ATaskName.TASK_DELETE)
     object TaskNodeRestart : STaskNode(ATaskNodeQueueName.TASK_RESTART)
     object TaskNodeBlocker : STaskNode(ATaskNodeQueueName.TASK_BLOCKER)
+    data class TaskNodeMulti(val taskNodes: MutableList<STaskNode>) : STaskNode(ATaskNodeQueueName.TASK_MULTI)
+}
+
+operator fun STaskNode.plus(taskNode: STaskNode): TaskNodeMulti {
+    return if (this is TaskNodeMulti) {
+        TaskNodeMulti(taskNodes.apply { add(taskNode) })
+    } else {
+        TaskNodeMulti(mutableListOf(this, taskNode))
+    }
 }

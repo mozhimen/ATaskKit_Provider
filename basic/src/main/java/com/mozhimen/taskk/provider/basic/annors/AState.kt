@@ -103,9 +103,9 @@ annotation class AState {
                 val lastTaskCode: Int = taskManager.getLastTaskNode_ofTaskNodeQueue(fileExt, taskNodeQueueName)?.taskName?.taskName2taskState() ?: return@run false
                 val taskCode: Int = ATaskState.getTaskCode(state)
                 val stateCode: Int = getStateCode(state)
-                Log.d(TAG, "isTaskSuccess: state $state lastTaskCode $lastTaskCode taskCode $taskCode stateCode $stateCode")
+//                Log.d(TAG, "isTaskSuccess: state $state lastTaskCode $lastTaskCode taskCode $taskCode stateCode $stateCode")
                 lastTaskCode == taskCode && stateCode == STATE_TASK_SUCCESS
-            }).also { Log.d(TAG, "isTaskSuccess: $it") }
+            }).also { /*Log.d(TAG, "isTaskSuccess: $it")*/ }
 
         fun isTaskFail(state: Int): Boolean =
             state == STATE_TASK_FAIL
