@@ -1,5 +1,7 @@
 package com.mozhimen.taskk.provider.basic.db
 
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.Log
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -15,6 +17,7 @@ import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATaskManager
 import com.mozhimen.taskk.provider.basic.cons.STaskNode
+import java.io.Serializable
 
 /**
  * @ClassName AppFileParam
@@ -62,7 +65,7 @@ data class AppTask constructor(
     @ColumnInfo(name = "apk_verify_need")
     var taskVerifyEnable: Boolean,//是否需要检测0,不需要,1需要
     @ColumnInfo(name = "apk_file_md5")
-    val taskVerifyFileMd5: String = "",//文件的MD5值
+    var taskVerifyFileMd5: String = "",//文件的MD5值
 
     ////////////////////////////////////////////////////////////////
 
@@ -76,7 +79,7 @@ data class AppTask constructor(
     @ColumnInfo(name = "apk_icon_url")
     var fileIconUrl: String,
     @ColumnInfo(name = "apk_icon_Id")
-    val fileIconId: Int = 0,
+    var fileIconId: Int = 0,
     @ColumnInfo("apk_file_name")
     var fileNameExt: String,//和apkName的区别是有后缀
     @ColumnInfo(name = "apk_name")
@@ -89,15 +92,16 @@ data class AppTask constructor(
     ////////////////////////////////////////////////////////////////
 
     @ColumnInfo(name = "apk_package_name")
-    val apkPackageName: String,//包名
+    var apkPackageName: String,//包名
     @ColumnInfo(name = "apk_version_code")
-    val apkVersionCode: Int,
+    var apkVersionCode: Int,
     @ColumnInfo(name = "apk_version_name")
-    val apkVersionName: String,
+    var apkVersionName: String,
     /*,
     @ColumnInfo(name = "apk_is_installed")
     var apkIsInstalled: Boolean,//是否安装0未,1安装*/
-) : IUtilK, IHasId {
+) : IUtilK, IHasId, Serializable, Parcelable {
+
     //for compose
     constructor() : this("", AState.STATE_TASK_CREATE, "taskName taskName taskName taskName taskName taskName taskName", "", false, "", false, "", "")
 
@@ -184,6 +188,37 @@ data class AppTask constructor(
         0,
         ""
     )
+
+    //for parcel
+    constructor(parcel: Parcel) : this(
+        parcel.readString()?:"",
+        parcel.readInt(),
+        parcel.readInt(),
+        parcel.readString()?:"",
+        parcel.readLong(),
+        parcel.readInt(),
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readInt(),
+        parcel.readLong(),
+        parcel.readLong(),
+        parcel.readLong(),
+        parcel.readByte() != 0.toByte(),
+        parcel.readString()?:"",
+        parcel.readByte() != 0.toByte(),
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readInt(),
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readString()?:"",
+        parcel.readInt(),
+        parcel.readString()?:""
+    ) {
+    }
 
     ////////////////////////////////////////////////////////////////
 
@@ -452,6 +487,36 @@ data class AppTask constructor(
 
     ////////////////////////////////////////////////////////////
 
+    fun copyOf(appTask: AppTask){
+        taskState = appTask.taskState
+        taskStateInit = appTask.taskStateInit
+        taskName = appTask.taskName
+        taskUpdateTime = appTask.taskUpdateTime
+        taskDownloadId = appTask.taskDownloadId
+        taskDownloadUrlCurrent = appTask.taskDownloadUrlCurrent
+        taskDownloadUrlInside = appTask.taskDownloadUrlInside
+        taskDownloadUrlOutside = appTask.taskDownloadUrlOutside
+        taskDownloadProgress = appTask.taskDownloadProgress
+        taskDownloadFileSizeOffset = appTask.taskDownloadFileSizeOffset
+        taskDownloadFileSizeTotal = appTask.taskDownloadFileSizeTotal
+        taskDownloadFileSpeed = appTask.taskDownloadFileSpeed
+        taskVerifyEnable = appTask.taskVerifyEnable
+        taskVerifyFileMd5 = appTask.taskVerifyFileMd5
+        taskUnzipEnable = appTask.taskUnzipEnable
+        taskUnzipFilePath = appTask.taskUnzipFilePath
+        fileIconUrl = appTask.fileIconUrl
+        fileIconId = appTask.fileIconId
+        fileNameExt = appTask.fileNameExt
+        fileName = appTask.fileName
+        fileExt = appTask.fileExt
+        filePathNameExt = appTask.filePathNameExt
+        apkPackageName = appTask.apkPackageName
+        apkVersionCode = appTask.apkVersionCode
+        apkVersionName = appTask.apkVersionName
+    }
+
+    ////////////////////////////////////////////////////////////
+
     override fun toString(): String {
         return "AppTask(taskId='$id', taskState=$taskState, taskName=${taskName}, taskStateInit=$taskStateInit, taskUpdateTime=$taskUpdateTime, taskDownloadId=$taskDownloadId, taskDownloadProgress=$taskDownloadProgress, taskDownloadFileSize=$taskDownloadFileSizeOffset, taskDownloadFileSizeTotal=$taskDownloadFileSizeTotal, taskVerifyEnable=$taskVerifyEnable, taskVerifyFileMd5='$taskVerifyFileMd5', taskUnzipEnable=$taskUnzipEnable, fileIconUrl='$fileIconUrl', fileIconId=$fileIconId, fileName='$fileName', fileExt='$fileExt', fileNameExt='$fileNameExt', filePathNameExt='$filePathNameExt', apkPackageName='$apkPackageName', apkVersionCode=$apkVersionCode, apkVersionName='$apkVersionName', taskDownloadUrlCurrent='$taskDownloadUrlCurrent', taskDownloadUrlInside='$taskDownloadUrlInside', taskDownloadUrlOutside='$taskDownloadUrlOutside')"
     }
@@ -516,6 +581,48 @@ data class AppTask constructor(
         return result
     }
 
-    //    fun isTaskWait(): Boolean =
-//        !apkIsInstalled && CNetKAppTaskState.isTaskWait(taskState)
+    ////////////////////////////////////////////////////////////
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
+        parcel.writeInt(taskState)
+        parcel.writeInt(taskStateInit)
+        parcel.writeString(taskName)
+        parcel.writeLong(taskUpdateTime)
+        parcel.writeInt(taskDownloadId)
+        parcel.writeString(taskDownloadUrlCurrent)
+        parcel.writeString(taskDownloadUrlInside)
+        parcel.writeString(taskDownloadUrlOutside)
+        parcel.writeInt(taskDownloadProgress)
+        parcel.writeLong(taskDownloadFileSizeOffset)
+        parcel.writeLong(taskDownloadFileSizeTotal)
+        parcel.writeLong(taskDownloadFileSpeed)
+        parcel.writeByte(if (taskVerifyEnable) 1 else 0)
+        parcel.writeString(taskVerifyFileMd5)
+        parcel.writeByte(if (taskUnzipEnable) 1 else 0)
+        parcel.writeString(taskUnzipFilePath)
+        parcel.writeString(fileIconUrl)
+        parcel.writeInt(fileIconId)
+        parcel.writeString(fileNameExt)
+        parcel.writeString(fileName)
+        parcel.writeString(fileExt)
+        parcel.writeString(filePathNameExt)
+        parcel.writeString(apkPackageName)
+        parcel.writeInt(apkVersionCode)
+        parcel.writeString(apkVersionName)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<AppTask> {
+        override fun createFromParcel(parcel: Parcel): AppTask {
+            return AppTask(parcel)
+        }
+
+        override fun newArray(size: Int): Array<AppTask?> {
+            return arrayOfNulls(size)
+        }
+    }
 }
