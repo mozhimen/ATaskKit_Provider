@@ -15,7 +15,7 @@ import com.mozhimen.kotlin.utilk.java.io.inputStream2file_use_ofBufferedOutStrea
 import com.mozhimen.kotlin.utilk.kotlin.containsAny
 import com.mozhimen.kotlin.utilk.kotlin.createFolder
 import com.mozhimen.kotlin.utilk.kotlin.deleteFolder
-import com.mozhimen.kotlin.utilk.kotlin.endsWithWithAny
+import com.mozhimen.kotlin.utilk.kotlin.endsWithAny
 import com.mozhimen.kotlin.utilk.kotlin.getSplitLastIndexToStart
 import com.mozhimen.kotlin.utilk.kotlin.getStrFolderPath
 import com.mozhimen.kotlin.utilk.kotlin.ranges.constraint
@@ -191,7 +191,7 @@ open class TaskUnzipApk(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle
                 zipEntryFile.parentFile?.createFolder()
                 zipEntryFile.deleteFile()//如果文件已经存在，则删除
 
-                if (zipEntryFile.name.endsWithWithAny(getSupportFileTasks().keys)) {
+                if (zipEntryFile.name.endsWithAny(getSupportFileTasks().keys)) {
                     strFilePathNameNews.add(zipEntryFile.name)
                 }
 
