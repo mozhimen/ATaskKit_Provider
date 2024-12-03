@@ -14,11 +14,14 @@ import androidx.lifecycle.LifecycleOwner
 import com.mozhimen.basick.bases.BaseWakeBefDestroyLifecycleObserver
 import com.mozhimen.kotlin.elemk.android.app.cons.CNotificationManager
 import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
+import com.mozhimen.kotlin.lintk.optins.OApiCall_BindViewLifecycle
 import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.utilk.android.app.UtilKNotificationChannel
 import com.mozhimen.kotlin.utilk.android.app.UtilKNotificationManager
 import com.mozhimen.kotlin.utilk.android.app.UtilKPendingIntentWrapper
 import com.mozhimen.kotlin.utilk.android.content.UtilKApplicationInfo
+import com.mozhimen.kotlin.utilk.android.os.UtilKBuildVersion
 import com.mozhimen.taskk.provider.apk.utils.NotificationUtil
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.apk.R
@@ -32,6 +35,7 @@ import com.mozhimen.taskk.provider.basic.bases.ATaskManager
  * @Date 2024/1/3
  * @Version 1.0
  */
+@OApiCall_BindViewLifecycle
 @OApiInit_ByLazy
 @OApiCall_BindLifecycle
 class NotificationProxy : BaseWakeBefDestroyLifecycleObserver() {
@@ -41,7 +45,9 @@ class NotificationProxy : BaseWakeBefDestroyLifecycleObserver() {
     }
 
     fun init(channelName: String) {
-        UtilKNotificationManager.createNotificationChannel(_notificationManager, NotificationUtil.NETK_APP_NOTIFICATION_CHANNEL_ID, channelName, CNotificationManager.IMPORTANCE_LOW)
+        if (UtilKBuildVersion.isAfterV_26_8_O()) {
+            UtilKNotificationManager.createNotificationChannel(_notificationManager, UtilKNotificationChannel.get(NotificationUtil.NETK_APP_NOTIFICATION_CHANNEL_ID, channelName, CNotificationManager.IMPORTANCE_LOW))
+        }
     }
 
     @OptIn(OApiInit_InApplication::class)
@@ -52,7 +58,7 @@ class NotificationProxy : BaseWakeBefDestroyLifecycleObserver() {
         taskManager: ATaskManager,
         @ATaskNodeQueueName taskNodeQueueName: String,
         intent: Intent? = null,
-        @DrawableRes notifierSmallIcon: Int = UtilKApplicationInfo.getIcon(_context)
+        @DrawableRes notifierSmallIcon: Int = UtilKApplicationInfo.getIcon(_context),
     ) {
         val builder: NotificationCompat.Builder = _builders[id] ?: run {
             NotificationCompat.Builder(_context, NotificationUtil.NETK_APP_NOTIFICATION_CHANNEL_ID)
