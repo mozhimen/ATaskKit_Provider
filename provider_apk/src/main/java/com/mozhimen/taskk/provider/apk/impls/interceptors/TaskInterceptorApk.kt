@@ -19,7 +19,7 @@ import com.mozhimen.taskk.provider.basic.db.AppTask
  */
 object TaskInterceptorApk : IUtilK {
     private val _cacheKDSProvider by lazy { CacheKDS.instance.with(NAME) }
-    var is_delete_apk_file by CacheKDSVarPropertyBoolean(_cacheKDSProvider, "is_delete_apk_file", true)
+    var is_delete_apk_file by CacheKDSVarPropertyBoolean(_cacheKDSProvider,  true)
 
     fun isAutoDeleteOrgFiles(): Boolean {
         return is_delete_apk_file
