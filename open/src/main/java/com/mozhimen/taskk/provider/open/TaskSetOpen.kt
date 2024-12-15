@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap
 class TaskSetOpen(taskManager: ATaskManager, override val providerDefaults: List<ATaskOpen>) : ATaskSetOpen(taskManager) {
     override val providers: ConcurrentHashMap<String, ATaskOpen> by lazy {
         ConcurrentHashMap(
-            providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskOpen>)?.toMutableMap() }.fold(emptyMap()) { acc, nex -> acc + nex }
+            providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskOpen>?) }.fold(mutableMapOf()) { acc, nex -> acc += nex;acc }
         )
     }
 }

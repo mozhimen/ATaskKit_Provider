@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap
 open class TaskSetDelete constructor(taskManager: ATaskManager, override val providerDefaults: List<ATaskDelete>) : ATaskSetDelete(taskManager) {
     override val providers: ConcurrentHashMap<String, ATaskDelete> by lazy {
         ConcurrentHashMap<String, ATaskDelete>(
-            providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskDelete>)?.toMutableMap() }.fold(emptyMap()) { a, n -> a + n })
+            providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskDelete>?) }.fold(mutableMapOf()) { acc, nex -> acc += nex;acc })
             .also { UtilKLogWrapper.d(TAG, "providers: $it") }
     }
 }

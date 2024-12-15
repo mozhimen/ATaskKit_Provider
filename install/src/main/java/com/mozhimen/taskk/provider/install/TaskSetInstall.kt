@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap
 open class TaskSetInstall(taskManager: ATaskManager, override val providerDefaults: List<ATaskInstall>) : ATaskSetInstall(taskManager) {
     override val providers: ConcurrentHashMap<String, ATaskInstall> by lazy {
         ConcurrentHashMap<String, ATaskInstall>(
-            providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskInstall>)?.toMutableMap() }.fold(emptyMap()) { a, n -> a + n })
+            providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskInstall>?) }.fold(mutableMapOf()) { acc, nex -> acc += nex;acc })
             .also { UtilKLogWrapper.d(TAG, "providers: $it") }
     }
 }

@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap
 class TaskSetClose(taskManager: ATaskManager, override val providerDefaults: List<ATaskClose>) : ATaskSetClose(taskManager) {
     override val providers: ConcurrentHashMap<String, ATaskClose> by lazy {
         ConcurrentHashMap(
-            providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskClose>)?.toMutableMap() }.fold(emptyMap()) { acc, nex -> acc + nex }
+            providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskClose>?) }.fold(mutableMapOf()) { acc, nex -> acc += nex;acc }
         )
     }
 }

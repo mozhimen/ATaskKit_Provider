@@ -61,7 +61,7 @@ abstract class TaskManager : ATaskManager() {
     /////////////////////////////////////////////////////////////////
 
     override fun getTaskNodeQueues(): Map<String, Map<String, List<STaskNode>>> {
-        return getTaskProviders().map { provider -> (provider.getSupportFileExtensions().associateWith { provider.getTaskNodeQueues() }).toMutableMap() }.fold(emptyMap()) { acc, nex -> acc + nex }
+        return getTaskProviders().map { provider -> (provider.getSupportFileExtensions().associateWith { provider.getTaskNodeQueues() }) }.reduce { acc, nex -> acc + nex }
     }
 
     override fun getTaskSets(): List<ATaskSet<*>> {

@@ -60,7 +60,7 @@ abstract class ATaskProvider(
             getTaskOpen()?.getSupportFileExts(),
             getTaskUninstall()?.getSupportFileExts(),
             getTaskDelete()?.getSupportFileExts()
-        ).filterNotNull().fold(emptySet()) { acc, nex -> acc + nex }
+        ).filterNotNull().fold(mutableSetOf()) { acc, nex -> acc += nex;acc }
         return set.toList()
     }
 }
@@ -69,6 +69,6 @@ fun main() {///for test
     val list: Set<Int> = listOf(
         listOf(1, 2, 3),
         listOf(2, 2, 2)
-    ).fold(emptySet()) { acc, nex -> acc + nex }
+    ).fold(mutableSetOf()) { acc, nex -> acc += nex;acc }
     println(list)
 }

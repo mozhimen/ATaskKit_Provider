@@ -14,10 +14,10 @@ import java.util.concurrent.ConcurrentHashMap
  * @Version 1.0
  */
 @OptIn(OApiInit_InApplication::class)
-class TaskSetUninstall(  taskManager: ATaskManager, override val providerDefaults: List<ATaskUninstall>) : ATaskSetUninstall(taskManager) {
+class TaskSetUninstall(taskManager: ATaskManager, override val providerDefaults: List<ATaskUninstall>) : ATaskSetUninstall(taskManager) {
     override val providers: ConcurrentHashMap<String, ATaskUninstall> by lazy {
         ConcurrentHashMap(
-            providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskUninstall>)?.toMutableMap() }.fold(emptyMap()) { acc, nex -> acc + nex }
+            providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskUninstall>?) }.fold(mutableMapOf()) { acc, nex -> acc += nex;acc }
         )
     }
 }

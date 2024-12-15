@@ -14,10 +14,10 @@ import java.util.concurrent.ConcurrentHashMap
  * @Version 1.0
  */
 @OptIn(OApiInit_InApplication::class)
-class TaskSetUnzip(  taskManager: ATaskManager, override val providerDefaults: List<ATaskUnzip>) : ATaskSetUnzip(taskManager) {
+class TaskSetUnzip(taskManager: ATaskManager, override val providerDefaults: List<ATaskUnzip>) : ATaskSetUnzip(taskManager) {
     override val providers: ConcurrentHashMap<String, ATaskUnzip> by lazy {
         ConcurrentHashMap(
-            providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskUnzip>)?.toMutableMap() }.fold(emptyMap()) { acc, nex -> acc + nex }
+            providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskUnzip>?) }.fold(mutableMapOf()) { acc, nex -> acc += nex;acc }
         )
     }
 }

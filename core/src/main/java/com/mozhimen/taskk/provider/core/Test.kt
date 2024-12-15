@@ -12,8 +12,8 @@ import com.mozhimen.taskk.provider.basic.annors.ATaskName
 fun main() {
     val taskProviderApk = TaskProviderApk()
     val taskProviderMod = TaskProviderMod()
-    val a : Map<String, Map<String, List<String>>> = listOf(taskProviderApk, taskProviderMod).map { provider -> (provider.getSupportFileExtensions().associateWith { provider.getTaskNodeQueues() }).toMutableMap() }
-        .fold(emptyMap()) { acc, nex -> acc + nex }
+    val a : Map<String, Map<String, List<String>>> = listOf(taskProviderApk, taskProviderMod).map { provider -> (provider.getSupportFileExtensions().associateWith { provider.getTaskNodeQueues() }) }
+        .fold(mutableMapOf()) { acc, nex -> acc += nex;acc }
     println(a)
 }
 
