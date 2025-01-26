@@ -10,12 +10,12 @@ import com.mozhimen.kotlin.elemk.commons.IHasId
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.commons.IUtilK
-import com.mozhimen.kotlin.utilk.kotlin.getSplitFirstIndexToEnd
-import com.mozhimen.kotlin.utilk.kotlin.getSplitFirstIndexToStart
+import com.mozhimen.kotlin.utilk.kotlin.getSplitLastIndexToEnd
+import com.mozhimen.kotlin.utilk.kotlin.getSplitLastIndexToStart
 import com.mozhimen.taskk.provider.basic.annors.AState
 import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
-import com.mozhimen.taskk.provider.basic.bases.ATaskManager
+import com.mozhimen.taskk.provider.basic.bases.ATaskManagerProvider
 import com.mozhimen.taskk.provider.basic.cons.STaskNode
 import java.io.Serializable
 
@@ -31,6 +31,8 @@ data class AppTask constructor(
     @PrimaryKey
     @ColumnInfo(name = "task_id")
     override val id: String,//主键
+    @ColumnInfo(name = "task_channel")
+    val taskChannel: String = "",//通道
     @ColumnInfo(name = "task_state")
     var taskState: Int,//下载状态
     @ColumnInfo(name = "task_state_init")
@@ -39,7 +41,6 @@ data class AppTask constructor(
     var taskName: String,
     @ColumnInfo(name = "task_update_time")
     var taskUpdateTime: Long = System.currentTimeMillis(),//更新时间
-
 
     ////////////////////////////////////////////////////////////////
 
@@ -83,9 +84,9 @@ data class AppTask constructor(
     @ColumnInfo("apk_file_name")
     var fileNameExt: String,//和apkName的区别是有后缀
     @ColumnInfo(name = "apk_name")
-    var fileName: String = if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitFirstIndexToStart(".") else "",//本地保存的名称 为appid.apk或appid.npk
+    var fileName: String = if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToStart(".",false) else "",//本地保存的名称 为appid.apk或appid.npk
     @ColumnInfo(name = "file_ext")
-    var fileExt: String = if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitFirstIndexToEnd(".") else "",//文件后缀
+    var fileExt: String = if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToEnd(".") else "",//文件后缀
     @ColumnInfo(name = "apk_path_name")
     var filePathNameExt: String = "",//本地暂存路径
 
@@ -122,6 +123,7 @@ data class AppTask constructor(
         apkVersionName: String,
     ) : this(
         taskId,
+        "",
         taskState,
         taskState,
         taskName,
@@ -141,8 +143,8 @@ data class AppTask constructor(
         fileIconUrl,
         fileIconId,
         fileNameExt,
-        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitFirstIndexToStart(".") else "",
-        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitFirstIndexToEnd(".") else "",
+        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToStart(".",false) else "",
+        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToEnd(".") else "",
         "",
         apkPackageName,
         apkVersionCode,
@@ -162,6 +164,7 @@ data class AppTask constructor(
         apkPackageName: String,//包名
     ) : this(
         taskId,
+        "",
         taskState,
         taskState,
         taskName,
@@ -181,44 +184,84 @@ data class AppTask constructor(
         "",
         0,
         fileNameExt,
-        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitFirstIndexToStart(".") else "",
-        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitFirstIndexToEnd(".") else "",
+        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToStart(".",false) else "",
+        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToEnd(".") else "",
         "",
         apkPackageName,
         0,
         ""
     )
 
+    //for other
+    constructor(
+        taskId: String,//主键
+        channel: String,
+        taskState: Int,//下载状态
+        taskName: String,
+        taskDownloadUrlCurrent: String,//当前使用的下载地址
+        fileSize: Long,
+        fileIconUrl: String,
+        fileNameExt: String,//和apkName的区别是有后缀
+    ) : this(
+        taskId,
+        channel,
+        taskState,
+        taskState,
+        taskName,
+        System.currentTimeMillis(),
+        0,
+        taskDownloadUrlCurrent,
+        taskDownloadUrlCurrent,
+        taskDownloadUrlCurrent,
+        0,
+        0,
+        fileSize,
+        0,
+        false,
+        "",
+        false,
+        "",
+        fileIconUrl,
+        0,
+        fileNameExt,
+        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToStart(".",false) else "",
+        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToEnd(".") else "",
+        "",
+        "",
+        0,
+        ""
+    )
+
     //for parcel
     constructor(parcel: Parcel) : this(
-        parcel.readString()?:"",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
         parcel.readInt(),
         parcel.readInt(),
-        parcel.readString()?:"",
+        parcel.readString() ?: "",
         parcel.readLong(),
         parcel.readInt(),
-        parcel.readString()?:"",
-        parcel.readString()?:"",
-        parcel.readString()?:"",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
         parcel.readInt(),
         parcel.readLong(),
         parcel.readLong(),
         parcel.readLong(),
         parcel.readByte() != 0.toByte(),
-        parcel.readString()?:"",
+        parcel.readString() ?: "",
         parcel.readByte() != 0.toByte(),
-        parcel.readString()?:"",
-        parcel.readString()?:"",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
         parcel.readInt(),
-        parcel.readString()?:"",
-        parcel.readString()?:"",
-        parcel.readString()?:"",
-        parcel.readString()?:"",
-        parcel.readString()?:"",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
         parcel.readInt(),
-        parcel.readString()?:""
-    ) {
-    }
+        parcel.readString() ?: ""
+    )
 
     ////////////////////////////////////////////////////////////////
 
@@ -229,11 +272,11 @@ data class AppTask constructor(
         taskDownloadFileSpeed = 0
     }
 
-    fun toTaskStateNew(taskStateNew: Int) {
+    fun toTaskStateNew(taskStateNew: Int, channel: String) {
         taskState = taskStateNew
         if (isTaskCreateOrUpdate())
             taskStateInit = taskState
-        AppTaskDaoManager.addOrUpdate(this)
+        AppTaskDaoManager.instance.with(channel).addOrUpdate(this)
     }
 
     ////////////////////////////////////////////////////////////////
@@ -242,7 +285,7 @@ data class AppTask constructor(
         ATaskState.intTaskState2strTaskState(taskState)
 
     @OptIn(OApiInit_InApplication::class)
-    fun getCurrentTaskNode(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String, firstTaskNode_ofTaskNodeQueue: STaskNode? = null): STaskNode? {
+    fun getCurrentTaskNode(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String, firstTaskNode_ofTaskNodeQueue: STaskNode? = null): STaskNode? {
         val taskCode: Int = getTaskCode()//->哪个环节
         val stateCode: Int = getStateCode()//->哪个状态
         if (isTaskSuccess(taskManager, taskNodeQueueName)) {
@@ -274,29 +317,29 @@ data class AppTask constructor(
     ////////////////////////////////////////////////////////////////
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskStart(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
+    fun canTaskStart(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
         return taskManager.canTaskStart(this, taskNodeQueueName)
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskResume(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
+    fun canTaskResume(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
         return taskManager.canTaskResume(this, taskNodeQueueName)
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskPause(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
+    fun canTaskPause(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
         return taskManager.canTaskPause(this, taskNodeQueueName)
     }
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskCancel(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
+    fun canTaskCancel(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
         return taskManager.canTaskCancel(this, taskNodeQueueName)
     }
 
     ////////////////////////////////////////////////////////////
 
     @OptIn(OApiInit_InApplication::class)
-    fun isTaskProcess(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+    fun isTaskProcess(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         AState.isTaskProcess(taskState, taskManager, fileExt, taskNodeQueueName)
 
     fun isTaskProcess(): Boolean =
@@ -318,7 +361,7 @@ data class AppTask constructor(
         AState.isTaskCancel(taskState)
 
     @OptIn(OApiInit_InApplication::class)
-    fun isTaskSuccess(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+    fun isTaskSuccess(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         AState.isTaskSuccess(taskState, taskManager, fileExt, taskNodeQueueName)
 
     fun isTaskSuccess(): Boolean =
@@ -350,35 +393,35 @@ data class AppTask constructor(
     ////////////////////////////////////////////////////////////
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskDownload(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+    fun canTaskDownload(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         ATaskState.canTaskDownload(taskState, taskManager, fileExt, taskNodeQueueName)
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskVerify(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+    fun canTaskVerify(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         ATaskState.canTaskVerify(taskState, taskManager, fileExt, taskNodeQueueName)
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskUnzip(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+    fun canTaskUnzip(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         ATaskState.canTaskUnzip(taskState, taskManager, fileExt, taskNodeQueueName)
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskInstall(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+    fun canTaskInstall(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         ATaskState.canTaskInstall(taskState, taskManager, fileExt, taskNodeQueueName)
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskOpen(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+    fun canTaskOpen(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         ATaskState.canTaskOpen(taskState, taskManager, fileExt, taskNodeQueueName)
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskClose(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+    fun canTaskClose(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         ATaskState.canTaskClose(taskState, taskManager, fileExt, taskNodeQueueName)
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskUninstall(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+    fun canTaskUninstall(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         ATaskState.canTaskUninstall(taskState, taskManager, fileExt, taskNodeQueueName)
 
     @OptIn(OApiInit_InApplication::class)
-    fun canTaskDelete(taskManager: ATaskManager, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+    fun canTaskDelete(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         ATaskState.canTaskDelete(taskState, taskManager, fileExt, taskNodeQueueName)
 
     ////////////////////////////////////////////////////////////
@@ -487,7 +530,7 @@ data class AppTask constructor(
 
     ////////////////////////////////////////////////////////////
 
-    fun copyOf(appTask: AppTask){
+    fun copyOf(appTask: AppTask) {
         taskState = appTask.taskState
         taskStateInit = appTask.taskStateInit
         taskName = appTask.taskName
@@ -585,6 +628,7 @@ data class AppTask constructor(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
+        parcel.writeString(taskChannel)
         parcel.writeInt(taskState)
         parcel.writeInt(taskStateInit)
         parcel.writeString(taskName)

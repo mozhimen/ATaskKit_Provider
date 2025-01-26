@@ -36,12 +36,12 @@ android {
 }
 
 dependencies {
-    implementation project(':SwiftKit:bindk')
+    implementation project(':ASwiftKit:bindk')
     implementation project(':AStackKit:stackk')
     implementation project(':AManifestKit_XXPermissions:manifestk_xxpermissions')
     implementation project(':core')
-    implementation project(':provider_apk')
-    implementation project(':install_splits_ackpine')
+    implementation project(':provider:apk')
+    implementation project(':install:splits_ackpine')
 
     //test
     testImplementation 'junit:junit:4.13.2'

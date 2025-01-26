@@ -24,22 +24,60 @@ include ':app'
 include ':core'
 include ':basic'
 include ':install'
+include ':install:splits_ackpine'
 include ':uninstall'
-include ':provider_apk'
+include ':provider:apk'
 include ':download'
-include ':download_okdownload'
+include ':download:okdownload'
 include ':open'
-include ':install_splits_ackpine'
 include ':unzip'
 include ':verify'
-include ':support_compose'
+include ':support:compose'
 include ':delete'
 include ':close'
-//SwiftKit
-include ':SwiftKit'
-project(':SwiftKit').projectDir = new File("D:\\WorkSpace\\GitHub\\SwiftKit")
-include ':SwiftKit:basick'
-include ':SwiftKit:bindk'
+//ALibKit_Apache
+include ':ALibKit_Apache'
+project(':ALibKit_Apache').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Apache")
+include ':ALibKit_Apache:commons_compress'
+//ALibKit_Android
+include ':ALibKit_Android'
+project(':ALibKit_Android').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Android")
+include ':ALibKit_Android:tools_build_apksig'
+//ALibKit_Google
+include ':ALibKit_Google'
+project(':ALibKit_Google').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Google")
+include ':ALibKit_Google:material'
+include ':ALibKit_Google:guava:listenablefuture'
+//ALibKit_Jetpack
+include(':ALibKit_Jetpack')
+project(':ALibKit_Jetpack').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Jetpack")
+include(':ALibKit_Jetpack:room')
+include(':ALibKit_Jetpack:room_paging')
+include(':ALibKit_Jetpack:datastore')
+include(':ALibKit_Jetpack:startup')
+include(':ALibKit_Jetpack:concurrent_futures')
+include(':ALibKit_Jetpack:annotation')
+include(':ALibKit_Jetpack:databinding')
+include(':ALibKit_Jetpack:core')
+//ALibKit_Jetbrains
+include ':ALibKit_Jetbrains'
+project(':ALibKit_Jetbrains').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Jetbrains")
+include ':ALibKit_Jetbrains:kotlin_stdlib'
+include ':ALibKit_Jetbrains:kotlinx_coroutines'
+//ALibKit_Squareup
+include(':ALibKit_Squareup')
+project(':ALibKit_Squareup').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Squareup")
+include(':ALibKit_Squareup:okhttp3')
+//APostKit
+include(':KUtilKit')
+project(':KUtilKit').projectDir = new File("D:\\WorkSpace\\GitHub\\KUtilKit")
+include(':KUtilKit:android')
+include(':KUtilKit:kotlin')
+//ASwiftKit
+include ':ASwiftKit'
+project(':ASwiftKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ASwiftKit")
+include ':ASwiftKit:basick'
+include ':ASwiftKit:bindk'
 //ANetKit_okdownload
 include(':ANetKit_okdownload')
 project(':ANetKit_okdownload').projectDir = new File("D:\\WorkSpace\\GitHub\\ANetKit_okdownload")
@@ -50,24 +88,13 @@ include(':ANetKit_okdownload:okdownload_ext')
 //AInstallKit
 include(':AInstallKit')
 project(':AInstallKit').projectDir = new File("D:\\WorkSpace\\GitHub\\AInstallKit")
-include(':AInstallKit:installk_manager')
-include(':AInstallKit:installk_splits_ackpine')
-//ALibKit_Jetpack
-include(':ALibKit_Jetpack')
-project(':ALibKit_Jetpack').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Jetpack")
-include(':ALibKit_Jetpack:room')
-include(':ALibKit_Jetpack:room_paging')
-include(':ALibKit_Jetpack:datastore')
-include(':ALibKit_Jetpack:startup')
-//ALibKit_Squareup
-include(':ALibKit_Squareup')
-project(':ALibKit_Squareup').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Squareup")
-include(':ALibKit_Squareup:okhttp3')
+include(':AInstallKit:manager')
+include(':AInstallKit:splits_ackpine')
 //ACacheKit
 include(':ACacheKit')
 project(':ACacheKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ACacheKit")
-include(':ACacheKit:cachek_datastore')
-include(':ACacheKit:cachek_basic')
+include(':ACacheKit:datastore')
+include(':ACacheKit:basic')
 //AInstallKit_Ackpine
 include(':AInstallKit_Ackpine')
 project(':AInstallKit_Ackpine').projectDir = new File("D:\\WorkSpace\\GitHub\\AInstallKit_Ackpine")
@@ -83,20 +110,18 @@ include(':AManifestKit_XXPermissions:manifestk_xxpermissions')
 //APostKit
 include(':APostKit')
 project(':APostKit').projectDir = new File("D:\\WorkSpace\\GitHub\\APostKit")
-include(':APostKit:postk_livedata')
-//APostKit
-include(':KUtilKit')
-project(':KUtilKit').projectDir = new File("D:\\WorkSpace\\GitHub\\KUtilKit")
-include(':KUtilKit:utilk_android')
-include(':KUtilKit:utilk_kotlin')
+include(':APostKit:livedata')
+include(':APostKit:basic')
 //AStackKit
 include(':AStackKit')
 project(':AStackKit').projectDir = new File("D:\\WorkSpace\\GitHub\\AStackKit")
 include(':AStackKit:stackk')
-include(':AStackKit:stackk_callback')
-include(':AStackKit:stackk_basic')
+include(':AStackKit:callback')
+include(':AStackKit:basic')
 //ATaskKit
 include(':ATaskKit')
 project(':ATaskKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ATaskKit")
-include(':ATaskKit:taskk_executor')
+include(':ATaskKit:executor')
 
+include ':provider:audio'
+include ':provider:video'

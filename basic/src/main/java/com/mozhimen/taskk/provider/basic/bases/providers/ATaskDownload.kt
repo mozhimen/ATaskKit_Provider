@@ -6,7 +6,7 @@ import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
 import com.mozhimen.taskk.provider.basic.bases.ATask
-import com.mozhimen.taskk.provider.basic.bases.ATaskManager
+import com.mozhimen.taskk.provider.basic.bases.ATaskManagerProvider
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
@@ -19,8 +19,7 @@ import java.io.File
  * @Date 2024/8/20
  * @Version 1.0
  */
-@OPermission_INTERNET
-abstract class ATaskDownload(taskManager: ATaskManager,iTaskLifecycle: ITaskLifecycle?) : ATask(taskManager,iTaskLifecycle) {
+abstract class ATaskDownload(taskManager: ATaskManagerProvider, iTaskLifecycle: ITaskLifecycle?) : ATask(taskManager,iTaskLifecycle) {
     protected abstract var _downloadDir: File?
     protected abstract var _taskNodeQueueName_ofDownload: String?
 

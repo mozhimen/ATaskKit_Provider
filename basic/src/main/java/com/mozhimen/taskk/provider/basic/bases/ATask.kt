@@ -23,8 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  *     |                                        |             |      ↓
  * delete(90)   <------------------------- uninstall(70) <- close(60)
  */
-@OptIn(OApiInit_InApplication::class)
-abstract class ATask(protected val _taskManager: ATaskManager, protected val _iTaskLifecycle: ITaskLifecycle?) : IUtilK, ITaskLifecycle, ITaskEvent {
+abstract class ATask(protected val _taskManager: ATaskManagerProvider, protected val _iTaskLifecycle: ITaskLifecycle?) : IUtilK, ITaskLifecycle, ITaskEvent {
     val isInit: AtomicBoolean = AtomicBoolean(false)
 
     //////////////////////////////////////////////////////
@@ -51,19 +50,19 @@ abstract class ATask(protected val _taskManager: ATaskManager, protected val _iT
 
     @CallSuper
     override fun onTaskStarted(taskState: Int, appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
-        appTask.toTaskStateNew(taskState)
+        appTask.toTaskStateNew(taskState, appTask.taskChannel)
         _iTaskLifecycle?.onTaskStarted(taskState, appTask, taskNodeQueueName)
     }
 
     @CallSuper
     override fun onTaskPaused(taskState: Int, appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
-        appTask.toTaskStateNew(taskState)
+        appTask.toTaskStateNew(taskState, appTask.taskChannel)
         _iTaskLifecycle?.onTaskPaused(taskState, appTask, taskNodeQueueName)
     }
 
     @CallSuper
     override fun onTaskFinished(taskState: Int, appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String, finishType: STaskFinishType) {
-        appTask.toTaskStateNew(taskState)
+        appTask.toTaskStateNew(taskState, appTask.taskChannel)
         _iTaskLifecycle?.onTaskFinished(taskState, appTask, taskNodeQueueName, finishType)
     }
 }

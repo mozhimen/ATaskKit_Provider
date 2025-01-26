@@ -15,3 +15,10 @@ sealed class STaskFinishType {
     object CANCEL : STaskFinishType()
     data class FAIL(val exception: TaskException) : STaskFinishType()
 }
+
+sealed class STaskType {
+    object DOING : STaskType()
+    object SUCCESS : STaskType()
+    object CANCEL : STaskType()
+    data class FAIL(val exception: TaskException) : STaskType()
+}

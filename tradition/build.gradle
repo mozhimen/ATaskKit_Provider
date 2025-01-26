@@ -31,14 +31,14 @@ android {
 }
 
 dependencies {
-    implementation project(':KUtilKit:utilk_android')
+    implementation project(':KUtilKit:android')
     implementation project(':APostKit:postk_livedata')
     implementation project(':ANetKit_okdownload:okdownload')
     implementation project(':ANetKit_okdownload:okdownload_ext')
     implementation project(':ANetKit_okdownload:okdownload-breakpoint-sqlite')
     implementation project(':ANetKit_okdownload:okdownload-connection-okhttp')
     implementation project(':ALibKit_Squareup:okhttp3')
-    implementation project(':ACacheKit:cachek_datastore')
+    implementation project(':ACacheKit:datastore')
     implementation project(':APostKit:postk_livedata')
     implementation project(':AInstallKit:installk_manager')
     implementation project(project.path.replace(project.name, '') + ':basic')

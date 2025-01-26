@@ -1,10 +1,9 @@
 package com.mozhimen.taskk.provider.basic.annors
 
-import android.util.Log
 import androidx.annotation.IntDef
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.commons.IUtilK
-import com.mozhimen.taskk.provider.basic.bases.ATaskManager
+import com.mozhimen.taskk.provider.basic.bases.ATaskManagerProvider
 
 /**
  * @ClassName ANetKAppTaskState
@@ -71,7 +70,7 @@ annotation class AState {
                     !isTaskSuccess(taskState)
 
         @OptIn(OApiInit_InApplication::class)
-        fun isTaskProcess(taskState: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+        fun isTaskProcess(taskState: Int, taskManager: ATaskManagerProvider, @AFileExt fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
             !isTaskCreate(taskState) &&
                     !isTaskUpdate(taskState) &&
                     !isTaskUnAvailable(taskState) &&
@@ -98,7 +97,7 @@ annotation class AState {
             state == STATE_TASK_SUCCESS
 
         @OptIn(OApiInit_InApplication::class)
-        fun isTaskSuccess(state: Int, taskManager: ATaskManager, @AFileExt fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
+        fun isTaskSuccess(state: Int, taskManager: ATaskManagerProvider, @AFileExt fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
             (isTaskSuccess(state) || run {
                 val lastTaskCode: Int = taskManager.getLastTaskNode_ofTaskNodeQueue(fileExt, taskNodeQueueName)?.taskName?.taskName2taskState() ?: return@run false
                 val taskCode: Int = ATaskState.getTaskCode(state)

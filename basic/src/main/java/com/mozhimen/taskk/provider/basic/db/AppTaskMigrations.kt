@@ -93,4 +93,13 @@ object AppTaskMigrations {
             db.execSQL("ALTER TABLE netk_app_task ADD COLUMN task_name TEXT NOT NULL DEFAULT ''")
         }
     }
+
+    /**
+     * 新增通道字段
+     */
+    internal val MIGRATION_4_5 = object : Migration(3, 4) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE netk_app_task ADD COLUMN taskchannel TEXT NOT NULL DEFAULT ''")
+        }
+    }
 }

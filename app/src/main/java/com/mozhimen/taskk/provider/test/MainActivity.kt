@@ -19,7 +19,6 @@ import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.db.AppTaskDaoManager
 import com.mozhimen.taskk.provider.basic.impls.TaskException
-import com.mozhimen.taskk.provider.basic.commons.ITasks
 import com.mozhimen.taskk.provider.basic.commons.ITasks2
 import com.mozhimen.taskk.provider.test.databinding.ActivityMain2Binding
 
@@ -46,40 +45,40 @@ class MainActivity : BaseActivityVB<ActivityMain2Binding>(), ITasks2 {
 
     @OptIn(OApiInit_InApplication::class)
     override fun initView(savedInstanceState: Bundle?) {
-        appTask = AppTaskUtil.generateAppTask_ofDb_installed_version(MainTaskManager, appTask, ATaskName.TASK_INSTALL)
-        UtilKLogWrapper.d(TAG, "initView: get_ofTaskId ${AppTaskDaoManager.get_ofTaskId(appTask.id)}")
-        UtilKLogWrapper.d(TAG, "initView: get_ofApkPackageName_ApkVersionCode ${AppTaskDaoManager.get_ofApkPackageName_ApkVersionCode(appTask.apkPackageName, appTask.apkVersionCode)}")
+        appTask = AppTaskUtil.generateAppTask_ofDb_installed_version(MainTaskManager.default(), appTask, ATaskName.TASK_INSTALL)
+        UtilKLogWrapper.d(TAG, "initView: get_ofTaskId ${AppTaskDaoManager.instance.default().get_ofTaskId(appTask.id)}")
+        UtilKLogWrapper.d(TAG, "initView: get_ofApkPackageName_ApkVersionCode ${AppTaskDaoManager.instance.default().get_ofApkPackageName_ApkVersionCode(appTask.apkPackageName, appTask.apkVersionCode)}")
         UtilKLogWrapper.d(
             TAG,
-            "initView: get_ofTaskId_ApkPackageName_ApkVersionCode ${AppTaskDaoManager.get_ofTaskId_ApkPackageName_ApkVersionCode(appTask.id, appTask.apkPackageName, appTask.apkVersionCode)}"
+            "initView: get_ofTaskId_ApkPackageName_ApkVersionCode ${AppTaskDaoManager.instance.default().get_ofTaskId_ApkPackageName_ApkVersionCode(appTask.id, appTask.apkPackageName, appTask.apkVersionCode)}"
         )
-        UtilKLogWrapper.d(TAG, "initView: gets_ofApkPackageName ${AppTaskDaoManager.gets_ofApkPackageName(appTask.apkPackageName)}")
-        UtilKLogWrapper.d(TAG, "initView: gets_ofApkPackageName_satisfyApkVersionCode ${AppTaskDaoManager.gets_ofApkPackageName_satisfyApkVersionCode(appTask.apkPackageName, appTask.apkVersionCode)}")
+        UtilKLogWrapper.d(TAG, "initView: gets_ofApkPackageName ${AppTaskDaoManager.instance.default().gets_ofApkPackageName(appTask.apkPackageName)}")
+        UtilKLogWrapper.d(TAG, "initView: gets_ofApkPackageName_satisfyApkVersionCode ${AppTaskDaoManager.instance.default().gets_ofApkPackageName_satisfyApkVersionCode(appTask.apkPackageName, appTask.apkVersionCode)}")
 
         vb.mainTxt.text = appTask.getTaskStateStr()
 
         vb.mainBtn.setOnClickListener {
             requestPermissionStorage {
-                if (appTask.isTaskProcess(MainTaskManager, ATaskName.TASK_INSTALL) && appTask.isAnyTasking()) {//任务中->暂停
-                    MainTaskManager.taskPause(appTask, ATaskName.TASK_INSTALL)
-                } else if (appTask.isTaskProcess(MainTaskManager, ATaskName.TASK_INSTALL) && appTask.isAnyTaskPause()) {//任务暂停->继续
-                    MainTaskManager.taskStart(appTask, ATaskName.TASK_INSTALL)
-                } else if (appTask.isTaskProcess(MainTaskManager, ATaskName.TASK_INSTALL) && appTask.isAnyTaskSuccess()) {//任务途中成功但等待用户操作安装->继续任务
-                    MainTaskManager.taskStart(appTask, ATaskName.TASK_INSTALL)
-                } else if (appTask.isTaskSuccess(MainTaskManager, ATaskName.TASK_INSTALL)) {//任务成功->下一个taskNodeQueue例如打开
-                    MainTaskManager.taskStart(appTask, ATaskName.TASK_OPEN)
+                if (appTask.isTaskProcess(MainTaskManager.default(), ATaskName.TASK_INSTALL) && appTask.isAnyTasking()) {//任务中->暂停
+                    MainTaskManager.default().taskPause(appTask, ATaskName.TASK_INSTALL)
+                } else if (appTask.isTaskProcess(MainTaskManager.default(), ATaskName.TASK_INSTALL) && appTask.isAnyTaskPause()) {//任务暂停->继续
+                    MainTaskManager.default().taskStart(appTask, ATaskName.TASK_INSTALL)
+                } else if (appTask.isTaskProcess(MainTaskManager.default(), ATaskName.TASK_INSTALL) && appTask.isAnyTaskSuccess()) {//任务途中成功但等待用户操作安装->继续任务
+                    MainTaskManager.default().taskStart(appTask, ATaskName.TASK_INSTALL)
+                } else if (appTask.isTaskSuccess(MainTaskManager.default(), ATaskName.TASK_INSTALL)) {//任务成功->下一个taskNodeQueue例如打开
+                    MainTaskManager.default().taskStart(appTask, ATaskName.TASK_OPEN)
                 } else if (appTask.isTaskCreateOrUpdate()) {//任务还在idle状态->开始任务
-                    MainTaskManager.taskStart(appTask, ATaskName.TASK_INSTALL)
+                    MainTaskManager.default().taskStart(appTask, ATaskName.TASK_INSTALL)
                 }
             }
         }
         vb.mainBtn.setOnLongClickListener {
             requestPermissionStorage {
-                MainTaskManager.taskCancel(appTask, ATaskName.TASK_INSTALL)
+                MainTaskManager.default().taskCancel(appTask, ATaskName.TASK_INSTALL)
             }
             true
         }
-        MainTaskManager.registerTask2Listener(this)
+        MainTaskManager.default().registerTask2Listener(this)
     }
 
 
@@ -97,8 +96,9 @@ class MainActivity : BaseActivityVB<ActivityMain2Binding>(), ITasks2 {
         }
     }
 
+    @OptIn(OApiInit_InApplication::class)
     override fun onDestroy() {
-        MainTaskManager.unregisterTask2Listener(this)
+        MainTaskManager.default().unregisterTask2Listener(this)
         super.onDestroy()
     }
 

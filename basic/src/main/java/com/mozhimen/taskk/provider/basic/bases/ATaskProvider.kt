@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 @OApiInit_InApplication
 abstract class ATaskProvider(
     protected val _iTaskLifecycle: ITaskLifecycle,
-    protected val _taskManager: ATaskManager
+    protected val _taskManagerProvider: ATaskManagerProvider
 ) {
     protected val _isInit = AtomicBoolean(false)
 

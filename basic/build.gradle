@@ -13,13 +13,13 @@ android {
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
+//        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
@@ -32,10 +32,10 @@ android {
 }
 
 dependencies {
-    implementation project(':KUtilKit:utilk_android')
+    implementation project(':KUtilKit:android')
     implementation project(':ALibKit_Jetpack:room')
     implementation project(':ALibKit_Jetpack:room_paging')
-    implementation project(':ATaskKit:taskk_executor')
+    implementation project(':ATaskKit:executor')
 
     //kapt
     kapt 'androidx.room:room-compiler:2.6.1'

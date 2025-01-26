@@ -13,7 +13,7 @@ import com.mozhimen.kotlin.utilk.android.app.UtilKApplicationWrapper
  * @Date 2023/11/7 16:01
  * @Version 1.0
  */
-@Database(entities = [AppTask::class], version = 4, exportSchema = false)
+@Database(entities = [AppTask::class], version = 5, exportSchema = false)
 abstract class AppTaskDb : RoomDatabase() {
     abstract fun appTaskDao(): AppTaskDao
 
@@ -22,7 +22,12 @@ abstract class AppTaskDb : RoomDatabase() {
             Room.databaseBuilder(UtilKApplicationWrapper.instance.get(), AppTaskDb::class.java, "netk_app_task_db")
                 .fallbackToDestructiveMigration()//使用该方法会在数据库升级异常时重建数据库，但是所有数据会丢失
                 .allowMainThreadQueries()
-                .addMigrations(AppTaskMigrations.MIGRATION_1_2, AppTaskMigrations.MIGRATION_2_3, AppTaskMigrations.MIGRATION_3_4)
+                .addMigrations(
+                    AppTaskMigrations.MIGRATION_1_2,
+                    AppTaskMigrations.MIGRATION_2_3,
+                    AppTaskMigrations.MIGRATION_3_4,
+                    AppTaskMigrations.MIGRATION_4_5
+                )
                 .build()
         }
 

@@ -6,7 +6,7 @@ import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.java.io.UtilKFileDir
 import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.annors.ATaskState
-import com.mozhimen.taskk.provider.basic.bases.ATaskManager
+import com.mozhimen.taskk.provider.basic.bases.ATaskManagerProvider
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetDownload
 import com.mozhimen.taskk.provider.basic.cons.CErrorCode
@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @Version 1.0
  */
 @OptIn(OPermission_INTERNET::class, OApiInit_InApplication::class)
-class TaskSetDownload constructor(taskManager: ATaskManager, override val providerDefaults: List<ATaskDownload>) : ATaskSetDownload(taskManager) {
+class TaskSetDownload constructor(taskManager: ATaskManagerProvider, override val providerDefaults: List<ATaskDownload>) : ATaskSetDownload(taskManager) {
     override val providers: ConcurrentHashMap<String, ATaskDownload> by lazy {
         ConcurrentHashMap(
             providerDefaults.mapNotNull { (it.getSupportFileTasks() as? Map<String, ATaskDownload>?) }.fold(mutableMapOf()) { acc, nex -> acc += nex;acc }

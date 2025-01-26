@@ -16,20 +16,20 @@ import androidx.room.Update
  */
 @Dao
 interface AppTaskDao {
-    @Query("select * from netk_app_task order by task_update_time desc")
-    fun gets_ofPagingSource(): PagingSource<Int, AppTask>
+    @Query("select * from netk_app_task where task_channel = :channel order by task_update_time desc")
+    fun gets_ofPagingSource(channel: String): PagingSource<Int, AppTask>
 
-    @Query("select * from netk_app_task where task_state > 9 order by task_update_time desc")
-    fun gets_process_ofPagingSource(): PagingSource<Int, AppTask>
+    @Query("select * from netk_app_task where task_state > 9 and task_channel = :channel order by task_update_time desc")
+    fun gets_process_ofPagingSource(channel: String): PagingSource<Int, AppTask>
 
-    @Query("select * from netk_app_task")
-    fun gets_ofAll(): List<AppTask>
+    @Query("select * from netk_app_task where task_channel = :channel")
+    fun gets_ofAll(channel: String): List<AppTask>
 
-    @Query("select * from netk_app_task where task_id = :taskId")
-    fun gets_ofTaskId(taskId: String): List<AppTask>
+    @Query("select * from netk_app_task where task_id = :taskId and task_channel = :channel")
+    fun gets_ofTaskId(taskId: String, channel: String): List<AppTask>
 
-    @Query("select * from netk_app_task where apk_package_name = :packageName order by task_update_time desc")
-    fun gets_ofPackageName(packageName: String): List<AppTask>
+    @Query("select * from netk_app_task where apk_package_name = :packageName and task_channel = :channel order by task_update_time desc")
+    fun gets_ofPackageName(packageName: String, channel: String): List<AppTask>
 
 //    @Query("select * from app_download_task where apk_is_installed = 0")
 //    fun getAllDownloading(): List<AppTask>

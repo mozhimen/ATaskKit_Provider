@@ -3,7 +3,7 @@ package com.mozhimen.taskk.provider.basic.bases.sets
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
-import com.mozhimen.taskk.provider.basic.bases.ATaskManager
+import com.mozhimen.taskk.provider.basic.bases.ATaskManagerProvider
 import com.mozhimen.taskk.provider.basic.bases.ATaskSet
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
 import java.io.File
@@ -16,7 +16,7 @@ import java.io.File
  * @Version 1.0
  */
 @OPermission_INTERNET
-abstract class ATaskSetDownload(taskManager: ATaskManager) : ATaskSet<ATaskDownload>(taskManager) {
+abstract class ATaskSetDownload(taskManager: ATaskManagerProvider) : ATaskSet<ATaskDownload>(taskManager) {
     fun getDownloadDirs(): List<File> =
         providers.values.mapNotNull { it.getDownloadDir() }.toSet().toList()
 
@@ -25,6 +25,12 @@ abstract class ATaskSetDownload(taskManager: ATaskManager) : ATaskSet<ATaskDownl
 
     fun taskPauseAll(fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String) {
         getProvider(fileExt)?.taskPauseAll(taskNodeQueueName)
+    }
+
+    fun taskPauseAll(@ATaskNodeQueueName taskNodeQueueName: String) {
+        (providers as? Map<String,ATaskDownload>)?.forEach {
+            taskPauseAll(taskNodeQueueName)
+        }
     }
 
     fun taskResumeAll(fileExt: String, @ATaskNodeQueueName taskNodeQueueName: String) {
