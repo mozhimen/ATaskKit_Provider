@@ -19,7 +19,7 @@ import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.app.UtilKNotificationChannel
 import com.mozhimen.kotlin.utilk.android.app.UtilKNotificationManager
-import com.mozhimen.kotlin.utilk.android.app.UtilKPendingIntentWrapper
+import com.mozhimen.kotlin.utilk.android.app.UtilKPendingIntentGet
 import com.mozhimen.kotlin.utilk.android.content.UtilKApplicationInfo
 import com.mozhimen.kotlin.utilk.android.os.UtilKBuildVersion
 import com.mozhimen.taskk.provider.apk.utils.NotificationUtil
@@ -82,21 +82,21 @@ class NotificationProxy : BaseWakeBefDestroyLifecycleObserver() {
         when {
             appTask.isTaskSuccess(taskManager, taskNodeQueueName) -> {
                 intent?.let {
-                    builder.setContentIntent(UtilKPendingIntentWrapper.get_ofActivity_IMMUTABLE(0, it))
+                    builder.setContentIntent(UtilKPendingIntentGet.getActivity_IMMUTABLE(0, it))
                 }
                 builder.setProgress(0, 0, false)
             }
 
             !appTask.taskUnzipEnable && appTask.isTaskVerifySuccess() -> {
                 intent?.let {
-                    builder.setContentIntent(UtilKPendingIntentWrapper.get_ofActivity_IMMUTABLE(0, it))
+                    builder.setContentIntent(UtilKPendingIntentGet.getActivity_IMMUTABLE(0, it))
                 }
                 builder.setProgress(0, 0, false)
             }
 
             appTask.taskUnzipEnable && appTask.isTaskUnzipSuccess() -> {
                 intent?.let {
-                    builder.setContentIntent(UtilKPendingIntentWrapper.get_ofActivity_IMMUTABLE(0, it))
+                    builder.setContentIntent(UtilKPendingIntentGet.getActivity_IMMUTABLE(0, it))
                 }
                 builder.setProgress(0, 0, false)
             }

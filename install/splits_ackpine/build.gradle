@@ -37,7 +37,7 @@ dependencies {
         api project(/*project.path.replace(project.name, '') +*/ ':ATaskKit_Provider:basic')
     }
     implementation project(':AInstallKit:splits_ackpine')
-    implementation project(':AManifestKit_XXPermissions:manifestk_xxpermissions')
+    implementation project(':APermissionKit_XXPermissions:permissionk_xxpermissions')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

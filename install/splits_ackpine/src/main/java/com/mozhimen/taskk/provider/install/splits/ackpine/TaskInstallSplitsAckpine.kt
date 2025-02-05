@@ -9,7 +9,7 @@ import com.mozhimen.kotlin.elemk.commons.IA_Listener
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_POST_NOTIFICATIONS
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
-import com.mozhimen.kotlin.utilk.java.io.file2uri_internal
+import com.mozhimen.kotlin.utilk.java.io.file2uri
 import com.mozhimen.kotlin.utilk.kotlin.strFilePath2file
 import com.mozhimen.kotlin.utilk.wrapper.UtilKPermission
 import com.mozhimen.installk.splits.ackpine.InstallKSplitsAckpine
@@ -62,7 +62,7 @@ class TaskInstallSplitsAckpine constructor(
     @OPermission_POST_NOTIFICATIONS
     private fun install_internal(file: File) {
         Log.d(TAG, "installInternal: file $file")
-        file.file2uri_internal()?.let {
+        file.file2uri()?.let {
             InstallKSplitsAckpine.install(it, ProcessLifecycleOwner.get().lifecycleScope, _installListener)
         } ?: run {
             _installListener?.invoke(SInstallState.Fail(null, null))

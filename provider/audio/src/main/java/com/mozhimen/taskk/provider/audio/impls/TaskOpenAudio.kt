@@ -5,7 +5,7 @@ import com.mozhimen.kotlin.utilk.android.app.UtilKApplicationWrapper
 import com.mozhimen.kotlin.utilk.android.content.UtilKContextStart
 import com.mozhimen.kotlin.utilk.android.content.UtilKIntentGet
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
-import com.mozhimen.kotlin.utilk.kotlin.strFilePath2uri_internal
+import com.mozhimen.kotlin.utilk.kotlin.strFilePath2uri
 import com.mozhimen.taskk.provider.audio.cons.CExt
 import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.bases.ATaskManagerProvider
@@ -45,7 +45,7 @@ class TaskOpenAudio(taskManager: ATaskManagerProvider, iTaskLifecycle: ITaskLife
     @SuppressLint("MissingSuperCall")
     override fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         try {
-            val intent = appTask.filePathNameExt.strFilePath2uri_internal()?.let { UtilKIntentGet.getViewAudio(it) }
+            val intent = appTask.filePathNameExt.strFilePath2uri()?.let { UtilKIntentGet.getViewAudio(it,UtilKApplicationWrapper.instance.get()) }
             val boolean = if (intent != null) {
                 UtilKContextStart.startContext(UtilKApplicationWrapper.instance.get(), intent)
             } else false

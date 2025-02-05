@@ -77,7 +77,7 @@ include(':KUtilKit:kotlin')
 include ':ASwiftKit'
 project(':ASwiftKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ASwiftKit")
 include ':ASwiftKit:basick'
-include ':ASwiftKit:bindk'
+include ':ASwiftKit:uik:databinding'
 //ANetKit_okdownload
 include(':ANetKit_okdownload')
 project(':ANetKit_okdownload').projectDir = new File("D:\\WorkSpace\\GitHub\\ANetKit_okdownload")
