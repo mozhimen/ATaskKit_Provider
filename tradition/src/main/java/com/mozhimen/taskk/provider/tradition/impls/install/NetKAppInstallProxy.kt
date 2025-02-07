@@ -18,7 +18,7 @@ import com.mozhimen.kotlin.utilk.wrapper.UtilKSysRom
 import com.mozhimen.taskk.provider.basic.db.AppTask
 
 /**
- * @ClassName InstallKFlyme
+ * @ClassName NetKAppInstallProxy
  * @Description TODO
  * @Author Mozhimen
  * @Date 2023/11/9 9:29
