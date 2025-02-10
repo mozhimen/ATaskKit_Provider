@@ -84,7 +84,7 @@ data class AppTask constructor(
     @ColumnInfo("apk_file_name")
     var fileNameExt: String,//和apkName的区别是有后缀
     @ColumnInfo(name = "apk_name")
-    var fileName: String = if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToStart(".",false) else "",//本地保存的名称 为appid.apk或appid.npk
+    var fileName: String = if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToStart(".", false) else "",//本地保存的名称 为appid.apk或appid.npk
     @ColumnInfo(name = "file_ext")
     var fileExt: String = if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToEnd(".") else "",//文件后缀
     @ColumnInfo(name = "apk_path_name")
@@ -98,9 +98,11 @@ data class AppTask constructor(
     var apkVersionCode: Int,
     @ColumnInfo(name = "apk_version_name")
     var apkVersionName: String,
-    /*,
-    @ColumnInfo(name = "apk_is_installed")
-    var apkIsInstalled: Boolean,//是否安装0未,1安装*/
+
+    ////////////////////////////////////////////////////////////////
+
+    @ColumnInfo(name = "remark")
+    var remark: String = "",
 ) : IUtilK, IHasId, Serializable, Parcelable {
 
     //for compose
@@ -143,7 +145,7 @@ data class AppTask constructor(
         fileIconUrl,
         fileIconId,
         fileNameExt,
-        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToStart(".",false) else "",
+        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToStart(".", false) else "",
         if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToEnd(".") else "",
         "",
         apkPackageName,
@@ -184,7 +186,7 @@ data class AppTask constructor(
         "",
         0,
         fileNameExt,
-        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToStart(".",false) else "",
+        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToStart(".", false) else "",
         if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToEnd(".") else "",
         "",
         apkPackageName,
@@ -202,6 +204,7 @@ data class AppTask constructor(
         fileSize: Long,
         fileIconUrl: String,
         fileNameExt: String,//和apkName的区别是有后缀
+        remark: String,
     ) : this(
         taskId,
         channel,
@@ -224,12 +227,13 @@ data class AppTask constructor(
         fileIconUrl,
         0,
         fileNameExt,
-        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToStart(".",false) else "",
+        if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToStart(".", false) else "",
         if (fileNameExt.isNotEmpty() && fileNameExt.contains(".")) fileNameExt.getSplitLastIndexToEnd(".") else "",
         "",
         "",
         0,
-        ""
+        "",
+        remark
     )
 
     //for parcel

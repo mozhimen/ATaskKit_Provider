@@ -99,7 +99,16 @@ object AppTaskMigrations {
      */
     internal val MIGRATION_4_5 = object : Migration(3, 4) {
         override fun migrate(db: SupportSQLiteDatabase) {
-            db.execSQL("ALTER TABLE netk_app_task ADD COLUMN taskchannel TEXT NOT NULL DEFAULT ''")
+            db.execSQL("ALTER TABLE netk_app_task ADD COLUMN task_channel TEXT NOT NULL DEFAULT ''")
+        }
+    }
+
+    /**
+     * 新增备注字段
+     */
+    internal val MIGRATION_5_6 = object : Migration(5, 6) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE netk_app_task ADD COLUMN remark TEXT NOT NULL DEFAULT ''")
         }
     }
 }

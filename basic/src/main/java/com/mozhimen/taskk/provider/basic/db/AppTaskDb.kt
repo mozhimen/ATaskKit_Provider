@@ -13,7 +13,7 @@ import com.mozhimen.kotlin.utilk.android.app.UtilKApplicationWrapper
  * @Date 2023/11/7 16:01
  * @Version 1.0
  */
-@Database(entities = [AppTask::class], version = 5, exportSchema = false)
+@Database(entities = [AppTask::class], version = 6, exportSchema = false)
 abstract class AppTaskDb : RoomDatabase() {
     abstract fun appTaskDao(): AppTaskDao
 
@@ -26,7 +26,8 @@ abstract class AppTaskDb : RoomDatabase() {
                     AppTaskMigrations.MIGRATION_1_2,
                     AppTaskMigrations.MIGRATION_2_3,
                     AppTaskMigrations.MIGRATION_3_4,
-                    AppTaskMigrations.MIGRATION_4_5
+                    AppTaskMigrations.MIGRATION_4_5,
+                    AppTaskMigrations.MIGRATION_5_6
                 )
                 .build()
         }
