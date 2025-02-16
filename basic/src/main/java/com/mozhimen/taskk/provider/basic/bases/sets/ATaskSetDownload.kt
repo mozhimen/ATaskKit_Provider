@@ -29,7 +29,7 @@ abstract class ATaskSetDownload(taskManager: ATaskManagerProvider) : ATaskSet<AT
 
     fun taskPauseAll(@ATaskNodeQueueName taskNodeQueueName: String) {
         (providers as? Map<String,ATaskDownload>)?.forEach {
-            taskPauseAll(taskNodeQueueName)
+            taskPauseAll(it.key,taskNodeQueueName)
         }
     }
 

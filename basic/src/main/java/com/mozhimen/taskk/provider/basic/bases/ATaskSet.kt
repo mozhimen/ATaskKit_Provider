@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 abstract class ATaskSet<T : ATask>(taskManager: ATaskManagerProvider) : ATask(taskManager, null) {
     abstract val providerDefaults: List<T>
-    abstract val providers: ConcurrentHashMap<String, T>
+    abstract val providers: ConcurrentHashMap<String, T>//fileExt,ATask
 
     ////////////////////////////////////////////////////////////////////
 
