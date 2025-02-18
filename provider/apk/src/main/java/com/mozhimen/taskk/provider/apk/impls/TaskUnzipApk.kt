@@ -11,7 +11,7 @@ import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.java.io.UtilKFileDir
 import com.mozhimen.kotlin.utilk.java.io.createFolder
 import com.mozhimen.kotlin.utilk.java.io.deleteFile
-import com.mozhimen.kotlin.utilk.java.io.inputStream2file_use_ofBufferedOutStream
+import com.mozhimen.kotlin.utilk.java.io.inputStream2file_use_bufferedOutStream
 import com.mozhimen.kotlin.utilk.kotlin.containsAny
 import com.mozhimen.kotlin.utilk.kotlin.createFolder
 import com.mozhimen.kotlin.utilk.kotlin.deleteFolder
@@ -203,7 +203,7 @@ open class TaskUnzipApk(taskManager: ATaskManagerProvider, iTaskLifecycle: ITask
                 } else strFilePathName).also { Log.d(TAG, "startUnzipOnBack: dest $it") }
 
                 //移动文件
-                zipFile.getInputStream(zipEntry).inputStream2file_use_ofBufferedOutStream(strFilePathName, bufferSize = 1024 * 1024, block = { offset: Int, _: Float ->
+                zipFile.getInputStream(zipEntry).inputStream2file_use_bufferedOutStream(strFilePathName, bufferSize = 1024 * 1024, block = { offset: Int, _: Float ->
                     ioOffset += offset
                     if (System.currentTimeMillis() - lastTime > 1000L) {
                         lastTime = System.currentTimeMillis()
