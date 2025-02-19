@@ -266,9 +266,9 @@ abstract class ATaskManagerProvider(val channel: String) : BaseUtilK(), ITask, I
     /////////////////////////////////////////////////////////////////
 
     suspend fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String, taskType: STaskType, @ATaskState taskState: Int): AppTask =
-        suspendCancellableCoroutine { coroutine ->
+        suspendCancellableCoroutine { continuation ->
             taskStart(appTask, taskNodeQueueName, taskType, taskState) {
-                coroutine.resumeWith(Result.success(appTask))
+                continuation.resumeWith(Result.success(appTask))
             }
         }
 

@@ -45,7 +45,7 @@ class TaskOpenAudio(taskManager: ATaskManagerProvider, iTaskLifecycle: ITaskLife
     @SuppressLint("MissingSuperCall")
     override fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         try {
-            val intent = appTask.filePathNameExt.strFilePath2uri()?.let { UtilKIntentGet.getViewAudio(it,UtilKApplicationWrapper.instance.get()) }
+            val intent = appTask.filePathNameExt.strFilePath2uri()?.let { UtilKIntentGet.getIntent_ACTION_VIEW_TYPE_AUDIO(it,UtilKApplicationWrapper.instance.get()) }
             val boolean = if (intent != null) {
                 UtilKContextStart.startContext(UtilKApplicationWrapper.instance.get(), intent)
             } else false
