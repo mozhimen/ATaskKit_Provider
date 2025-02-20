@@ -82,21 +82,21 @@ class NotificationProxy : BaseWakeBefDestroyLifecycleObserver() {
         when {
             appTask.isTaskSuccess(taskManager, taskNodeQueueName) -> {
                 intent?.let {
-                    builder.setContentIntent(UtilKPendingIntentGet.getActivity_IMMUTABLE(0, it))
+                    builder.setContentIntent(UtilKPendingIntentGet.getActivity_IMMUTABLE(_context, 0, it))
                 }
                 builder.setProgress(0, 0, false)
             }
 
             !appTask.taskUnzipEnable && appTask.isTaskVerifySuccess() -> {
                 intent?.let {
-                    builder.setContentIntent(UtilKPendingIntentGet.getActivity_IMMUTABLE(0, it))
+                    builder.setContentIntent(UtilKPendingIntentGet.getActivity_IMMUTABLE(_context, 0, it))
                 }
                 builder.setProgress(0, 0, false)
             }
 
             appTask.taskUnzipEnable && appTask.isTaskUnzipSuccess() -> {
                 intent?.let {
-                    builder.setContentIntent(UtilKPendingIntentGet.getActivity_IMMUTABLE(0, it))
+                    builder.setContentIntent(UtilKPendingIntentGet.getActivity_IMMUTABLE(_context, 0, it))
                 }
                 builder.setProgress(0, 0, false)
             }

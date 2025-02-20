@@ -41,7 +41,7 @@ class TaskOpenVideo constructor(taskManager: ATaskManagerProvider, iTaskLifecycl
     @SuppressLint("MissingSuperCall")
     override fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         try {
-            val intent = UtilKIntentGet.getDownloadManager_downloads()
+            val intent = UtilKIntentGet.getDownloadManager_ACTION_VIEW_DOWNLOADS()
             val boolean = if (intent != null) {
                 UtilKContextStart.startContext(UtilKApplicationWrapper.instance.get(), intent)
             } else false

@@ -63,13 +63,13 @@ object NotificationUtil {
         when {
             appTask.isTaskSuccess(taskManager, taskNodeQueueName) -> {
                 intent?.let {
-                    builder.setContentIntent(UtilKPendingIntentGet.getActivity_IMMUTABLE(0, it))
+                    builder.setContentIntent(UtilKPendingIntentGet.getActivity_IMMUTABLE(context,0, it))
                 }
             }
 
             appTask.isTaskUnzipSuccess()->{
                 intent?.let {
-                    builder.setContentIntent(UtilKPendingIntentGet.getActivity_IMMUTABLE(0, it))
+                    builder.setContentIntent(UtilKPendingIntentGet.getActivity_IMMUTABLE(context,0, it))
                 }
             }
 
