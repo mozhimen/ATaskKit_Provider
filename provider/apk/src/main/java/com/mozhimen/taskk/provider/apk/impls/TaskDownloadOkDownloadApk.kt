@@ -11,7 +11,7 @@ import com.mozhimen.taskk.provider.basic.bases.ATaskManagerProvider
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
 import com.mozhimen.taskk.provider.basic.cons.STaskFinishType
 import com.mozhimen.taskk.provider.basic.db.AppTask
-import com.mozhimen.taskk.provider.download.okdownload.TaskDownloadOkDownload
+import com.mozhimen.taskk.provider.task.download.okdownload.TaskDownloadOkDownload
 
 /**
  * @ClassName TaskProviderDownloadApk

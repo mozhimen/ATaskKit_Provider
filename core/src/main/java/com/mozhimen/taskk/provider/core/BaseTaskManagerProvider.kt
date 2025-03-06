@@ -14,14 +14,14 @@ import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUninstall
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskUnzip
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskVerify
 import com.mozhimen.taskk.provider.basic.cons.STaskNode
-import com.mozhimen.taskk.provider.close.TaskSetClose
-import com.mozhimen.taskk.provider.delete.TaskSetDelete
-import com.mozhimen.taskk.provider.download.TaskSetDownload
-import com.mozhimen.taskk.provider.install.TaskSetInstall
-import com.mozhimen.taskk.provider.open.TaskSetOpen
-import com.mozhimen.taskk.provider.uninstall.TaskSetUninstall
-import com.mozhimen.taskk.provider.unzip.TaskSetUnzip
-import com.mozhimen.taskk.provider.verify.TaskSetVerify
+import com.mozhimen.taskk.provider.task.close.TaskSetClose
+import com.mozhimen.taskk.provider.task.delete.TaskSetDelete
+import com.mozhimen.taskk.provider.task.download.TaskSetDownload
+import com.mozhimen.taskk.provider.task.install.TaskSetInstall
+import com.mozhimen.taskk.provider.task.open.TaskSetOpen
+import com.mozhimen.taskk.provider.task.uninstall.TaskSetUninstall
+import com.mozhimen.taskk.provider.task.unzip.TaskSetUnzip
+import com.mozhimen.taskk.provider.task.verify.TaskSetVerify
 
 /**
  * @ClassName TaskProvider

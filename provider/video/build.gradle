@@ -33,10 +33,10 @@ android {
 dependencies {
     if (rootProject.name == "ATaskKit_Provider") {
         implementation project(/*project.path.replace(project.name, '') +*/ ':basic')
-        implementation project(/*project.path.replace(project.name, '') +*/ ':download:okdownload')
+        implementation project(/*project.path.replace(project.name, '') +*/ ':task:download:okdownload')
     } else {
         implementation project(/*project.path.replace(project.name, '') +*/ ':ATaskKit_Provider:basic')
-        implementation project(/*project.path.replace(project.name, '') +*/ ':ATaskKit_Provider:download:okdownload')
+        implementation project(/*project.path.replace(project.name, '') +*/ ':ATaskKit_Provider:task:download:okdownload')
     }
     implementation project(':KUtilKit:android')
 

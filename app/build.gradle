@@ -38,10 +38,10 @@ android {
 dependencies {
     implementation project(':ASwiftKit:uik:databinding')
     implementation project(':AStackKit:stackk')
-    implementation project(':AManifestKit_XXPermissions:manifestk_xxpermissions')
+    implementation project(':APermissionKit_XXPermissions:permissionk_xxpermissions')
     implementation project(':core')
+    implementation project(':task:install:splits_ackpine')
     implementation project(':provider:apk')
-    implementation project(':install:splits_ackpine')
 
     //test
     testImplementation 'junit:junit:4.13.2'

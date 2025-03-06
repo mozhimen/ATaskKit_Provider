@@ -2,7 +2,7 @@ package com.mozhimen.taskk.provider.video.impls
 
 import com.mozhimen.taskk.provider.basic.bases.ATaskManagerProvider
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
-import com.mozhimen.taskk.provider.download.okdownload.TaskDownloadOkDownload
+import com.mozhimen.taskk.provider.task.download.okdownload.TaskDownloadOkDownload
 import com.mozhimen.taskk.provider.video.cons.CExt
 
 /**

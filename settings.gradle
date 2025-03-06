@@ -23,18 +23,20 @@ rootProject.name = "ATaskKit_Provider"
 include ':app'
 include ':core'
 include ':basic'
-include ':install'
-include ':install:splits_ackpine'
-include ':uninstall'
+include ':task:install'
+include ':task:install:splits_ackpine'
+include ':task:uninstall'
+include ':task:download'
+include ':task:download:okdownload'
+include ':task:open'
+include ':task:unzip'
+include ':task:verify'
+include ':task:delete'
+include ':task:close'
 include ':provider:apk'
-include ':download'
-include ':download:okdownload'
-include ':open'
-include ':unzip'
-include ':verify'
+include ':provider:audio'
+include ':provider:video'
 include ':support:compose'
-include ':delete'
-include ':close'
 //ALibKit_Apache
 include ':ALibKit_Apache'
 project(':ALibKit_Apache').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Apache")
@@ -77,6 +79,7 @@ include(':KUtilKit:kotlin')
 include ':ASwiftKit'
 project(':ASwiftKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ASwiftKit")
 include ':ASwiftKit:basick'
+include ':ASwiftKit:xmlk'
 include ':ASwiftKit:uik:databinding'
 //ANetKit_okdownload
 include(':ANetKit_okdownload')
@@ -102,11 +105,11 @@ include(':AInstallKit_Ackpine:ackpine-splits')
 include(':AInstallKit_Ackpine:ackpine-ktx')
 include(':AInstallKit_Ackpine:ackpine-core')
 include(':AInstallKit_Ackpine:ackpine-runtime')
-//AManifestKit_XXPermissions
-include(':AManifestKit_XXPermissions')
-project(':AManifestKit_XXPermissions').projectDir = new File("D:\\WorkSpace\\GitHub\\AManifestKit_XXPermissions")
-include(':AManifestKit_XXPermissions:library')
-include(':AManifestKit_XXPermissions:manifestk_xxpermissions')
+//APermissionKit_XXPermissions
+include(':APermissionKit_XXPermissions')
+project(':APermissionKit_XXPermissions').projectDir = new File("D:\\WorkSpace\\GitHub\\APermissionKit_XXPermissions")
+include(':APermissionKit_XXPermissions:library')
+include(':APermissionKit_XXPermissions:permissionk_xxpermissions')
 //APostKit
 include(':APostKit')
 project(':APostKit').projectDir = new File("D:\\WorkSpace\\GitHub\\APostKit")
@@ -123,5 +126,5 @@ include(':ATaskKit')
 project(':ATaskKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ATaskKit")
 include(':ATaskKit:executor')
 
-include ':provider:audio'
-include ':provider:video'
+
+include ':task:upload'

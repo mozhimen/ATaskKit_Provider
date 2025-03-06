@@ -288,7 +288,6 @@ data class AppTask constructor(
     fun getTaskStateStr(): String =
         ATaskState.intTaskState2strTaskState(taskState)
 
-    @OptIn(OApiInit_InApplication::class)
     fun getCurrentTaskNode(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String, firstTaskNode_ofTaskNodeQueue: STaskNode? = null): STaskNode? {
         val taskCode: Int = getTaskCode()//->哪个环节
         val stateCode: Int = getStateCode()//->哪个状态
@@ -320,29 +319,24 @@ data class AppTask constructor(
 
     ////////////////////////////////////////////////////////////////
 
-    @OptIn(OApiInit_InApplication::class)
     fun canTaskStart(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
         return taskManager.canTaskStart(this, taskNodeQueueName)
     }
 
-    @OptIn(OApiInit_InApplication::class)
     fun canTaskResume(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
         return taskManager.canTaskResume(this, taskNodeQueueName)
     }
 
-    @OptIn(OApiInit_InApplication::class)
     fun canTaskPause(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
         return taskManager.canTaskPause(this, taskNodeQueueName)
     }
 
-    @OptIn(OApiInit_InApplication::class)
     fun canTaskCancel(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean {
         return taskManager.canTaskCancel(this, taskNodeQueueName)
     }
 
     ////////////////////////////////////////////////////////////
 
-    @OptIn(OApiInit_InApplication::class)
     fun isTaskProcess(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         AState.isTaskProcess(taskState, taskManager, fileExt, taskNodeQueueName)
 
@@ -364,7 +358,6 @@ data class AppTask constructor(
     fun isTaskCancel(): Boolean =
         AState.isTaskCancel(taskState)
 
-    @OptIn(OApiInit_InApplication::class)
     fun isTaskSuccess(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         AState.isTaskSuccess(taskState, taskManager, fileExt, taskNodeQueueName)
 
@@ -396,35 +389,27 @@ data class AppTask constructor(
 
     ////////////////////////////////////////////////////////////
 
-    @OptIn(OApiInit_InApplication::class)
     fun canTaskDownload(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         ATaskState.canTaskDownload(taskState, taskManager, fileExt, taskNodeQueueName)
 
-    @OptIn(OApiInit_InApplication::class)
     fun canTaskVerify(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         ATaskState.canTaskVerify(taskState, taskManager, fileExt, taskNodeQueueName)
 
-    @OptIn(OApiInit_InApplication::class)
     fun canTaskUnzip(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         ATaskState.canTaskUnzip(taskState, taskManager, fileExt, taskNodeQueueName)
 
-    @OptIn(OApiInit_InApplication::class)
     fun canTaskInstall(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         ATaskState.canTaskInstall(taskState, taskManager, fileExt, taskNodeQueueName)
 
-    @OptIn(OApiInit_InApplication::class)
     fun canTaskOpen(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         ATaskState.canTaskOpen(taskState, taskManager, fileExt, taskNodeQueueName)
 
-    @OptIn(OApiInit_InApplication::class)
     fun canTaskClose(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         ATaskState.canTaskClose(taskState, taskManager, fileExt, taskNodeQueueName)
 
-    @OptIn(OApiInit_InApplication::class)
     fun canTaskUninstall(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         ATaskState.canTaskUninstall(taskState, taskManager, fileExt, taskNodeQueueName)
 
-    @OptIn(OApiInit_InApplication::class)
     fun canTaskDelete(taskManager: ATaskManagerProvider, @ATaskNodeQueueName taskNodeQueueName: String): Boolean =
         ATaskState.canTaskDelete(taskState, taskManager, fileExt, taskNodeQueueName)
 

@@ -33,10 +33,10 @@ android {
 dependencies {
     if (rootProject.name=="ATaskKit_Provider"){
         implementation project(/*project.path.replace(project.name, '') +*/ ':basic')
-        api project(/*project.path.replace(project.name, '') +*/ ':download:okdownload')
+        api project(/*project.path.replace(project.name, '') +*/ ':task:download:okdownload')
     }else{
         implementation project(/*project.path.replace(project.name, '') +*/ ':ATaskKit_Provider:basic')
-        api project(/*project.path.replace(project.name, '') +*/ ':ATaskKit_Provider:download:okdownload')
+        api project(/*project.path.replace(project.name, '') +*/ ':ATaskKit_Provider:task:download:okdownload')
     }
     implementation project(':ASwiftKit:basick')
     implementation project(':ACacheKit:datastore')

@@ -1,16 +1,9 @@
 package com.mozhimen.taskk.provider.test
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import com.mozhimen.uik.databinding.bases.viewbinding.activity.BaseActivityVB
-import com.mozhimen.kotlin.elemk.commons.I_Listener
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_MANAGE_EXTERNAL_STORAGE
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_READ_EXTERNAL_STORAGE
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_WRITE_EXTERNAL_STORAGE
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
-import com.mozhimen.manifestk.xxpermissions.XXPermissionsCheckUtil
-import com.mozhimen.manifestk.xxpermissions.XXPermissionsRequestUtil
 import com.mozhimen.taskk.provider.apk.utils.AppTaskUtil
 import com.mozhimen.taskk.provider.basic.annors.AState
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
@@ -21,6 +14,7 @@ import com.mozhimen.taskk.provider.basic.db.AppTaskDaoManager
 import com.mozhimen.taskk.provider.basic.impls.TaskException
 import com.mozhimen.taskk.provider.basic.commons.ITasks2
 import com.mozhimen.taskk.provider.test.databinding.ActivityMain2Binding
+import com.mozhimen.taskk.provider.test.helpers.PermissionUtil
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -48,17 +42,14 @@ class MainActivity : BaseActivityVB<ActivityMain2Binding>(), ITasks2 {
         appTask = AppTaskUtil.generateAppTask_ofDb_installed_version(MainTaskManager.default(), appTask, ATaskName.TASK_INSTALL)
         UtilKLogWrapper.d(TAG, "initView: get_ofTaskId ${AppTaskDaoManager.instance.default().get_ofTaskId(appTask.id)}")
         UtilKLogWrapper.d(TAG, "initView: get_ofApkPackageName_ApkVersionCode ${AppTaskDaoManager.instance.default().get_ofApkPackageName_ApkVersionCode(appTask.apkPackageName, appTask.apkVersionCode)}")
-        UtilKLogWrapper.d(
-            TAG,
-            "initView: get_ofTaskId_ApkPackageName_ApkVersionCode ${AppTaskDaoManager.instance.default().get_ofTaskId_ApkPackageName_ApkVersionCode(appTask.id, appTask.apkPackageName, appTask.apkVersionCode)}"
-        )
+        UtilKLogWrapper.d(TAG, "initView: get_ofTaskId_ApkPackageName_ApkVersionCode ${AppTaskDaoManager.instance.default().get_ofTaskId_ApkPackageName_ApkVersionCode(appTask.id, appTask.apkPackageName, appTask.apkVersionCode)}")
         UtilKLogWrapper.d(TAG, "initView: gets_ofApkPackageName ${AppTaskDaoManager.instance.default().gets_ofApkPackageName(appTask.apkPackageName)}")
         UtilKLogWrapper.d(TAG, "initView: gets_ofApkPackageName_satisfyApkVersionCode ${AppTaskDaoManager.instance.default().gets_ofApkPackageName_satisfyApkVersionCode(appTask.apkPackageName, appTask.apkVersionCode)}")
 
         vb.mainTxt.text = appTask.getTaskStateStr()
 
         vb.mainBtn.setOnClickListener {
-            requestPermissionStorage {
+            PermissionUtil.requestPermissionStorage(this) {
                 if (appTask.isTaskProcess(MainTaskManager.default(), ATaskName.TASK_INSTALL) && appTask.isAnyTasking()) {//任务中->暂停
                     MainTaskManager.default().taskPause(appTask, ATaskName.TASK_INSTALL)
                 } else if (appTask.isTaskProcess(MainTaskManager.default(), ATaskName.TASK_INSTALL) && appTask.isAnyTaskPause()) {//任务暂停->继续
@@ -73,27 +64,12 @@ class MainActivity : BaseActivityVB<ActivityMain2Binding>(), ITasks2 {
             }
         }
         vb.mainBtn.setOnLongClickListener {
-            requestPermissionStorage {
+            PermissionUtil.requestPermissionStorage(this) {
                 MainTaskManager.default().taskCancel(appTask, ATaskName.TASK_INSTALL)
             }
             true
         }
         MainTaskManager.default().registerTask2Listener(this)
-    }
-
-
-    @OptIn(OPermission_READ_EXTERNAL_STORAGE::class, OPermission_WRITE_EXTERNAL_STORAGE::class, OPermission_MANAGE_EXTERNAL_STORAGE::class)
-    @SuppressLint("MissingPermission")
-    private fun requestPermissionStorage(block: I_Listener) {
-        if (XXPermissionsCheckUtil.hasReadWritePermission(this)) {
-            block.invoke()
-        } else {
-            XXPermissionsRequestUtil.requestReadWritePermission(this, onGranted = {
-                block.invoke()
-            }, onDenied = {
-
-            })
-        }
     }
 
     @OptIn(OApiInit_InApplication::class)

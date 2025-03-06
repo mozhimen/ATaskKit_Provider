@@ -3,7 +3,7 @@ package com.mozhimen.taskk.provider.audio.impls
 import com.mozhimen.taskk.provider.audio.cons.CExt
 import com.mozhimen.taskk.provider.basic.bases.ATaskManagerProvider
 import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
-import com.mozhimen.taskk.provider.download.okdownload.TaskDownloadOkDownload
+import com.mozhimen.taskk.provider.task.download.okdownload.TaskDownloadOkDownload
 
 /**
  * @ClassName TaskDownloadAudio

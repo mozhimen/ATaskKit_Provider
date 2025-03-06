@@ -37,15 +37,27 @@ android {
 dependencies {
 
     implementation project(':KUtilKit:android')
-    api project(project.path.replace(project.name, '') + ':basic')
-    api project(project.path.replace(project.name, '') + ':download')
-    api project(project.path.replace(project.name, '') + ':verify')
-    api project(project.path.replace(project.name, '') + ':unzip')
-    api project(project.path.replace(project.name, '') + ':install')
-    api project(project.path.replace(project.name, '') + ':open')
-    api project(project.path.replace(project.name, '') + ':uninstall')
-    api project(project.path.replace(project.name, '') + ':delete')
-    api project(project.path.replace(project.name, '') + ':close')
+    if (rootProject.name == "ATaskKit_Provider") {
+        api project(':basic')
+        api project(':task:download')
+        api project(':task:verify')
+        api project(':task:unzip')
+        api project(':task:install')
+        api project(':task:open')
+        api project(':task:uninstall')
+        api project(':task:delete')
+        api project(':task:close')
+    } else {
+        api project(':ATaskKit_Provider:basic')
+        api project(':ATaskKit_Provider:task:download')
+        api project(':ATaskKit_Provider:task:verify')
+        api project(':ATaskKit_Provider:task:unzip')
+        api project(':ATaskKit_Provider:task:install')
+        api project(':ATaskKit_Provider:task:open')
+        api project(':ATaskKit_Provider:task:uninstall')
+        api project(':ATaskKit_Provider:task:delete')
+        api project(':ATaskKit_Provider:task:close')
+    }
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
