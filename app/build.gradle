@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace 'com.mozhimen.taskk.provider.test'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.mozhimen.netk.app.test"
