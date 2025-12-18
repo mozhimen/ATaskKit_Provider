@@ -33,6 +33,10 @@ object ViewUtil {
         view.setOnClickListener {
             val appTask: AppTask = onGetAppTask.invoke()
             when {
+                appTask.isTaskUnAvailable()->{
+                    //nothing
+                }
+
                 appTask.isTaskCreateOrUpdate() -> {
                     onTaskStart.invoke(it.context, appTask)
                 }
