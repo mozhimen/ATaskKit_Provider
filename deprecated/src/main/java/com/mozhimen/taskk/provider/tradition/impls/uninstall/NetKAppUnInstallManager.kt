@@ -3,7 +3,7 @@ package com.mozhimen.taskk.provider.tradition.impls.uninstall
 import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.commons.IUtilK
-import com.mozhimen.kotlin.utilk.kotlin.collections.ifNotEmptyOr
+
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.taskk.provider.basic.db.AppTask
 import com.mozhimen.taskk.provider.basic.db.AppTaskDaoManager
@@ -21,7 +21,7 @@ internal object NetKAppUnInstallManager : IUtilK {
     @JvmStatic
     fun onUninstallSuccess(apkPackageName: String) {
         val list = AppTaskDaoManager.gets_ofApkPackageName(apkPackageName)
-        list.ifNotEmptyOr({
+        list.ifNotNullOrEmptyOr({
             it.forEach { appTask ->
                 UtilKLogWrapper.d(TAG, "onUninstallSuccess: apkPackageName $apkPackageName")
                 onUninstallSuccess(appTask)

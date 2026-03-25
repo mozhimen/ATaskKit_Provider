@@ -6,7 +6,7 @@ import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
 import com.mozhimen.kotlin.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.commons.IUtilK
-import com.mozhimen.kotlin.utilk.kotlin.collections.ifNotEmptyOr
+
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.taskk.provider.apk.impls.TaskInstallApk
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskInstall
@@ -73,7 +73,7 @@ internal object NetKAppInstallManager : IUtilK {
     @JvmStatic
     fun onInstallSuccess(apkPackageName: String, versionCode: Int) {
         val list = AppTaskDaoManager.gets_ofApkPackageName(apkPackageName)
-        list.ifNotEmptyOr({
+        list.ifNotNullOrEmptyOr({
             it.forEach { appTask ->
                 if (appTask.apkVersionCode <= versionCode) {
                     UtilKLogWrapper.d(TAG, "onInstallSuccess: apkPackageName $apkPackageName")
@@ -131,7 +131,7 @@ internal object NetKAppInstallManager : IUtilK {
 //    @JvmStatic
 //    fun onInstallSuccess(apkPackageName: String) {
 //        val list = AppTaskDaoManager.getAppTasksByApkPackageName(apkPackageName)
-//        list.ifNotEmptyOr({
+//        list.ifNotNullOrEmptyOr({
 //            it.forEach { appTask ->
 //                UtilKLogWrapper.d(TAG, "onInstallSuccess: apkPackageName $apkPackageName")
 //                onInstallSuccess(appTask)
