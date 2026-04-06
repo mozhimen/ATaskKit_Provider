@@ -3,8 +3,8 @@ package com.mozhimen.taskk.provider.apk.impls
 import android.annotation.SuppressLint
 import android.util.Log
 import com.mozhimen.installk.manager.commons.IInstallKReceiverProxy
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_REQUEST_INSTALL_PACKAGES
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.wrapper.UtilKAppInstall
 import com.mozhimen.taskk.provider.apk.cons.CExt
@@ -41,7 +41,7 @@ class TaskInstallApk(
 
     @OptIn(OApiInit_InApplication::class)
     @SuppressLint("MissingSuperCall")
-    @OPermission_REQUEST_INSTALL_PACKAGES
+    @OUsesPermission_REQUEST_INSTALL_PACKAGES
     override fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         if (!appTask.canTaskInstall(_taskManager, taskNodeQueueName)) {
             UtilKLogWrapper.e(TAG, "install: the task hasn't unzip or verify success")

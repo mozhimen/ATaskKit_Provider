@@ -15,8 +15,8 @@ import com.liulishuo.okdownload.core.file.ExtProcessFileStrategy
 import com.liulishuo.okdownload.core.listener.DownloadListener1
 import com.liulishuo.okdownload.core.listener.assist.Listener1Assist
 import com.mozhimen.kotlin.elemk.javax.net.bases.BaseX509TrustManager
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_INTERNET
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.java.io.UtilKFileDir
 import com.mozhimen.kotlin.utilk.java.io.createFolder

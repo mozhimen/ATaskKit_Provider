@@ -3,7 +3,7 @@ package com.mozhimen.taskk.provider.apk.impls
 import android.os.Environment
 import android.util.Log
 import androidx.annotation.WorkerThread
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.app.UtilKApplicationWrapper
 import com.mozhimen.kotlin.utilk.android.content.UtilKContextDir
 import com.mozhimen.kotlin.utilk.android.os.UtilKHandlerWrapper

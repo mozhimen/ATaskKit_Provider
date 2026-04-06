@@ -1,8 +1,8 @@
 package com.mozhimen.taskk.provider.video
 
 import android.content.Context
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_INTERNET
 import com.mozhimen.taskk.provider.video.impls.TaskDeleteVideo
 import com.mozhimen.taskk.provider.video.impls.TaskDownloadOkDownloadVideo
 import com.mozhimen.taskk.provider.video.impls.TaskOpenVideo
@@ -32,7 +32,7 @@ open class TaskProviderVideo constructor(
     taskManagerProvider: ATaskManagerProvider,
 ) : ATaskProvider(iTaskLifecycle, taskManagerProvider) {
 
-    @OPermission_INTERNET
+    @OUsesPermission_INTERNET
     override fun getTaskDownload(): ATaskDownload {
         return TaskDownloadOkDownloadVideo(_taskManagerProvider,_iTaskLifecycle)
     }

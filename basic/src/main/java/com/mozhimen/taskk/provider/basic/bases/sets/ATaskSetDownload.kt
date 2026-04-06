@@ -1,6 +1,6 @@
 package com.mozhimen.taskk.provider.basic.bases.sets
 
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_INTERNET
 import com.mozhimen.taskk.provider.basic.annors.ATaskName
 import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.bases.ATaskManagerProvider
@@ -15,7 +15,7 @@ import java.io.File
  * @Date 2024/8/20
  * @Version 1.0
  */
-@OPermission_INTERNET
+@OUsesPermission_INTERNET
 abstract class ATaskSetDownload(taskManager: ATaskManagerProvider) : ATaskSet<ATaskDownload>(taskManager) {
     fun getDownloadDirs(): List<File> =
         providers.values.mapNotNull { it.getDownloadDir() }.toSet().toList()

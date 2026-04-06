@@ -1,7 +1,7 @@
 package com.mozhimen.taskk.provider.basic.annors
 
 import androidx.annotation.IntDef
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.taskk.provider.basic.bases.ATaskManagerProvider
 

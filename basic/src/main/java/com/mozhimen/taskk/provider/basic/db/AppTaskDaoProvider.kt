@@ -3,7 +3,7 @@ package com.mozhimen.taskk.provider.basic.db
 import android.util.Log
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import androidx.annotation.WorkerThread
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.taskk.executor.TaskKExecutor
 import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName

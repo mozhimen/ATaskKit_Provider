@@ -1,7 +1,7 @@
 package com.mozhimen.taskk.provider.task.download
 
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_INTERNET
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.java.io.UtilKFileDir
 import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @Date 2024/8/20
  * @Version 1.0
  */
-@OptIn(OPermission_INTERNET::class, OApiInit_InApplication::class)
+@OptIn(OUsesPermission_INTERNET::class, OApiInit_InApplication::class)
 class TaskSetDownload constructor(taskManager: ATaskManagerProvider, override val providerDefaults: List<ATaskDownload>) : ATaskSetDownload(taskManager) {
     override val providers: ConcurrentHashMap<String, ATaskDownload> by lazy {
         ConcurrentHashMap(

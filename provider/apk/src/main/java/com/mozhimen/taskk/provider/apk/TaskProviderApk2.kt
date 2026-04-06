@@ -1,9 +1,9 @@
 package com.mozhimen.taskk.provider.apk
 
 import android.content.Context
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_INTERNET
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_REQUEST_INSTALL_PACKAGES
 import com.mozhimen.taskk.provider.apk.impls.TaskDeleteApk
 import com.mozhimen.taskk.provider.apk.impls.TaskDownloadOkDownloadApk
 import com.mozhimen.taskk.provider.apk.impls.TaskOpenApk
@@ -29,14 +29,14 @@ import com.mozhimen.taskk.provider.basic.cons.STaskNode
  * @Date 2024/8/20
  * @Version 1.0
  */
-@OPermission_REQUEST_INSTALL_PACKAGES
+@OUsesPermission_REQUEST_INSTALL_PACKAGES
 @OApiInit_InApplication
 open class TaskProviderApk2 constructor(
     iTaskLifecycle: ITaskLifecycle,
     taskManagerProvider: ATaskManagerProvider,
 ) : ATaskProvider(iTaskLifecycle, taskManagerProvider) {
 
-    @OPermission_INTERNET
+    @OUsesPermission_INTERNET
     override fun getTaskDownload(): ATaskDownload {
         return TaskDownloadOkDownloadApk(_taskManagerProvider,_iTaskLifecycle)
     }

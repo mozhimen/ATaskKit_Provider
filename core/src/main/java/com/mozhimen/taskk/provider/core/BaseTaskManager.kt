@@ -1,7 +1,7 @@
 package com.mozhimen.taskk.provider.core
 
 import android.content.Context
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
 import java.util.concurrent.ConcurrentHashMap
 
 /**

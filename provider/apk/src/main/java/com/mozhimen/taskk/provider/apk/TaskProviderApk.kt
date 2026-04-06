@@ -3,10 +3,10 @@ package com.mozhimen.taskk.provider.apk
 import android.content.Context
 import android.util.Log
 import com.liulishuo.okdownload.core.breakpoint.IBreakpointCompare
-import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
-import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.kotlin.lintk.optins.api.OApiCall_BindLifecycle
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_ByLazy
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_INTERNET
 import com.mozhimen.kotlin.utilk.android.content.UtilKPackage
 import com.mozhimen.installk.manager.InstallKManager
 import com.mozhimen.installk.manager.commons.IPackagesChangeListener
@@ -63,7 +63,7 @@ open class TaskProviderApk(
 
     ////////////////////////////////////////////////////////////////////
 
-    @OPermission_INTERNET
+    @OUsesPermission_INTERNET
     override fun getTaskDownload(): ATaskDownload {
         return TaskDownloadOkDownloadApk(_taskManagerProvider,_iTaskLifecycle).apply {
             _breakpointCompare?.let {

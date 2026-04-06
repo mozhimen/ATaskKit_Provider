@@ -1,7 +1,7 @@
 package com.mozhimen.taskk.provider.apk.utils
 
 import com.mozhimen.installk.manager.InstallKManager
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName

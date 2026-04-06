@@ -4,8 +4,8 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.CallSuper
 import com.mozhimen.kotlin.elemk.commons.IA_Listener
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_INTERNET
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.bases.BaseUtilK
 import com.mozhimen.taskk.provider.basic.annors.AFileExt
@@ -234,7 +234,7 @@ abstract class ATaskManagerProvider(val channel: String) : BaseUtilK(), ITask, I
 
     /////////////////////////////////////////////////////////////////
 
-    @OPermission_INTERNET
+    @OUsesPermission_INTERNET
     fun getTaskSetDownload(): ATaskSetDownload? {
         return getTaskSet(ATaskName.TASK_DOWNLOAD) as? ATaskSetDownload
     }

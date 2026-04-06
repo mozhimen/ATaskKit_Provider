@@ -5,8 +5,8 @@ import android.content.Intent
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.elemk.android.content.bases.BaseBroadcastReceiver
 import com.mozhimen.kotlin.elemk.android.content.cons.CIntent
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_QUERY_ALL_PACKAGES
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_QUERY_ALL_PACKAGES
 import com.mozhimen.kotlin.utilk.android.content.UtilKPackage
 import com.mozhimen.kotlin.utilk.android.content.UtilKPackageInfo
 import com.mozhimen.taskk.provider.core.impls.install.NetKAppInstallManager
@@ -20,7 +20,7 @@ import com.mozhimen.taskk.provider.tradition.impls.uninstall.NetKAppUnInstallMan
  * @Version 1.0
  */
 class NetKAppInstallReceiver : BaseBroadcastReceiver() {
-    @OptIn(OApiInit_InApplication::class, OPermission_QUERY_ALL_PACKAGES::class)
+    @OptIn(OApiInit_InApplication::class, OUsesPermission_QUERY_ALL_PACKAGES::class)
     override fun onReceive(context: Context?, intent: Intent?) {
         context?.let {
             intent?.let { intent ->

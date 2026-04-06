@@ -6,8 +6,8 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.mozhimen.kotlin.elemk.commons.IABC_Listener
 import com.mozhimen.kotlin.elemk.commons.IA_Listener
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_POST_NOTIFICATIONS
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_POST_NOTIFICATIONS
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_REQUEST_INSTALL_PACKAGES
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.java.io.file2uri
 import com.mozhimen.kotlin.utilk.kotlin.strFilePath2file
@@ -28,8 +28,8 @@ import java.io.File
  * @Date 2024/6/21
  * @Version 1.0
  */
-@OPermission_REQUEST_INSTALL_PACKAGES
-@OPermission_POST_NOTIFICATIONS
+@OUsesPermission_REQUEST_INSTALL_PACKAGES
+@OUsesPermission_POST_NOTIFICATIONS
 class TaskInstallSplitsAckpine constructor(
     taskManager:ATaskManagerProvider,
     iTaskLifecycle: ITaskLifecycle,
@@ -59,7 +59,7 @@ class TaskInstallSplitsAckpine constructor(
 
     ////////////////////////////////////////////////////////////
 
-    @OPermission_POST_NOTIFICATIONS
+    @OUsesPermission_POST_NOTIFICATIONS
     private fun install_internal(file: File) {
         Log.d(TAG, "installInternal: file $file")
         file.file2uri()?.let {

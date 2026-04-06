@@ -1,9 +1,9 @@
 package com.mozhimen.taskk.provider.tradition.impls.install
 
-import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
-import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
+import com.mozhimen.kotlin.lintk.optins.api.OApiCall_BindLifecycle
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_ByLazy
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_REQUEST_INSTALL_PACKAGES
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.commons.IUtilK
 
@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap
 internal object NetKAppInstallManager : IUtilK {
     private val _installProviders: ConcurrentHashMap<String, ATaskInstall> = ConcurrentHashMap()
 
-    @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class)
+    @OptIn(OUsesPermission_REQUEST_INSTALL_PACKAGES::class)
     fun init() {
         _installProviders["apk"] = TaskInstallApk()
     }
@@ -45,7 +45,7 @@ internal object NetKAppInstallManager : IUtilK {
         }
     }
 
-    @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class, OPermission_REQUEST_INSTALL_PACKAGES::class)
+    @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class, OUsesPermission_REQUEST_INSTALL_PACKAGES::class)
     @JvmStatic
     fun install(appTask: AppTask, fileApk: File) {
         if (!appTask.canTaskInstall()) {

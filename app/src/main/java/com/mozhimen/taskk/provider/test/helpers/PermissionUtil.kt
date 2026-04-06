@@ -3,11 +3,11 @@ package com.mozhimen.taskk.provider.test.helpers
 import android.annotation.SuppressLint
 import android.content.Context
 import com.mozhimen.kotlin.elemk.commons.I_Listener
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_MANAGE_EXTERNAL_STORAGE
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_POST_NOTIFICATIONS
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_READ_EXTERNAL_STORAGE
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_WRITE_EXTERNAL_STORAGE
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_MANAGE_EXTERNAL_STORAGE
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_POST_NOTIFICATIONS
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_READ_EXTERNAL_STORAGE
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_REQUEST_INSTALL_PACKAGES
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_WRITE_EXTERNAL_STORAGE
 import com.mozhimen.permissionk.xxpermissions.XXPermissionsCheckUtil
 import com.mozhimen.permissionk.xxpermissions.XXPermissionsRequestUtil
 
@@ -21,7 +21,7 @@ import com.mozhimen.permissionk.xxpermissions.XXPermissionsRequestUtil
 object PermissionUtil {
     @JvmStatic
     @SuppressLint("MissingPermission")
-    @OptIn(OPermission_READ_EXTERNAL_STORAGE::class, OPermission_WRITE_EXTERNAL_STORAGE::class, OPermission_MANAGE_EXTERNAL_STORAGE::class)
+    @OptIn(OUsesPermission_READ_EXTERNAL_STORAGE::class, OUsesPermission_WRITE_EXTERNAL_STORAGE::class, OUsesPermission_MANAGE_EXTERNAL_STORAGE::class)
     fun requestPermissionStorage(context: Context, block: I_Listener) {
         if (XXPermissionsCheckUtil.hasPermission_EXTERNAL_STORAGE(context)) {
             block.invoke()
@@ -34,7 +34,7 @@ object PermissionUtil {
 
     @JvmStatic
     @SuppressLint("MissingPermission")
-    @OptIn(OPermission_POST_NOTIFICATIONS::class)
+    @OptIn(OUsesPermission_POST_NOTIFICATIONS::class)
     fun requestPermissionNotification(context: Context, block: I_Listener) {
         if (XXPermissionsCheckUtil.hasPermission_POST_NOTIFICATIONS(context)) {
             block.invoke()
@@ -45,7 +45,7 @@ object PermissionUtil {
         }
     }
 
-    @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class)
+    @OptIn(OUsesPermission_REQUEST_INSTALL_PACKAGES::class)
     fun requestPermissionInstall(activityContext: Context, block: I_Listener) {
         if (XXPermissionsCheckUtil.hasPermission_REQUEST_INSTALL_PACKAGES(activityContext)) {
             block.invoke()

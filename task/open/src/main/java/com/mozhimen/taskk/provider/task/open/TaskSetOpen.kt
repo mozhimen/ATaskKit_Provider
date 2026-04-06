@@ -1,6 +1,6 @@
 package com.mozhimen.taskk.provider.task.open
 
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
 import com.mozhimen.taskk.provider.basic.bases.ATaskManagerProvider
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskOpen
 import com.mozhimen.taskk.provider.basic.bases.sets.ATaskSetOpen

@@ -7,7 +7,7 @@ import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import com.mozhimen.kotlin.elemk.android.app.cons.CNotificationManager
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.android.app.UtilKNotificationManager
 import com.mozhimen.kotlin.utilk.android.app.UtilKPendingIntentGet
 import com.mozhimen.kotlin.utilk.android.content.UtilKApplicationInfo

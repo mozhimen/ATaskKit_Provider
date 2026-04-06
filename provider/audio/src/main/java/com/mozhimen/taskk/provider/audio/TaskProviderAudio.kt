@@ -1,8 +1,8 @@
 package com.mozhimen.taskk.provider.audio
 
 import android.content.Context
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_INTERNET
 import com.mozhimen.taskk.provider.audio.impls.TaskDeleteAudio
 import com.mozhimen.taskk.provider.audio.impls.TaskDownloadOkDownloadAudio
 import com.mozhimen.taskk.provider.audio.impls.TaskOpenAudio
@@ -32,7 +32,7 @@ open class TaskProviderAudio(
     taskManagerProvider: ATaskManagerProvider,
 ) : ATaskProvider(iTaskLifecycle, taskManagerProvider) {
 
-    @OPermission_INTERNET
+    @OUsesPermission_INTERNET
     override fun getTaskDownload(): ATaskDownload {
         return TaskDownloadOkDownloadAudio(_taskManagerProvider,_iTaskLifecycle)
     }

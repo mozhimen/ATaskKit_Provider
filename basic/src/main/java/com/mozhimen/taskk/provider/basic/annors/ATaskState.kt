@@ -2,7 +2,7 @@ package com.mozhimen.taskk.provider.basic.annors
 
 import android.util.Log
 import androidx.annotation.IntDef
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
 import com.mozhimen.taskk.provider.basic.annors.ATaskName.Companion.TASK_CLOSE
 import com.mozhimen.taskk.provider.basic.annors.ATaskName.Companion.TASK_DELETE
 import com.mozhimen.taskk.provider.basic.annors.ATaskName.Companion.TASK_DOWNLOAD

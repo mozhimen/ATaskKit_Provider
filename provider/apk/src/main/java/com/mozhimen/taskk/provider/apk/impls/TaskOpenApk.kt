@@ -1,7 +1,7 @@
 package com.mozhimen.taskk.provider.apk.impls
 
 import android.annotation.SuppressLint
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_QUERY_ALL_PACKAGES
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_QUERY_ALL_PACKAGES
 import com.mozhimen.kotlin.utilk.android.app.UtilKApplicationWrapper
 import com.mozhimen.kotlin.utilk.android.content.UtilKContextStart
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
@@ -26,7 +26,7 @@ class TaskOpenApk(taskManager: ATaskManagerProvider, iTaskLifecycle: ITaskLifecy
     }
 
     @SuppressLint("MissingSuperCall")
-    @OptIn(OPermission_QUERY_ALL_PACKAGES::class)
+    @OptIn(OUsesPermission_QUERY_ALL_PACKAGES::class)
     override fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         try {
             val boolean = UtilKContextStart.startContext_ofPackageName(UtilKApplicationWrapper.instance.get(), appTask.apkPackageName)

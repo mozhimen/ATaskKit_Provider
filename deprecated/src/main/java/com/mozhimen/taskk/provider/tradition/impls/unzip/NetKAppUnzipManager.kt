@@ -2,7 +2,7 @@ package com.mozhimen.taskk.provider.tradition.impls.unzip
 
 import android.os.Environment
 import androidx.annotation.WorkerThread
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
 import com.mozhimen.taskk.executor.TaskKExecutor
 import com.mozhimen.kotlin.utilk.android.os.UtilKHandlerWrapper
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper

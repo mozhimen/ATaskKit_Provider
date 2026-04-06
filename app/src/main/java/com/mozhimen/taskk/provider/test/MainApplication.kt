@@ -1,6 +1,6 @@
 package com.mozhimen.taskk.provider.test
 
-import com.mozhimen.kotlin.lintk.optins.OApiMultiDex_InApplication
+import com.mozhimen.kotlin.lintk.optins.api.OApiMultiDex_InApplication
 import com.mozhimen.stackk.bases.BaseApplication
 
 /**

@@ -2,7 +2,7 @@ package com.mozhimen.taskk.provider.basic.bases
 
 import android.content.Context
 import androidx.annotation.CallSuper
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
 import com.mozhimen.kotlin.utilk.commons.IUtilK
 import com.mozhimen.taskk.provider.basic.annors.ATaskNodeQueueName
 import com.mozhimen.taskk.provider.basic.commons.ITaskEvent

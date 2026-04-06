@@ -1,8 +1,8 @@
 package com.mozhimen.taskk.provider.apk.impls
 
 import android.annotation.SuppressLint
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_QUERY_ALL_PACKAGES
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_QUERY_ALL_PACKAGES
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_REQUEST_INSTALL_PACKAGES
 import com.mozhimen.kotlin.utilk.android.app.UtilKApplicationWrapper
 import com.mozhimen.kotlin.utilk.android.content.UtilKContextStart
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
@@ -22,7 +22,7 @@ import com.mozhimen.taskk.provider.basic.commons.ITaskLifecycle
  * @Date 2024/8/21 21:55
  * @Version 1.0
  */
-@OPermission_REQUEST_INSTALL_PACKAGES
+@OUsesPermission_REQUEST_INSTALL_PACKAGES
 class TaskOpenApk2 constructor(taskManager: ATaskManagerProvider, iTaskLifecycle: ITaskLifecycle) : ATaskOpen(taskManager,iTaskLifecycle) {
 
     override fun getSupportFileExts(): List<String> {
@@ -30,7 +30,7 @@ class TaskOpenApk2 constructor(taskManager: ATaskManagerProvider, iTaskLifecycle
     }
 
     @SuppressLint("MissingSuperCall")
-    @OptIn(OPermission_QUERY_ALL_PACKAGES::class)
+    @OptIn(OUsesPermission_QUERY_ALL_PACKAGES::class)
     override fun taskStart(appTask: AppTask, @ATaskNodeQueueName taskNodeQueueName: String) {
         try {
             val boolean = UtilKAppInstall.install_ofView(appTask.filePathNameExt)

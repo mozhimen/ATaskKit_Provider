@@ -2,8 +2,8 @@ package com.mozhimen.taskk.provider.basic.bases
 
 import android.content.Context
 import androidx.annotation.CallSuper
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_INTERNET
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_INTERNET
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskClose
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDelete
 import com.mozhimen.taskk.provider.basic.bases.providers.ATaskDownload
@@ -38,7 +38,7 @@ abstract class ATaskProvider(
     fun hasInit(): Boolean =
         _isInit.get()
 
-    @OptIn(OPermission_INTERNET::class)
+    @OptIn(OUsesPermission_INTERNET::class)
     abstract fun getTaskDownload(): ATaskDownload?
     abstract fun getTaskVerify(): ATaskVerify?
     abstract fun getTaskUnzip(): ATaskUnzip?
@@ -50,7 +50,7 @@ abstract class ATaskProvider(
 
     abstract fun getTaskNodeQueues(): Map<String, List<STaskNode>>
 
-    @OptIn(OPermission_INTERNET::class)
+    @OptIn(OUsesPermission_INTERNET::class)
     fun getSupportFileExtensions(): List<String> {
         val set: Set<String> = listOf(
             getTaskDownload()?.getSupportFileExts(),

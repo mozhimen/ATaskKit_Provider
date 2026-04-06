@@ -6,10 +6,10 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import com.liulishuo.okdownload.core.breakpoint.IBreakpointCompare
 import com.liulishuo.okdownload.core.exception.ServerCanceledException
 import com.mozhimen.kotlin.elemk.commons.I_Listener
-import com.mozhimen.kotlin.lintk.optins.OApiCall_BindLifecycle
-import com.mozhimen.kotlin.lintk.optins.OApiInit_ByLazy
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
+import com.mozhimen.kotlin.lintk.optins.api.OApiCall_BindLifecycle
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_ByLazy
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_REQUEST_INSTALL_PACKAGES
 import com.mozhimen.kotlin.utilk.android.content.UtilKPackage
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.kotlin.utilk.bases.BaseUtilK
@@ -76,7 +76,7 @@ class NetKApp : ITaskState, BaseUtilK() {
     // init
     /////////////////////////////////////////////////////////////////
     //region # init
-    @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class, OPermission_REQUEST_INSTALL_PACKAGES::class)
+    @OptIn(OApiCall_BindLifecycle::class, OApiInit_ByLazy::class, OUsesPermission_REQUEST_INSTALL_PACKAGES::class)
     fun init(context: Context, compare: IBreakpointCompare, strSourceApkNameUnzip: String = ""): NetKApp {
         if (_isInitNetKApp.compareAndSet(false,true)){
             _netKAppInstallProxy.bindLifecycle(ProcessLifecycleOwner.get())// 注册应用安装的监听 InstalledApkReceiver.registerReceiver(this)
@@ -112,7 +112,7 @@ class NetKApp : ITaskState, BaseUtilK() {
         }
     }
 
-    @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class)
+    @OptIn(OUsesPermission_REQUEST_INSTALL_PACKAGES::class)
     fun addInstallProvider(provider: ATaskInstall) {
         NetKAppInstallManager.addInstallProvider(provider)
     }
@@ -216,7 +216,7 @@ class NetKApp : ITaskState, BaseUtilK() {
         }
     }
 
-    @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class)
+    @OptIn(OUsesPermission_REQUEST_INSTALL_PACKAGES::class)
     fun taskCancel(appTask: AppTask/*, onCancelBlock: IAB_Listener<Boolean, Int>? = null*/) {
         UtilKLogWrapper.d(TAG, "taskCancel: appTask $appTask")
         if (!appTask.isTaskProcess()) {
@@ -264,12 +264,12 @@ class NetKApp : ITaskState, BaseUtilK() {
         }
     }
 
-    @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class)
+    @OptIn(OUsesPermission_REQUEST_INSTALL_PACKAGES::class)
     fun taskInstall(appTask: AppTask) {
         NetKAppInstallManager.install(appTask, appTask.filePathNameExt.strFilePath2file())
     }
 
-    @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class)
+    @OptIn(OUsesPermission_REQUEST_INSTALL_PACKAGES::class)
     fun resetTaskStateOfInstall(appTask: AppTask) {
         NetKAppInstallManager.onInstallSuccess(appTask.apkPackageName, appTask.apkVersionCode)
     }
@@ -632,7 +632,7 @@ class NetKApp : ITaskState, BaseUtilK() {
         })
     }
 
-    @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class)
+    @OptIn(OUsesPermission_REQUEST_INSTALL_PACKAGES::class)
     override fun onUnzipSuccess(appTask: AppTask) {
         applyAppTaskState(appTask, ATaskState.STATE_UNZIP_SUCCESS, onNext = {
             /**

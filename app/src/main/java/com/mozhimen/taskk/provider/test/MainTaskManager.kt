@@ -1,6 +1,6 @@
 package com.mozhimen.taskk.provider.test
 
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
 import com.mozhimen.taskk.provider.core.BaseTaskManager
 import com.mozhimen.taskk.provider.core.BaseTaskManagerProvider
 

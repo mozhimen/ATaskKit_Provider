@@ -1,9 +1,9 @@
 package com.mozhimen.taskk.provider.test
 
 import android.annotation.SuppressLint
-import com.mozhimen.kotlin.lintk.optins.OApiInit_InApplication
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_POST_NOTIFICATIONS
-import com.mozhimen.kotlin.lintk.optins.permission.OPermission_REQUEST_INSTALL_PACKAGES
+import com.mozhimen.kotlin.lintk.optins.api.OApiInit_InApplication
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_POST_NOTIFICATIONS
+import com.mozhimen.kotlin.lintk.optins.manifest.uses_permission.OUsesPermission_REQUEST_INSTALL_PACKAGES
 import com.mozhimen.kotlin.utilk.android.util.UtilKLogWrapper
 import com.mozhimen.stackk.callback.StackKCb
 import com.mozhimen.taskk.provider.apk.TaskProviderApk
@@ -48,7 +48,7 @@ class MainTaskManagerProvider : BaseTaskManagerProvider("") {
     ////////////////////////////////////////////////////////////////////
 
     @SuppressLint("MissingPermission")
-    @OptIn(OPermission_REQUEST_INSTALL_PACKAGES::class, OPermission_POST_NOTIFICATIONS::class)
+    @OptIn(OUsesPermission_REQUEST_INSTALL_PACKAGES::class, OUsesPermission_POST_NOTIFICATIONS::class)
     override fun getTaskInstalls(): List<ATaskInstall> {
         return mutableListOf(TaskInstallSplitsAckpine(this, _iTaskLifecycle, _applyPermissionListener = { _, taskInstallSplitsAckpine, appTask ->
             UtilKLogWrapper.d(TAG, "getTaskInstalls: permissions")
