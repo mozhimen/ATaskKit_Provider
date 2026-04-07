@@ -31,7 +31,7 @@ android {
 }
 
 dependencies {
-    implementation project(':KUtilKit:android')
+    implementation 'com.github.mozhimen.KUtilKit:android:0.0.2'
     implementation project(':APostKit:postk_livedata')
     implementation project(':ANetKit_okdownload:okdownload')
     implementation project(':ANetKit_okdownload:okdownload_ext')

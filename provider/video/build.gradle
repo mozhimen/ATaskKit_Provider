@@ -38,7 +38,7 @@ dependencies {
         implementation project(/*project.path.replace(project.name, '') +*/ ':ATaskKit_Provider:basic')
         implementation project(/*project.path.replace(project.name, '') +*/ ':ATaskKit_Provider:task:download:okdownload')
     }
-    implementation project(':KUtilKit:android')
+    implementation 'com.github.mozhimen.KUtilKit:android:0.0.2'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'

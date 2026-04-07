@@ -32,9 +32,9 @@ android {
 }
 
 dependencies {
-    implementation project(':KUtilKit:android')
-    implementation project(':ALibKit_Jetpack:room')
-    implementation project(':ALibKit_Jetpack:room_paging')
+    implementation 'com.github.mozhimen.KUtilKit:android:0.0.2'
+    implementation project(':ALibKit_Jetpack:room-bom')
+    implementation project(':ALibKit_Jetpack:room-paging')
     implementation project(':ATaskKit:executor')
 
     //kapt

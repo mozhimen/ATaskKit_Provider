@@ -41,10 +41,6 @@ include ':support:compose'
 include ':ALibKit_Apache'
 project(':ALibKit_Apache').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Apache")
 include ':ALibKit_Apache:commons_compress'
-//ALibKit_Android
-include ':ALibKit_Android'
-project(':ALibKit_Android').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Android")
-include ':ALibKit_Android:tools_build_apksig'
 //ALibKit_Google
 include ':ALibKit_Google'
 project(':ALibKit_Google').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Google")
