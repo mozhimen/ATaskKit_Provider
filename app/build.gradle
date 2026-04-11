@@ -36,7 +36,7 @@ android {
 }
 
 dependencies {
-    implementation project(':ASwiftKit:uik:databinding')
+    implementation 'com.github.mozhimen.ASwiftKit:uik-databinding:2.0.4'
     implementation project(':AStackKit:stackk')
     implementation project(':APermissionKit_XXPermissions:permissionk_xxpermissions')
     implementation project(':core')

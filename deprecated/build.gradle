@@ -31,13 +31,13 @@ android {
 }
 
 dependencies {
-    implementation 'com.github.mozhimen.KUtilKit:android:0.0.2'
+    implementation 'com.github.mozhimen.KUtilKit:android:0.0.3'
     implementation project(':APostKit:postk_livedata')
     implementation project(':ANetKit_okdownload:okdownload')
     implementation project(':ANetKit_okdownload:okdownload_ext')
     implementation project(':ANetKit_okdownload:okdownload-breakpoint-sqlite')
     implementation project(':ANetKit_okdownload:okdownload-connection-okhttp')
-    implementation project(':ALibKit_Squareup:okhttp3')
+    implementation 'com.github.mozhimen.ALibKit_Squareup:okhttp3:0.0.1'
     implementation project(':ACacheKit:datastore')
     implementation project(':APostKit:postk_livedata')
     implementation project(':AInstallKit:installk_manager')

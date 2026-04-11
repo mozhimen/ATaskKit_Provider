@@ -30,7 +30,7 @@ android {
 }
 
 dependencies {
-    implementation project(':ASwiftKit:basick')
+    implementation 'com.github.mozhimen.ASwiftKit:basick:2.0.4'
     if (rootProject.name=="ATaskKit_Provider"){
         api project(/*project.path.replace(project.name, '') +*/ ':basic')
     }else{

@@ -31,7 +31,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.github.mozhimen.KUtilKit:android:0.0.2'
+    implementation 'com.github.mozhimen.KUtilKit:android:0.0.3'
     if (rootProject.name == "ATaskKit_Provider") {
         implementation project(/*project.path.replace(project.name, '') +*/ ':basic')
         api project(/*project.path.replace(project.name, '') +*/ ':task:download')
@@ -43,7 +43,7 @@ dependencies {
     api project(':ANetKit_okdownload:okdownload_ext')
     api project(':ANetKit_okdownload:okdownload-breakpoint-sqlite')
     api project(':ANetKit_okdownload:okdownload-connection-okhttp')
-    api project(':ALibKit_Squareup:okhttp3')
+    api 'com.github.mozhimen.ALibKit_Squareup:okhttp3:0.0.1'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

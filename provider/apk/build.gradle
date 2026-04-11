@@ -38,7 +38,7 @@ dependencies {
         implementation project(/*project.path.replace(project.name, '') +*/ ':ATaskKit_Provider:basic')
         api project(/*project.path.replace(project.name, '') +*/ ':ATaskKit_Provider:task:download:okdownload')
     }
-    implementation project(':ASwiftKit:basick')
+    implementation 'com.github.mozhimen.ASwiftKit:basick:2.0.4'
     implementation project(':ACacheKit:datastore')
     implementation project(':ATaskKit:executor')
     implementation project(':AStackKit:callback')
