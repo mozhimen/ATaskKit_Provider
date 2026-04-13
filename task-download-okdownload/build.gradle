@@ -1,11 +1,10 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
 }
 
 android {
-    namespace 'com.mozhimen.taskk.provider.basic'
+    namespace 'com.mozhimen.taskk.provider.task.download.okdownload'
     compileSdk 35
 
     defaultConfig {
@@ -33,10 +32,13 @@ android {
 
 dependencies {
     implementation 'com.github.mozhimen.KUtilKit:android:0.0.3'
-    implementation 'com.github.mozhimen.ALibKit_Jetpack:room-bom:0.0.7'
-    implementation 'com.github.mozhimen.ALibKit_Jetpack:room-paging:0.0.7'
-    implementation 'com.github.mozhimen.ATaskKit:executor:0.0.1'
-    kapt 'androidx.room:room-compiler:2.6.1'
+    implementation project(/*project.path.replace(project.name, '') +*/ ':basic')
+    api project(':task-download')
+    api 'com.github.mozhimen.ANetKit_okdownload:okdownload:0.0.2'
+    api 'com.github.mozhimen.ANetKit_okdownload:okdownload-ext:0.0.2'
+    api 'com.github.mozhimen.ANetKit_okdownload:okdownload-breakpoint-sqlite:0.0.2'
+    api 'com.github.mozhimen.ANetKit_okdownload:okdownload-connection-okhttp:0.0.2'
+    api 'com.github.mozhimen.ALibKit_Squareup:okhttp3:0.0.1'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

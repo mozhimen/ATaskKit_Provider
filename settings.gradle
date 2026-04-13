@@ -1,6 +1,10 @@
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+        maven { url "https://jitpack.io" }
 //        maven { url "https://plugins.gradle.org/m2/" }
         maven { url 'https://maven.aliyun.com/repository/central' }
         maven { url 'https://maven.aliyun.com/repository/google' }
@@ -12,104 +16,28 @@ dependencyResolutionManagement {
         maven { url 'https://gitee.com/liuchaoya/libcommon/raw/mNeaster/repository/' }
         maven { url "https://repo.eclipse.org/content/repositories/paho-snapshots/" }
         maven { url 'https://developer.huawei.com/repo/' }
-        maven { url "https://jitpack.io" }
         maven { url 'https://www.jitpack.io' }
-        mavenCentral()
-        google()
+
     }
 }
 
 rootProject.name = "ATaskKit_Provider"
 include ':app'
-include ':core'
 include ':basic'
-include ':task:install'
-include ':task:install:splits_ackpine'
-include ':task:uninstall'
-include ':task:download'
-include ':task:download:okdownload'
-include ':task:open'
-include ':task:unzip'
-include ':task:verify'
-include ':task:delete'
-include ':task:close'
-include ':provider:apk'
-include ':provider:audio'
-include ':provider:video'
-include ':support:compose'
-//ALibKit_Apache
-include ':ALibKit_Apache'
-project(':ALibKit_Apache').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Apache")
-include ':ALibKit_Apache:commons_compress'
-//ALibKit_Google
-include ':ALibKit_Google'
-project(':ALibKit_Google').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Google")
-include ':ALibKit_Google:material'
-include ':ALibKit_Google:guava:listenablefuture'
-//ALibKit_Jetbrains
-include ':ALibKit_Jetbrains'
-project(':ALibKit_Jetbrains').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Jetbrains")
-include ':ALibKit_Jetbrains:kotlin_stdlib'
-include ':ALibKit_Jetbrains:kotlinx_coroutines'
-//ALibKit_Squareup
-include(':ALibKit_Squareup')
-project(':ALibKit_Squareup').projectDir = new File("D:\\WorkSpace\\GitHub\\ALibKit_Squareup")
-include(':ALibKit_Squareup:okhttp3')
-//APostKit
-include(':KUtilKit')
-project(':KUtilKit').projectDir = new File("D:\\WorkSpace\\GitHub\\KUtilKit")
-include(':KUtilKit:android')
-include(':KUtilKit:kotlin')
-//ASwiftKit
-include ':ASwiftKit'
-project(':ASwiftKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ASwiftKit")
-include ':ASwiftKit:basick'
-include ':ASwiftKit:xmlk'
-include ':ASwiftKit:uik:databinding'
-//ANetKit_okdownload
-include(':ANetKit_okdownload')
-project(':ANetKit_okdownload').projectDir = new File("D:\\WorkSpace\\GitHub\\ANetKit_okdownload")
-include(':ANetKit_okdownload:okdownload')
-include(':ANetKit_okdownload:okdownload-breakpoint-sqlite')
-include(':ANetKit_okdownload:okdownload-connection-okhttp')
-include(':ANetKit_okdownload:okdownload_ext')
-//AInstallKit
-include(':AInstallKit')
-project(':AInstallKit').projectDir = new File("D:\\WorkSpace\\GitHub\\AInstallKit")
-include(':AInstallKit:manager')
-include(':AInstallKit:splits_ackpine')
-//ACacheKit
-include(':ACacheKit')
-project(':ACacheKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ACacheKit")
-include(':ACacheKit:datastore')
-include(':ACacheKit:basic')
-//AInstallKit_Ackpine
-include(':AInstallKit_Ackpine')
-project(':AInstallKit_Ackpine').projectDir = new File("D:\\WorkSpace\\GitHub\\AInstallKit_Ackpine")
-include(':AInstallKit_Ackpine:ackpine-splits')
-include(':AInstallKit_Ackpine:ackpine-ktx')
-include(':AInstallKit_Ackpine:ackpine-core')
-include(':AInstallKit_Ackpine:ackpine-runtime')
-//APermissionKit_XXPermissions
-include(':APermissionKit_XXPermissions')
-project(':APermissionKit_XXPermissions').projectDir = new File("D:\\WorkSpace\\GitHub\\APermissionKit_XXPermissions")
-include(':APermissionKit_XXPermissions:library')
-include(':APermissionKit_XXPermissions:permissionk_xxpermissions')
-//APostKit
-include(':APostKit')
-project(':APostKit').projectDir = new File("D:\\WorkSpace\\GitHub\\APostKit")
-include(':APostKit:livedata')
-include(':APostKit:basic')
-//AStackKit
-include(':AStackKit')
-project(':AStackKit').projectDir = new File("D:\\WorkSpace\\GitHub\\AStackKit")
-include(':AStackKit:stackk')
-include(':AStackKit:callback')
-include(':AStackKit:basic')
-//ATaskKit
-include(':ATaskKit')
-project(':ATaskKit').projectDir = new File("D:\\WorkSpace\\GitHub\\ATaskKit")
-include(':ATaskKit:executor')
+include ':core'
+include ':provider-apk'
+include ':provider-audio'
+include ':provider-video'
+include ':support-compose'
+include ':task-close'
+include ':task-delete'
+include ':task-download'
+include ':task-download-okdownload'
+include ':task-install'
+include ':task-install-splits_ackpine'
+include ':task-open'
+include ':task-uninstall'
+include ':task-unzip'
+include ':task-upload'
+include ':task-verify'
 
-
-include ':task:upload'

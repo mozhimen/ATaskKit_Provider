@@ -23,3 +23,123 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
+
+subprojects {
+    apply plugin: 'maven-publish'
+    def versionToPublished = '0.0.1'
+    def groupIdToPublished = 'com.github.mozhimen.ATaskKit_Provider'
+
+    afterEvaluate { project ->
+
+        if (project.plugins.hasPlugin('java-library')|| project.plugins.hasPlugin('java')) {
+            publishing {
+                publications {
+                    create("mavenJava", MavenPublication) {
+                        from components.java
+                        groupId = 'com.github.mozhimen'
+                        artifactId = project.name
+                        version = versionToPublished
+
+                        pom.withXml {
+                            def root = asNode()
+                            def dependenciesNode = root.dependencies ? root.dependencies[0] : root.appendNode('dependencies')
+
+                            def allDeps = []  // 收集 api + impl
+                            def apiDeps = project.configurations.api.allDependencies.toList()
+                            def implDeps = project.configurations.implementation.allDependencies.toList()
+                            allDeps.addAll(apiDeps)
+                            allDeps.addAll(implDeps)
+
+                            def addedDepSet = new HashSet<String>()
+
+                            allDeps.each { dep ->
+                                def groupId //= dep instanceof ProjectDependency ? project.rootProject.group.toString() : dep.group
+                                def version
+                                if(dep instanceof ProjectDependency){
+                                    groupId = groupIdToPublished
+                                    version = versionToPublished
+                                }else{
+                                    groupId = dep.group
+                                    version = dep.version
+                                }
+                                def scope = project.configurations.api.allDependencies.contains(dep) ? 'compile' : 'runtime'
+
+                                def key = "${groupId}:${dep.name}:${version}:${scope}"
+                                if (addedDepSet.contains(key)) return
+                                addedDepSet.add(key)
+
+                                def depNode = dependenciesNode.appendNode("dependency")
+                                depNode.appendNode("groupId",groupId)
+                                depNode.appendNode("artifactId", dep.name)
+                                depNode.appendNode("version",version)
+                                depNode.appendNode("scope",scope)
+
+                                println "[POM DEBUG] runtime dependency -> groupId: $groupId, artifactId: ${dep.name}, version: $version"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        else if (project.plugins.hasPlugin('com.android.library')) {
+            project.android.libraryVariants.all { variant ->
+                if (variant.buildType.name == "release") {
+                    def releaseAar = project.tasks.named("bundle${variant.name.capitalize()}Aar")
+
+                    publishing {
+                        publications {
+                            create("release", MavenPublication) {
+                                groupId = 'com.github.mozhimen'
+                                artifactId = project.name
+                                version = versionToPublished
+
+                                artifact(releaseAar) {
+                                    builtBy releaseAar
+                                }
+
+                                pom.withXml {
+                                    def root = asNode()
+                                    def dependenciesNode = root.dependencies ? root.dependencies[0] : root.appendNode('dependencies')
+
+                                    def allDeps = []  // 收集 api + impl
+                                    def apiDeps = project.configurations.api.allDependencies.toList()
+                                    def implDeps = project.configurations.implementation.allDependencies.toList()
+                                    allDeps.addAll(apiDeps)
+                                    allDeps.addAll(implDeps)
+
+                                    def addedDepSet = new HashSet<String>()
+
+                                    allDeps.each { dep ->
+                                        def groupId //= dep instanceof ProjectDependency ? project.rootProject.group.toString() : dep.group
+                                        def version
+                                        if(dep instanceof ProjectDependency){
+                                            groupId = groupIdToPublished
+                                            version = versionToPublished
+                                        }else{
+                                            groupId = dep.group
+                                            version = dep.version
+                                        }
+                                        def scope = project.configurations.api.allDependencies.contains(dep) ? 'compile' : 'runtime'
+
+                                        def key = "${groupId}:${dep.name}:${version}:${scope}"
+                                        if (addedDepSet.contains(key)) return
+                                        addedDepSet.add(key)
+
+                                        def depNode = dependenciesNode.appendNode("dependency")
+                                        depNode.appendNode("groupId",groupId)
+                                        depNode.appendNode("artifactId", dep.name)
+                                        depNode.appendNode("version",version)
+                                        depNode.appendNode("scope", scope)
+
+                                        println "[POM DEBUG] runtime dependency -> groupId: $groupId, artifactId: ${dep.name}, version: $version"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,16 +1,14 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
 }
 
 android {
-    namespace 'com.mozhimen.taskk.provider.basic'
+    namespace 'com.mozhimen.task.provider.task.install.splits.ackpine'
     compileSdk 35
 
     defaultConfig {
-        minSdk 19
-        multiDexEnabled true
+        minSdk 21
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 //        consumerProguardFiles "consumer-rules.pro"
@@ -32,11 +30,10 @@ android {
 }
 
 dependencies {
-    implementation 'com.github.mozhimen.KUtilKit:android:0.0.3'
-    implementation 'com.github.mozhimen.ALibKit_Jetpack:room-bom:0.0.7'
-    implementation 'com.github.mozhimen.ALibKit_Jetpack:room-paging:0.0.7'
-    implementation 'com.github.mozhimen.ATaskKit:executor:0.0.1'
-    kapt 'androidx.room:room-compiler:2.6.1'
+    api project(/*project.path.replace(project.name, '') +*/ ':basic')
+    implementation 'com.github.mozhimen.ASwiftKit:basick:2.1.6'
+    implementation 'com.github.mozhimen.AInstallKit:splits_ackpine:0.0.3'
+    implementation 'com.github.mozhimen.APermissionKit_XXPermissions:permissionk_xxpermissions:0.0.4'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

@@ -37,11 +37,11 @@ android {
 
 dependencies {
     implementation 'com.github.mozhimen.ASwiftKit:uik-databinding:2.1.6'
-    implementation project(':AStackKit:stackk')
-    implementation project(':APermissionKit_XXPermissions:permissionk_xxpermissions')
+    implementation 'com.github.mozhimen.AStackKit:stackk:0.0.1'
+    implementation 'com.github.mozhimen.APermissionKit_XXPermissions:permissionk_xxpermissions:0.0.4'
     implementation project(':core')
-    implementation project(':task:install:splits_ackpine')
-    implementation project(':provider:apk')
+    implementation project(':task-install-splits_ackpine')
+    implementation project(':provider-apk')
 
     //test
     testImplementation 'junit:junit:4.13.2'

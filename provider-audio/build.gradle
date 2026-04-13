@@ -1,11 +1,10 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
 }
 
 android {
-    namespace 'com.mozhimen.taskk.provider.basic'
+    namespace 'com.mozhimen.taskk.provider.audio'
     compileSdk 35
 
     defaultConfig {
@@ -32,13 +31,11 @@ android {
 }
 
 dependencies {
+    implementation project(/*project.path.replace(project.name, '') +*/ ':basic')
+    implementation project(/*project.path.replace(project.name, '') +*/ ':task-download-okdownload')
     implementation 'com.github.mozhimen.KUtilKit:android:0.0.3'
-    implementation 'com.github.mozhimen.ALibKit_Jetpack:room-bom:0.0.7'
-    implementation 'com.github.mozhimen.ALibKit_Jetpack:room-paging:0.0.7'
-    implementation 'com.github.mozhimen.ATaskKit:executor:0.0.1'
-    kapt 'androidx.room:room-compiler:2.6.1'
 
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 }
